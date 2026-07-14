@@ -175,3 +175,13 @@ bot.telegram.deleteWebhook().then(() => {
 // Зупинка бота при закритті програми
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+// --- ФЕЙКОВИЙ СЕРВЕР ДЛЯ RENDER ---
+const http = require('http');
+const port = process.env.PORT || 3000;
+http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('L2 Bot is alive!\n');
+}).listen(port, () => {
+    console.log(`✅ Web-сервер запущено на порту ${port} (для Render)`);
+});
