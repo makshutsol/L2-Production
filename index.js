@@ -176,12 +176,17 @@ bot.telegram.deleteWebhook().then(() => {
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
-// --- ФЕЙКОВИЙ СЕРВЕР ДЛЯ RENDER ---
+
+require('dotenv').config();
+const { Telegraf, Markup } = require('telegraf');
+const { createClient } = require('@supabase/supabase-js');
+
+// --- ФЕЙКОВИЙ СЕРВЕР ДЛЯ RENDER (ЗАЛІЗОБЕТОННИЙ) ---
 const http = require('http');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('L2 Bot is alive!\n');
-}).listen(port, () => {
+}).listen(port, '0.0.0.0', () => {
     console.log(`✅ Web-сервер запущено на порту ${port} (для Render)`);
 });
