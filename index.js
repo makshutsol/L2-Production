@@ -9,12 +9,12 @@ const ADMIN_CHAT_ID = '738066424';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// === 1. ЗАПУСК ВЕБ-СЕРВЕРА ===
+// === 1. ЗАПУСК ВЕБ-СЕРВЕРА (Щоб Render працював) ===
 const app = express();
 app.get('/', (req, res) => res.send('L2 ERP Bot Status: ACTIVE 🚀'));
 app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-сервер запущено'));
 
-// Відв'язка старого Google-бота
+// Відв'язка старого Google-бота (це вирішить проблему з мовчанням бота)
 fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook`).catch(()=>{});
 
 // === 2. ФУНКЦІЇ ДЛЯ ТЕЛЕГРАМУ (БЕЗ БІБЛІОТЕК) ===
@@ -60,13 +60,13 @@ async function sendMenuByDept(chatId, dept) {
     let dpt = dept.toLowerCase(); let txt = ""; let markup = null;
     
     if (dpt === "запаковка") {
-        txt = "📦 **МЕНЮ ЗАПАКОВЩИКА**\n\n🔹 `🛒 Забрати акуми` — внести отримані деталі.\n🔹 `🏁 Закрити зміну` — надіслати чеки Пайщикам.";
+        txt = "📦 **МЕНЮ ЗАПАКОВЩИКА**\n\n🔹 `🛒 Забрати акуми` — внести отримані деталі від Пайщика.\n🔹 `🏁 Закрити зміну` — надіслати чеки Пайщикам для підтвердження.";
         markup = { keyboard: [[{ text: "🛒 Забрати акуми" }, { text: "🏁 Закрити зміну" }]], resize_keyboard: true };
     } else if (dpt === "пайка") {
-        txt = "🔥 **МЕНЮ ПАЙЩИКА**\n\nЗапаковщик сам фіксує деталі. Чекайте на вечірній звіт для підтвердження.";
+        txt = "🔥 **МЕНЮ ПАЙЩИКА**\n\nВам не потрібно вносити звіти самостійно. Запаковщик сам фіксує деталі.\nЧекайте на вечірній звіт для підтвердження або оскарження.";
         markup = { keyboard: [[{ text: "ℹ️ Довідка" }]], resize_keyboard: true };
     } else if (dpt === "зварка") {
-        txt = "⚡ **МЕНЮ ЗВАРЮВАЛЬНИКА**\n\nТисніть 'Здати роботу', щоб внести виготовлені збірки.";
+        txt = "⚡ **МЕНЮ ЗВАРЮВАЛЬНИКА**\n\nТисніть 'Здати роботу', щоб обрати виготовлені збірки з каталогу.";
         markup = { keyboard: [[{ text: "📝 Здати роботу" }]], resize_keyboard: true };
     } else if (dpt === "адмін") {
         txt = "👑 **МЕНЮ АДМІНІСТРАТОРА**\n\nКерування здійснюється через веб-панель.";
@@ -103,10 +103,10 @@ async function handleMessage(msg) {
 
     const dpt = user.dept.toLowerCase();
 
-    // АДМІН: Оголошення
+    // --- АДМІН ---
     if (dpt === "адмін" && text === "📢 Надіслати Оголошення") {
         states[chatId] = { step: "WAIT_BROADCAST" };
-        return sendMessage(chatId, "📝 Введіть текст оголошення:", { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
+        return sendMessage(chatId, "📝 Введіть текст оголошення для команди:", { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
     }
     if (dpt === "адмін" && state && state.step === "WAIT_BROADCAST") {
         const { data: all } = await supabase.from('workers').select('chat_id').eq('status', 'Активний');
@@ -116,12 +116,12 @@ async function handleMessage(msg) {
         return sendMenuByDept(chatId, user.dept);
     }
 
-    // ЗВАРКА
+    // --- ЗВАРКА ---
     if (dpt === "зварка" && text === "📝 Здати роботу") {
         const { data: models } = await supabase.from('active_models').select('model');
-        if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог зміни порожній.");
+        if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог зміни порожній. Адмін ще не додав збірки на сьогодні.");
         states[chatId] = { step: "WELDER_MODEL" };
-        return sendMessage(chatId, "🔋 **Оберіть збірку:**", buildKeyboard(models.map(m=>m.model), 1));
+        return sendMessage(chatId, "🔋 **Оберіть збірку з каталогу:**", buildKeyboard(models.map(m=>m.model), 1));
     }
     if (dpt === "зварка" && state && state.step === "WELDER_MODEL") {
         states[chatId] = { step: "WELDER_COUNT", model: text };
@@ -135,7 +135,7 @@ async function handleMessage(msg) {
         return sendMenuByDept(chatId, user.dept);
     }
 
-    // ЗАПАКОВКА
+    // --- ЗАПАКОВКА ---
     if (dpt === "запаковка" && text === "🛒 Забрати акуми") {
         const { data: solderers } = await supabase.from('workers').select('*').eq('dept', 'Пайка').eq('status', 'Активний');
         if (!solderers || solderers.length === 0) return sendMessage(chatId, "❌ Немає пайщиків у базі.");
@@ -146,8 +146,9 @@ async function handleMessage(msg) {
         let selected = state.solderers.find(s => s.name === text);
         if (!selected) return sendMessage(chatId, "⚠️ Оберіть з клавіатури.");
         const { data: models } = await supabase.from('active_models').select('model');
+        if (!models || models.length===0) return sendMessage(chatId, "❌ Каталог зміни порожній. Адмін ще не додав збірки на сьогодні.");
         states[chatId] = { step: "PACK_MODEL", sName: selected.name, sChatId: selected.chat_id };
-        return sendMessage(chatId, `🔋 Оберіть збірку:`, buildKeyboard(models.map(m=>m.model), 1));
+        return sendMessage(chatId, `🔋 Оберіть збірку з каталогу:`, buildKeyboard(models.map(m=>m.model), 1));
     }
     if (dpt === "запаковка" && state && state.step === "PACK_MODEL") {
         states[chatId].step = "PACK_COUNT"; states[chatId].model = text;
@@ -177,7 +178,7 @@ async function handleMessage(msg) {
         return sendMenuByDept(chatId, user.dept);
     }
 
-    // ОСКАРЖЕННЯ ВІД ПАЙЩИКА -> АДМІНУ
+    // --- ПАЙКА: ОСКАРЖЕННЯ ---
     if (state && state.step === "WAITING_REASON") {
         let batch = disputeBatches[state.batchId]; if(!batch) { delete states[chatId]; return sendMessage(chatId, "⚠️ Дані застаріли."); }
         let item = batch.items[state.itemIndex]; delete states[chatId];
@@ -220,7 +221,7 @@ async function handleCallbackQuery(query) {
     }
 }
 
-// === 6. БЕЗПЕЧНИЙ POLLING ДЛЯ RENDER ===
+// === 6. БЕЗПЕЧНИЙ POLLING (БЕЗ ПАДІНЬ RENDER) ===
 let lastUpdateId = 0;
 async function poll() {
     try {
