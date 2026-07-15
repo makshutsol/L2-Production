@@ -1,24 +1,27 @@
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 
-// === ТВОЇ КЛЮЧІ ===
-const TELEGRAM_TOKEN = '8632082763:-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8';
+// === 🔑 ТВОЇ КЛЮЧІ ===
+// ВСТАВ СЮДИ НОВИЙ ТОКЕН З @BotFather МІЖ ОДИНАРНИМИ ЛАПКАМИ:
+const TELEGRAM_TOKEN = '8632082763:AAHs-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8';
 const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
 const ADMIN_CHAT_ID = '738066424';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// === 1. ЗАПУСК ВЕБ-СЕРВЕРА ===
+// === 1. ЗАПУСК ВЕБ-СЕРВЕРА (ДЛЯ RENDER) ===
 const app = express();
 app.get('/', (req, res) => res.send('L2 Production Bot is LIVE!'));
 app.listen(10000, '0.0.0.0', () => console.log('✅ Web-сервер запущено на порту 10000'));
 
 // === 2. ВБИВАЄМО СТАРИЙ GOOGLE SCRIPT ===
-// Ця команда примусово скаже Телеграму: "Забудь про Google, відправляй дані сюди!"
 fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook`)
     .then(res => res.json())
-    .then(data => console.log('✅ Старий Google-зв\'язок знищено:', data.description));
+    .then(data => {
+        if(data.ok) console.log('✅ Старий Google-зв\'язок успішно знищено!');
+        else console.log('⚠️ Статус токена:', data.description);
+    });
 
 // === 3. ПРЯМА РОБОТА З ТЕЛЕГРАМОМ (БЕЗ БІБЛІОТЕК) ===
 const states = {}; 
@@ -83,19 +86,15 @@ async function handleMessage(msg) {
 
     let user = workers && workers.length > 0 ? workers[0] : null;
 
-    // СУПЕР-ЗАХИЩЕНА РЕЄСТРАЦІЯ
     if (!user) {
       if (text === '/start') {
         return sendMessage(chatId, "👋 **Вітаємо у системі L2!**\n\n✍️ Напишіть своє **Прізвище та Ім'я** для реєстрації:");
       }
       
       const { error: insertError } = await supabase.from('workers').insert([{ name: text, dept: 'Інше', chat_id: chatId, status: 'Очікує' }]);
-      
-      // Якщо в Supabase помилка (наприклад, немає колонки або увімкнений RLS), бот напише про це!
       if (insertError) {
-          return sendMessage(chatId, `❌ **Помилка бази даних!**\n\nДеталі: _${insertError.message}_\n\n❗️ **Адміну:** Перевір у Supabase, чи є в таблиці 'workers' колонки: name, dept, chat_id, status. І переконайся, що вимкнено RLS (Row Level Security)!`);
+          return sendMessage(chatId, `❌ **Помилка бази даних!**\n\nДеталі: _${insertError.message}_\n\n❗️ **Адміну:** Перевір у Supabase, чи є в таблиці 'workers' колонки: name, dept, chat_id, status.`);
       }
-      
       return sendMessage(chatId, "⏳ **Заявку надіслано!**\nВаш акаунт перевіряється адміністратором.");
     }
 
@@ -109,7 +108,6 @@ async function handleMessage(msg) {
 
     const dpt = user.dept.toLowerCase();
 
-    // Зварка
     if (dpt === "зварка" && text === "📝 Здати роботу") {
       const { data: models } = await supabase.from('active_models').select('model');
       if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог порожній.");
@@ -128,7 +126,6 @@ async function handleMessage(msg) {
       return sendMenuByDept(chatId, user.dept);
     }
 
-    // Запаковка
     if (dpt === "запаковка" && text === "🛒 Забрати акуми") {
       const { data: solderers } = await supabase.from('workers').select('*').eq('dept', 'Пайка').eq('status', 'Активний');
       states[chatId] = { step: "PACK_SOLDERER", solderers: solderers };
@@ -193,24 +190,27 @@ async function handleCallbackQuery(query) {
   }
 }
 
-// === 5. ПРЯМИЙ POLLING (ІДЕАЛЬНО ДЛЯ RENDER) ===
+// === 5. ПРЯМИЙ POLLING (З ЛОГАМИ ПОМИЛОК) ===
 let lastUpdateId = 0;
 async function poll() {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=50`);
-        if(res.ok) {
-            const data = await res.json();
-            if (data.ok && data.result) {
-                for (const update of data.result) {
-                    lastUpdateId = update.update_id;
-                    if (update.message) await handleMessage(update.message);
-                    if (update.callback_query) await handleCallbackQuery(update.callback_query);
-                }
+        const data = await res.json();
+        
+        if(res.ok && data.ok && data.result) {
+            for (const update of data.result) {
+                lastUpdateId = update.update_id;
+                if (update.message) await handleMessage(update.message);
+                if (update.callback_query) await handleCallbackQuery(update.callback_query);
             }
+        } else if (!data.ok) {
+            console.error("❌ Телеграм каже, що токен помилковий:", data.description);
         }
-    } catch (e) { } // Ігноруємо дрібні помилки мережі
+    } catch (e) {
+        console.error("Помилка мережі:", e.message);
+    }
     setTimeout(poll, 1000);
 }
 
-console.log("🚀 Telegram Bot успішно запущено без сторонніх бібліотек!");
+console.log("🚀 Telegram Bot успішно запущено!");
 poll();
