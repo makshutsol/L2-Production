@@ -10,17 +10,16 @@ const ADMIN_CHAT_ID = '738066424';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// === 1. ЗАПУСК ВЕБ-СЕРВЕРА (ТУТ ВИПРАВЛЕНО ПІДКЛЮЧЕННЯ ПАНЕЛІ) ===
+// === 1. ЗАПУСК ВЕБ-СЕРВЕРА ===
 const app = express();
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-сервер та Адмінка запущені'));
 
-// Відв'язка старого Google-бота
 fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook`).catch(()=>{});
 
-// === 2. ЯДРО ТЕЛЕГРАМУ (НАДІЙНЕ) ===
+// === 2. ЯДРО ТЕЛЕГРАМУ ===
 async function tg(method, payload = {}) {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {

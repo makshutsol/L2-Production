@@ -112,7 +112,7 @@
       
       <!-- 1. ОПЕРАЦІЇ -->
       <div id="daily" class="section active">
-        <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі (з детальним звітом)</p></div>
+        <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі</p></div>
         
         <div id="pendingCard" class="card" style="display:none; border-color: var(--warning);">
             <div class="card-title" style="color:var(--warning)">Нові заявки (Авторизація)</div>
@@ -120,7 +120,7 @@
         </div>
 
         <div class="card">
-          <div class="card-header"><div class="card-title">Каталог Зміни (Спільний для всіх)</div><button class="btn-secondary" onclick="clearModels()">Скинути каталог</button></div>
+          <div class="card-header"><div class="card-title">Каталог Зміни (Спільний)</div><button class="btn-secondary" onclick="clearModels()">Скинути каталог</button></div>
           <div class="setup-grid">
             <select id="webConfig"><option>Завантаження...</option></select>
             <select id="webElement"><option>Завантаження...</option></select>
@@ -137,6 +137,11 @@
              <div class="dept-block"><div class="dept-block-header" style="color:var(--info)"><i class="fa-solid fa-fire"></i> Цех Пайки</div><div id="list-payka">⏳</div></div>
              <div class="dept-block"><div class="dept-block-header" style="color:var(--success)"><i class="fa-solid fa-box-open"></i> Відділ Запаковки</div><div id="list-zapakovka">⏳</div></div>
           </div>
+          
+          <!-- КНОПКА ВІДПРАВКИ ЗВІТУ В ТЕЛЕГРАМ -->
+          <button id="btnSendTg" class="btn-success" style="width: 100%; padding: 16px; margin-top: 20px; font-size: 15px;" onclick="sendDailyReportTg()">
+             <i class="fa-solid fa-paper-plane"></i> Затвердити та надіслати файл .txt у Telegram
+          </button>
         </div>
       </div>
 
@@ -162,7 +167,6 @@
            <div class="card" style="flex:1; min-width:300px;"><div class="card-title">Продукція (%)</div><div style="position:relative; height:300px; width:100%;"><canvas id="modelsChart"></canvas></div></div>
         </div>
 
-        <!-- НОВА ТАБЛИЦЯ СТАТИСТИКИ ПО АКУМАХ -->
         <div class="card" style="margin-top: 25px;">
           <div class="card-header">
             <div class="card-title">Детальна статистика по акумуляторах (Моделі)</div>
@@ -178,7 +182,7 @@
         </div>
       </div>
 
-      <!-- 3. ТАБЕЛЬ (ПОДІЛЕНИЙ) -->
+      <!-- 3. ТАБЕЛЬ -->
       <div id="tabel" class="section">
         <div class="header"><h1>Табель обліку</h1><p>Окремі відомості виробництва за місяць</p></div>
         <div class="card" style="padding: 20px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
@@ -258,7 +262,7 @@
   <!-- МОДАЛКА КАЛЕНДАРЯ (ДЕНЬ) -->
   <div class="modal" id="calModal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('calModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button><div class="modal-title" id="calModalTitle"></div><input type="hidden" id="calModalName"><input type="hidden" id="calModalDate"><input type="hidden" id="calModalDept"><div id="calModalDetailsBlock" style="display:none;"><div style="font-size: 12px; color: var(--success); margin-bottom: 10px; font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div><div class="details-list" id="calModalDetailsList"></div></div><div style="margin-bottom: 8px; font-size: 12px; color: var(--text-muted);">Зміна статусу дня:</div><select id="calModalStatus" style="margin-bottom: 20px;"><option value="-- Немає (Пусто) --">-- Очистити записи --</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Примусовий вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select><button class="btn-primary" style="width: 100%;" onclick="saveCalModal()">Зберегти статус дня</button></div></div>
 
-  <!-- МОДАЛКА ПРОФІЛЮ ПРАЦІВНИКА (З ДЕТАЛІЗАЦІЄЮ ЗБІРОК) -->
+  <!-- МОДАЛКА ПРОФІЛЮ ПРАЦІВНИКА -->
   <div class="modal" id="workerModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('workerModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
@@ -304,6 +308,8 @@
     // === КЛЮЧІ ===
     const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
+    const TELEGRAM_TOKEN = '8632082763:-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8';
+    const ADMIN_CHAT_ID = '738066424';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let d = new Date(); let m = d.getMonth() + 1; let mStr = d.getFullYear() + "-" + (m < 10 ? "0" + m : m);
@@ -338,7 +344,7 @@
       if(s==='Простой') return '<span class="st-badge st-p">П</span>'; return '';
     }
 
-    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ (ДЕТАЛЬНИЙ ЗВІТ) ===
+    // === 1. ОПЕРАЦІЇ ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
       document.getElementById('list-admin').innerHTML="⏳ Завантаження..."; document.getElementById('list-zvarka').innerHTML="⏳ Завантаження..."; document.getElementById('list-payka').innerHTML="⏳ Завантаження..."; document.getElementById('list-zapakovka').innerHTML="⏳ Завантаження...";
@@ -387,6 +393,77 @@
       document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:13px;'>Порожньо</div>";
     }
 
+    // === НОВЕ: ВІДПРАВКА ЗВІТУ В ТЕЛЕГРАМ ===
+    window.sendDailyReportTg = async function() {
+        const dStr = document.getElementById('repDate').value;
+        const [year, month, day] = dStr.split('-');
+        const dateFormatted = `${day}.${month}.${year}`;
+
+        const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name');
+        const { data: rZv } = await supabase.from('reports_zvarka').select('*').eq('date', dStr);
+        const { data: rPa } = await supabase.from('reports_payka').select('*').eq('date', dStr);
+        const { data: rZa } = await supabase.from('reports_zapakovka').select('*').eq('date', dStr);
+
+        let depts = [
+            { id: 'Зварка', title: 'сварка', data: rZv },
+            { id: 'Пайка', title: 'пайка', data: rPa },
+            { id: 'Запаковка', title: 'запаковка', data: rZa }
+        ];
+
+        let sent = 0;
+        document.getElementById('btnSendTg').innerHTML = "⏳ Формування та надсилання...";
+
+        for (let dpt of depts) {
+            let deptWorkers = workers.filter(w => w.dept === dpt.id);
+            if (deptWorkers.length === 0) continue;
+
+            let text = `Л2 ${dpt.title} ${dateFormatted}\n\n`;
+            let hasData = false;
+
+            deptWorkers.forEach(w => {
+                let wReps = (dpt.data || []).filter(r => (r.name || r.solderer_name || r.packager_name) === w.name);
+                
+                if (wReps.length === 0) {
+                    text += `${w.name} ( звіту немає )\n0 - шт\n\n`;
+                } else {
+                    let firstRep = wReps[0];
+                    if (firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
+                        text += `${w.name} ( ${firstRep.status.toLowerCase()} )\n0 - шт\n\n`;
+                    } else {
+                        text += `${w.name}\n`;
+                        let models = {};
+                        let total = 0;
+                        wReps.forEach(r => {
+                            let m = r.config || 'Інше';
+                            let c = parseInt(r.count) || 0;
+                            if (c > 0) { models[m] = (models[m] || 0) + c; total += c; }
+                        });
+                        for (let m in models) {
+                            text += `${m} - ${models[m]} шт\n`;
+                        }
+                        if (total === 0) text += `0 - шт\n`;
+                        text += `\n`;
+                    }
+                }
+                hasData = true;
+            });
+
+            if (hasData) {
+                try {
+                    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: text.trim() })
+                    });
+                    sent++;
+                } catch(e) { console.error(e); }
+            }
+        }
+        
+        document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-paper-plane"></i> Затвердити та надіслати файл .txt у Telegram`;
+        alert(`✅ Звіти успішно надіслано в Telegram (${sent} відділів)!`);
+    }
+
     // === 2. ДАШБОРД ===
     window.loadDashboard = async function() {
        const start = document.getElementById('dashStart').value; const end = document.getElementById('dashEnd').value;
@@ -424,7 +501,7 @@
        chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:sDates.map(x=>dS[x]), borderColor:'#50CD89', backgroundColor:'rgba(80,205,137,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
     }
 
-    // === НОВЕ: ДЕТАЛЬНА СТАТИСТИКА ПО МОДЕЛЯХ ===
+    // === ДЕТАЛЬНА СТАТИСТИКА ПО МОДЕЛЯХ ===
     window.loadDetailedModelStats = async function() {
         const start = document.getElementById('statModStart').value;
         const end = document.getElementById('statModEnd').value;
@@ -470,7 +547,7 @@
         document.getElementById('detailedModelStatsContainer').innerHTML = html;
     }
 
-    // === 3. ТАБЕЛЬ (ПОДІЛЕНИЙ) ===
+    // === 3. ТАБЕЛЬ ===
     window.loadTabel = async function() {
       const mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
       document.getElementById('tabel-admin-container').innerHTML = "⏳ Завантаження..."; 
@@ -499,7 +576,6 @@
                 let model = r.config || 'Інше';
                 tData[name].days[d].models[model] = (tData[name].days[d].models[model] || 0) + c;
                 tData[name].details[r.date] = (tData[name].details[r.date]||0)+c; 
-                // Collect monthly models for profile
                 tData[name].modelsMonthly[model] = (tData[name].modelsMonthly[model] || 0) + c;
             }
          }
@@ -549,7 +625,6 @@
       let uData = globalTabelData[name] || { days: {}, sum: 0, details: {}, modelsMonthly: {} };
       document.getElementById('wInfoItems').innerText = uData.sum + ' шт';
 
-      // Список моделей за місяць
       let modelsHtml = "";
       if (Object.keys(uData.modelsMonthly).length > 0) {
           modelsHtml = Object.keys(uData.modelsMonthly).map(m => `<div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;"><span>${m}</span><span style="font-weight:600;">${uData.modelsMonthly[m]} шт</span></div>`).join('');
@@ -610,7 +685,6 @@
         let rows = document.querySelectorAll('.mass-worker-row'); 
         document.getElementById('massUpdateCard').classList.remove('active'); 
 
-        // Перебираємо всі дні в діапазоні
         let d = new Date(startDate);
         while (d <= endDate) {
             let y = d.getFullYear();
