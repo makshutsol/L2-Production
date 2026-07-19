@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
 
-// === 🔑 ТВОЇ КЛЮЧІ ===
+// === 🔑 ТВОЇ КЛЮЧІ (ОНОВЛЕНО) ===
 const TELEGRAM_TOKEN = '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y';
 const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';

@@ -72,8 +72,8 @@
     .modal.active { display: flex; animation: fadeIn 0.2s; }
     .modal-content { background: var(--bg-surface); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; border: 1px solid var(--border-thin); position: relative; max-height: 85vh; overflow-y: auto;}
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; position: absolute; right: 25px; top: 25px;}
-    .details-list { background: var(--bg-base); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed var(--border-thin);}
-    .details-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px;}
+    .details-list { background: var(--bg-base); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border-thin);}
+    .details-item { display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;}
     .modal-tabs { display: flex; border-bottom: 1px solid var(--border-thin); margin-bottom: 20px; }
     .modal-tab { padding: 10px 20px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 14px; border-bottom: 2px solid transparent;}
     .modal-tab.active { color: var(--info); border-bottom-color: var(--info); }
@@ -112,7 +112,7 @@
       
       <!-- 1. ОПЕРАЦІЇ -->
       <div id="daily" class="section active">
-        <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі</p></div>
+        <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі (з детальним звітом)</p></div>
         
         <div id="pendingCard" class="card" style="display:none; border-color: var(--warning);">
             <div class="card-title" style="color:var(--warning)">Нові заявки (Авторизація)</div>
@@ -120,7 +120,7 @@
         </div>
 
         <div class="card">
-          <div class="card-header"><div class="card-title">Каталог Зміни (Спільний)</div><button class="btn-secondary" onclick="clearModels()">Скинути каталог</button></div>
+          <div class="card-header"><div class="card-title">Каталог Зміни (Спільний для всіх)</div><button class="btn-secondary" onclick="clearModels()">Скинути каталог</button></div>
           <div class="setup-grid">
             <select id="webConfig"><option>Завантаження...</option></select>
             <select id="webElement"><option>Завантаження...</option></select>
@@ -145,7 +145,7 @@
         </div>
       </div>
 
-      <!-- 2. ДАШБОРД (Тут додано детальну статистику моделей) -->
+      <!-- 2. ДАШБОРД (Детальна статистика моделей) -->
       <div id="dashboard" class="section">
         <div class="header"><h1>Аналітика та Графіки</h1></div>
         <div class="card" style="padding: 20px;">
@@ -259,10 +259,36 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА КАЛЕНДАРЯ (ДЕНЬ) -->
-  <div class="modal" id="calModal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('calModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button><div class="modal-title" id="calModalTitle"></div><input type="hidden" id="calModalName"><input type="hidden" id="calModalDate"><input type="hidden" id="calModalDept"><div id="calModalDetailsBlock" style="display:none;"><div style="font-size: 12px; color: var(--success); margin-bottom: 10px; font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div><div class="details-list" id="calModalDetailsList"></div></div><div style="margin-bottom: 8px; font-size: 12px; color: var(--text-muted);">Зміна статусу дня:</div><select id="calModalStatus" style="margin-bottom: 20px;"><option value="-- Немає (Пусто) --">-- Очистити записи --</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Примусовий вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select><button class="btn-primary" style="width: 100%;" onclick="saveCalModal()">Зберегти статус дня</button></div></div>
+  <!-- МОДАЛКА КАЛЕНДАРЯ (ОНОВЛЕНО ЯК НА СКРІНШОТІ) -->
+  <div class="modal" id="calModal">
+    <div class="modal-content" style="max-width: 420px;">
+        <button class="close-btn" onclick="document.getElementById('calModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-title" id="calModalTitle" style="font-size: 18px; margin-bottom: 5px;"></div>
+        <input type="hidden" id="calModalName"><input type="hidden" id="calModalDate"><input type="hidden" id="calModalDept">
+        
+        <div id="calModalDetailsBlock" style="display:none; margin-top:15px;">
+            <div style="font-size: 13px; color: var(--success); margin-bottom: 15px; font-weight:600;">
+                <i class="fa-solid fa-check"></i> Виробничий лог дня:
+            </div>
+            <div class="details-list" id="calModalDetailsList" style="background:var(--bg-hover); border:none;"></div>
+        </div>
+        
+        <div style="margin-top: 25px;">
+            <div style="margin-bottom: 8px; font-size: 12px; color: var(--text-muted);">Зміна статусу дня:</div>
+            <select id="calModalStatus" style="margin-bottom: 20px;">
+                <option value="-- Немає (Пусто) --">-- Очистити записи --</option>
+                <option value="Вихідний">Вихідний</option>
+                <option value="Примусовий вихідний">Примусовий вихідний</option>
+                <option value="Відпустка">Відпустка</option>
+                <option value="Лікарняний">Лікарняний</option>
+                <option value="Простой">Простой</option>
+            </select>
+            <button class="btn-primary" style="width: 100%; background: #fff; color: #000;" onclick="saveCalModal()">Зберегти статус дня</button>
+        </div>
+    </div>
+  </div>
 
-  <!-- МОДАЛКА ПРОФІЛЮ ПРАЦІВНИКА -->
+  <!-- МОДАЛКА ПРОФІЛЮ ПРАЦІВНИКА (З ДЕТАЛІЗАЦІЄЮ ЗБІРОК) -->
   <div class="modal" id="workerModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('workerModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
@@ -273,7 +299,7 @@
             <div class="modal-tab" id="tabEditBtn" onclick="switchWorkerTab('edit')">Допуски</div>
         </div>
         <div id="wTabInfo" class="modal-tab-content active">
-            <div class="details-list">
+            <div class="details-list" style="border:none; background:var(--bg-hover);">
                 <div class="details-item"><span>Цех виробництва:</span><span id="wInfoDept" style="font-weight:700; color:var(--info);"></span></div>
                 <div class="details-item"><span>Статус профілю:</span><span id="wInfoStatus" style="font-weight:700;"></span></div>
                 <div class="details-item"><span>Динаміка:</span><span id="wInfoTrend" style="font-weight:700;">⏳...</span></div>
@@ -308,7 +334,7 @@
     // === КЛЮЧІ ===
     const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
-    const TELEGRAM_TOKEN = '8632082763:-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8';
+    const TELEGRAM_TOKEN = '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y'; // Оновлений токен
     const ADMIN_CHAT_ID = '738066424';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -326,7 +352,7 @@
     document.getElementById('statModStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`;
     document.getElementById('statModEnd').valueAsDate = d;
 
-    let globalWorkers = []; let globalTabelData = {}; 
+    window.globalWorkers = []; window.globalTabelData = {}; 
     let chartWorkers = null; let chartModels = null; let chartTrend = null; let chartPersonal = null;
 
     window.switchTab = function(tab) {
@@ -344,7 +370,7 @@
       if(s==='Простой') return '<span class="st-badge st-p">П</span>'; return '';
     }
 
-    // === 1. ОПЕРАЦІЇ ===
+    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ (ДЕТАЛЬНИЙ ЗВІТ) ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
       document.getElementById('list-admin').innerHTML="⏳ Завантаження..."; document.getElementById('list-zvarka').innerHTML="⏳ Завантаження..."; document.getElementById('list-payka').innerHTML="⏳ Завантаження..."; document.getElementById('list-zapakovka').innerHTML="⏳ Завантаження...";
@@ -358,14 +384,14 @@
       const { data: models } = await supabase.from('active_models').select('model');
       document.getElementById('activeTags').innerHTML = (!models || models.length===0) ? "—" : models.map(m => `<div class="badge" style="background:#fff; color:#000;">${m.model}</div>`).join('');
 
-      const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name'); globalWorkers = workers || [];
+      const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name'); window.globalWorkers = workers || [];
       const { data: rZv } = await supabase.from('reports_zvarka').select('*').eq('date', dStr);
       const { data: rPa } = await supabase.from('reports_payka').select('*').eq('date', dStr);
       const { data: rZa } = await supabase.from('reports_zapakovka').select('*').eq('date', dStr);
       let all = [...(rZv||[]), ...(rPa||[]), ...(rZa||[])];
 
       let adm = "", zv = "", pa = "", zap = "";
-      globalWorkers.forEach(w => {
+      window.globalWorkers.forEach(w => {
          let rep = all.filter(r => (r.name || r.solderer_name || r.packager_name) === w.name); 
          let detailsHtml = "";
          
@@ -393,7 +419,7 @@
       document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:13px;'>Порожньо</div>";
     }
 
-    // === НОВЕ: ВІДПРАВКА ЗВІТУ В ТЕЛЕГРАМ ===
+    // === ФОРМАТУВАННЯ ЗВІТУ ЯК У ТЕКСТОВОМУ ФАЙЛІ ===
     window.sendDailyReportTg = async function() {
         const dStr = document.getElementById('repDate').value;
         const [year, month, day] = dStr.split('-');
@@ -558,13 +584,13 @@
       const [y, mo] = mVal.split('-'); const days = new Date(y, mo, 0).getDate();
       const start = `${y}-${mo}-01`; const end = `${y}-${mo}-${days}`;
 
-      const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name'); globalWorkers = workers || [];
+      const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name'); window.globalWorkers = workers || [];
       const { data: rZv } = await supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end);
       const { data: rPa } = await supabase.from('reports_payka').select('*').gte('date', start).lte('date', end);
       const { data: rZa } = await supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end);
       let all = [...(rZv||[]), ...(rPa||[]), ...(rZa||[])];
 
-      let tData = {}; if (workers) workers.forEach(w => { tData[w.name] = { dept: w.dept, days: {}, sum: 0, details: {}, modelsMonthly: {} }; });
+      let tData = {}; if (window.globalWorkers) window.globalWorkers.forEach(w => { tData[w.name] = { dept: w.dept, days: {}, sum: 0, details: {}, modelsMonthly: {} }; });
       all.forEach(r => {
          let name = r.name || r.solderer_name || r.packager_name;
          if(tData[name]) {
@@ -580,7 +606,7 @@
             }
          }
       });
-      globalTabelData = tData;
+      window.globalTabelData = tData;
 
       let depts = { "Адмін": [], "Зварка": [], "Пайка": [], "Запаковка": [] };
       Object.keys(tData).forEach(n => { if(depts[tData[n].dept]) depts[tData[n].dept].push(n); });
@@ -602,13 +628,11 @@
             let uD = tData[name];
             for(let i=1; i<=days; i++) {
                let fullDate = `${y}-${mo}-${i<10?'0'+i:i}`; let txt = `<span style="color:rgba(255,255,255,0.05)">—</span>`; let cls = "";
-               let jsonD = '{}';
                if(uD.days[i]) {
-                  jsonD = encodeURIComponent(JSON.stringify(uD.days[i].models || {}));
                   if(uD.days[i].status) { txt = getStatusBadge(uD.days[i].status); cls = ""; }
                   else if(uD.days[i].count > 0) { txt = `<span class="st-num">${uD.days[i].count}</span>`; cls = ""; }
                }
-               html += `<td class="${cls}" onclick="openCalModal('${name}','${fullDate}','${dpt}','${uD.days[i]?.status||''}','${jsonD}')">${txt}</td>`;
+               html += `<td class="${cls}" onclick="openCalModal('${name}','${fullDate}','${dpt}')">${txt}</td>`;
             }
             html += `<td class="sum-cell">${uD.sum > 0 ? uD.sum : ''}</td></tr>`;
          });
@@ -616,13 +640,47 @@
       }
     }
 
+    // === ПРЯМИЙ ЗВ'ЯЗОК ДЛЯ МОДАЛКИ (ВИПРАВЛЕННЯ БАГА) ===
+    window.openCalModal = function(n, dt, dpt) { 
+        document.getElementById('calModalName').value=n; 
+        document.getElementById('calModalDate').value=dt; 
+        document.getElementById('calModalDept').value=dpt; 
+        document.getElementById('calModalTitle').innerText=`${n} (${dt.split('-').reverse().slice(0,2).join('.')})`; 
+        
+        let day = parseInt(dt.split('-')[2]);
+        let uD = window.globalTabelData[n];
+        let dayData = uD && uD.days[day] ? uD.days[day] : { count: 0, status: null, models: {} };
+
+        document.getElementById('calModalStatus').value = dayData.status || '-- Немає (Пусто) --'; 
+        
+        let dbList=document.getElementById('calModalDetailsList'); 
+        if (dayData.count > 0 || Object.keys(dayData.models).length > 0) { 
+            document.getElementById('calModalDetailsBlock').style.display='block'; 
+            let h='', t=0; 
+            for(let k in dayData.models) { 
+                h+=`<div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+                        <span style="color:var(--text-main); font-weight:500;">${k}</span>
+                        <span style="font-weight:600;">${dayData.models[k]} шт</span>
+                    </div>`; 
+                t+=dayData.models[k]; 
+            } 
+            h+=`<div style="display:flex; justify-content:space-between; margin-top:12px; font-size:15px; font-weight:700; color:var(--success); background:rgba(80, 205, 137, 0.1); padding: 8px; border-radius: 6px;">
+                    <span>Всього:</span><span>${t} шт</span>
+                </div>`; 
+            dbList.innerHTML=h; 
+        } else {
+            document.getElementById('calModalDetailsBlock').style.display='none'; 
+        }
+        document.getElementById('calModal').classList.add('active'); 
+    }
+
     // === ПРОФІЛЬ (З ДЕТАЛІЗАЦІЄЮ МІСЯЦЯ) ===
     window.openWorkerProfile = async function(name) {
-      let worker = globalWorkers.find(w => w.name === name); if(!worker) return;
+      let worker = window.globalWorkers.find(w => w.name === name); if(!worker) return;
       document.getElementById('wModalTitle').innerText = worker.name; document.getElementById('wModalId').value = worker.id;
       document.getElementById('wInfoDept').innerText = worker.dept; document.getElementById('wInfoStatus').innerText = worker.status;
       
-      let uData = globalTabelData[name] || { days: {}, sum: 0, details: {}, modelsMonthly: {} };
+      let uData = window.globalTabelData[name] || { days: {}, sum: 0, details: {}, modelsMonthly: {} };
       document.getElementById('wInfoItems').innerText = uData.sum + ' шт';
 
       let modelsHtml = "";
@@ -750,19 +808,6 @@
     // ДОДАТКОВІ ФУНКЦІЇ КНОПОК
     window.switchWorkerTab = function(t) { document.querySelectorAll('.modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.modal-tab-content').forEach(e=>e.classList.remove('active')); document.getElementById(t==='info'?'tabInfoBtn':'tabEditBtn').classList.add('active'); document.getElementById(t==='info'?'wTabInfo':'wTabEdit').classList.add('active'); }
     window.switchInvTab = function(t) { document.querySelectorAll('#inventory .modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('#inventory .modal-tab-content').forEach(e=>e.classList.remove('active')); event.currentTarget.classList.add('active'); document.getElementById(`inv-${t}`).classList.add('active'); }
-    
-    window.openCalModal = function(n,dt,dpt,s,j) { 
-        document.getElementById('calModalName').value=n; document.getElementById('calModalDate').value=dt; document.getElementById('calModalDept').value=dpt; 
-        document.getElementById('calModalTitle').innerText=`${n} (${dt.split('-').reverse().slice(0,2).join('.')})`; 
-        document.getElementById('calModalStatus').value=s||'-- Немає (Пусто) --'; 
-        let det=JSON.parse(decodeURIComponent(j||'{}')); let dbList=document.getElementById('calModalDetailsList'); 
-        if(Object.keys(det).length>0){ 
-            document.getElementById('calModalDetailsBlock').style.display='block'; let h='', t=0; 
-            for(let k in det){ h+=`<div class="details-item"><span style="color:var(--text-main);">${k}</span><span style="font-weight:600;">${det[k]} шт</span></div>`; t+=det[k]; } 
-            h+=`<div class="details-item" style="color:var(--success); font-weight:700;"><span>Всього за день:</span><span>${t} шт</span></div>`; dbList.innerHTML=h; 
-        } else document.getElementById('calModalDetailsBlock').style.display='none'; 
-        document.getElementById('calModal').classList.add('active'); 
-    }
     
     window.saveCalModal = async function() { 
         let n=document.getElementById('calModalName').value, dt=document.getElementById('calModalDate').value, dpt=document.getElementById('calModalDept').value, s=document.getElementById('calModalStatus').value, t=getTableName(dpt); 
