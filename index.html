@@ -11,28 +11,30 @@
   <style>
     :root { --bg-base:#0f0f13; --bg-surface:#18181d; --bg-hover:#22222a; --text-main:#FFFFFF; --text-muted:#8a8d93; --border-thin:rgba(255,255,255,0.05); --danger:#ff4444; --success:#50CD89; --warning:#f6c000; --info:#009EF7; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, .logo-text, .card-title { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -0.5px; }
 
-    .sidebar { width: 260px; background-color: var(--bg-surface); border-right: 1px solid var(--border-thin); display: flex; flex-direction: column; padding: 40px 24px; z-index: 100; }
+    /* БОКОВЕ МЕНЮ */
+    .sidebar { width: 260px; background-color: var(--bg-surface); border-right: 1px solid var(--border-thin); display: flex; flex-direction: column; padding: 40px 24px; z-index: 1000; transition: transform 0.3s ease; }
     .logo-text { font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 40px; letter-spacing: 2px;}
     .nav-menu { display: flex; flex-direction: column; gap: 8px; }
     .nav-item { padding: 14px 16px; border-radius: 12px; color: var(--text-muted); cursor: pointer; font-weight: 500; font-size: 13px; display: flex; align-items: center; gap: 14px; transition: 0.2s; text-transform: uppercase; }
     .nav-item:hover { color: var(--text-main); background: var(--bg-hover); }
     .nav-item.active { background: var(--text-main); color: #000; font-weight: 600; }
     
-    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
     .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; }
     .header { margin-bottom: 30px; }
     .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
     .header p { color: var(--text-muted); font-size: 14px; }
-    .section { display: none; animation: fadeIn 0.4s ease-out; }
+    .section { display: none; animation: fadeIn 0.3s ease-out; }
     .section.active { display: block; }
     @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
     
-    .card { background: var(--bg-surface); border: 1px solid var(--border-thin); border-radius: 16px; padding: 30px; margin-bottom: 25px; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-thin); flex-wrap: wrap; gap: 15px; }
-    .card-title { font-size: 18px; font-weight: 700; }
+    /* КАРТКИ ТА ЕЛЕМЕНТИ */
+    .card { background: var(--bg-surface); border: 1px solid var(--border-thin); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-thin); flex-wrap: wrap; gap: 15px; }
+    .card-title { font-size: 17px; font-weight: 700; }
     
     select, input { background: var(--bg-base); border: 1px solid var(--border-thin); color: var(--text-main); padding: 12px 16px; border-radius: 10px; font-size: 14px; width: 100%; outline: none; }
     button { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
@@ -40,59 +42,85 @@
     .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid var(--border-thin); }
     .btn-success { background: var(--success); color: #fff; } .btn-danger { background: rgba(241,65,108,0.1); color: var(--danger); border: 1px solid rgba(241,65,108,0.3); } .btn-info { background: rgba(0,158,247,0.1); color: var(--info); border: 1px solid rgba(0,158,247,0.3); }
     
-    .setup-grid { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; align-items: center;}
+    .setup-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;}
     .setup-grid > * { flex: 1; min-width: 150px; }
-    .row { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px; background: var(--bg-base); border: 1px solid var(--border-thin); border-radius: 12px; margin-bottom: 10px; flex-wrap: wrap; gap: 15px; }
+    .row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--bg-base); border: 1px solid var(--border-thin); border-radius: 12px; margin-bottom: 10px; gap: 15px; }
     
-    .dept-block { background: rgba(255,255,255,0.02); border: 1px solid var(--border-thin); border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+    .dept-block { background: rgba(255,255,255,0.02); border: 1px solid var(--border-thin); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
     .dept-block-header { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-thin);}
     
-    .clickable-name { font-weight: 600; font-size: 15px; color: var(--text-main); cursor: pointer; transition: 0.2s; border-bottom: 1px dashed transparent; }
-    .clickable-name:hover { color: var(--info); border-color: var(--info); }
+    .clickable-name { font-weight: 600; font-size: 15px; color: var(--text-main); cursor: pointer; transition: 0.2s; }
+    .clickable-name:hover { color: var(--info); }
     
-    .stat-card { background: var(--bg-base); border: 1px solid var(--border-thin); padding: 20px; border-radius: 12px; flex: 1; min-width: 200px;}
-    .stat-card h4 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px;}
-    .stat-card .value { font-size: 28px; font-weight: 700; color: var(--success); }
+    .stat-card { background: var(--bg-base); border: 1px solid var(--border-thin); padding: 20px; border-radius: 12px; flex: 1; min-width: 140px;}
+    .stat-card h4 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;}
+    .stat-card .value { font-size: 24px; font-weight: 700; color: var(--success); }
     .badge { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
 
-    .table-container { overflow-x: auto; margin-bottom: 20px; }
+    /* ТАБЛИЦІ */
+    .table-container { overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; min-width: 900px; text-align: left; }
     th { color: var(--text-muted); font-size: 11px; padding: 12px 6px; border-bottom: 1px dotted var(--border-thin); font-weight: 500;}
     td { padding: 8px 4px; border-bottom: 1px dotted var(--border-thin); font-size: 13px; }
     .tabel-table td { text-align: center; cursor: pointer; }
-    .tabel-table td:hover { background: rgba(255,255,255,0.02); }
-    .name-cell { position: sticky; left: 0; background: var(--bg-surface); padding-left: 20px; border-right: 1px solid var(--border-thin); z-index: 2; width: 180px; font-weight: 600; text-align: left; }
+    .tabel-table td:hover { background: rgba(255,255,255,0.05); }
+    .name-cell { position: sticky; left: 0; background: var(--bg-surface); padding-left: 15px; border-right: 1px solid var(--border-thin); z-index: 2; min-width: 150px; font-weight: 600; text-align: left; }
     
     .st-num { color: var(--success); font-weight: 700; }
-    .st-badge { padding: 4px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block;}
+    .st-badge { padding: 5px; border-radius: 4px; font-size: 10px; font-weight: 700; display: inline-block; min-width: 26px; text-align: center;}
     .st-vx { background: rgba(255,255,255,0.1); color: #fff; } .st-v { background: rgba(0,158,247,0.15); color: var(--info); } .st-pv { background: rgba(241,65,108,0.15); color: var(--danger); } .st-l { background: rgba(255,199,0,0.15); color: var(--warning); } .st-p { background: rgba(114,57,234,0.15); color: #7239EA; }
     .sum-cell { background: rgba(80,205,137,0.08); color: var(--success); font-weight: 700; border-radius: 6px; }
 
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; }
+    /* МОДАЛКИ (АДАПТОВАНІ) */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
-    .modal-content { background: var(--bg-surface); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; border: 1px solid var(--border-thin); position: relative; max-height: 85vh; overflow-y: auto;}
-    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; position: absolute; right: 25px; top: 25px;}
-    .details-list { background: var(--bg-base); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border-thin);}
-    .details-item { display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;}
-    .modal-tabs { display: flex; border-bottom: 1px solid var(--border-thin); margin-bottom: 20px; }
-    .modal-tab { padding: 10px 20px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 14px; border-bottom: 2px solid transparent;}
+    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid var(--border-thin); position: relative; max-height: 90vh; overflow-y: auto; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; position: absolute; right: 20px; top: 20px;}
+    
+    .modal-tabs { display: flex; border-bottom: 1px solid var(--border-thin); margin-bottom: 20px; overflow-x: auto;}
+    .modal-tab { padding: 10px 15px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 13px; border-bottom: 2px solid transparent; white-space: nowrap;}
     .modal-tab.active { color: var(--info); border-bottom-color: var(--info); }
     .modal-tab-content { display: none; } .modal-tab-content.active { display: block; }
     
+    /* КАЛЕНДАР-МОДАЛКА (ЯК НА СКРІНШОТІ) */
+    .cal-details-box { background: #1c1c21; border-radius: 12px; padding: 15px; margin-top: 15px; margin-bottom: 20px; }
+    .cal-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-main); font-weight: 500;}
+    .cal-total-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--success); padding-top: 12px; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+    /* МОБІЛЬНА АДАПТАЦІЯ */
     .mobile-header { display: none; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; }
+    
     @media (max-width: 768px) {
-      body { flex-direction: column; } .mobile-header { display: flex; justify-content: space-between; padding: 16px 24px; background: var(--bg-surface); border-bottom: 1px solid var(--border-thin);}
-      .sidebar { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); width: 80%; } .sidebar.open { transform: translateX(0); }
-      .main-content { padding: 20px 15px; } .stat-card { width: 100%; }
+      body { flex-direction: column; } 
+      .mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-surface); border-bottom: 1px solid var(--border-thin); z-index: 800;}
+      
+      .sidebar { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); width: 280px; box-shadow: 5px 0 15px rgba(0,0,0,0.5); } 
+      .sidebar.open { transform: translateX(0); }
+      .overlay.active { display: block; }
+      
+      .main-content { padding: 20px 15px; } 
+      .header h1 { font-size: 24px; }
+      .card { padding: 15px; border-radius: 12px; }
+      .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      
+      .setup-grid { flex-direction: column; gap: 10px; }
+      .setup-grid > * { width: 100%; }
+      .row { flex-direction: column; align-items: flex-start; gap: 10px; padding: 15px; }
+      .stat-card { width: 100%; margin-bottom: 10px; }
+      
+      table { min-width: 600px; } /* Трохи менша мінімальна ширина для телефону */
     }
   </style>
 </head>
 <body>
 
   <div class="mobile-header">
-    <div class="logo-text">L2 PRO</div>
-    <button onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fa-solid fa-bars" style="color:#fff;"></i></button>
+    <div class="logo-text" style="margin:0; font-size:20px;">L2 PRO</div>
+    <button onclick="toggleMenu()" style="background:transparent; border:none; color:#fff; font-size:20px; padding:0;"><i class="fa-solid fa-bars"></i></button>
   </div>
+  
+  <div class="overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
 
   <aside class="sidebar" id="sidebar">
     <div class="logo-text">L2<br>PRODUCTION</div>
@@ -112,25 +140,25 @@
       
       <!-- 1. ОПЕРАЦІЇ -->
       <div id="daily" class="section active">
-        <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі (з детальним звітом)</p></div>
+        <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі</p></div>
         
         <div id="pendingCard" class="card" style="display:none; border-color: var(--warning);">
             <div class="card-title" style="color:var(--warning)">Нові заявки (Авторизація)</div>
-            <div id="pendingList" style="margin-top: 20px;"></div>
+            <div id="pendingList" style="margin-top: 15px;"></div>
         </div>
 
         <div class="card">
-          <div class="card-header"><div class="card-title">Каталог Зміни (Спільний для всіх)</div><button class="btn-secondary" onclick="clearModels()">Скинути каталог</button></div>
+          <div class="card-header"><div class="card-title">Каталог Зміни</div><button class="btn-secondary" onclick="clearModels()">Скинути</button></div>
           <div class="setup-grid">
-            <select id="webConfig"><option>Завантаження...</option></select>
-            <select id="webElement"><option>Завантаження...</option></select>
+            <div><select id="webConfig"><option>Завантаження...</option></select></div>
+            <div><select id="webElement"><option>Завантаження...</option></select></div>
             <button class="btn-primary" onclick="addActiveModel()">Додати в роботу</button>
           </div>
-          <div id="activeTags" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;"></div>
+          <div id="activeTags" style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;"></div>
         </div>
 
         <div class="card">
-          <div class="card-header"><div class="card-title">Звіти за день</div><input type="date" id="repDate" onchange="loadDaily()" style="max-width: 200px;"></div>
+          <div class="card-header"><div class="card-title">Звіти за день</div><input type="date" id="repDate" onchange="loadDaily()" style="max-width: 160px;"></div>
           <div id="deptWorkersContainer">
              <div class="dept-block"><div class="dept-block-header" style="color:#A1A5B7"><i class="fa-solid fa-user-shield"></i> Адміністрація</div><div id="list-admin">⏳</div></div>
              <div class="dept-block"><div class="dept-block-header" style="color:var(--warning)"><i class="fa-solid fa-bolt"></i> Цех Зварки</div><div id="list-zvarka">⏳</div></div>
@@ -138,17 +166,17 @@
              <div class="dept-block"><div class="dept-block-header" style="color:var(--success)"><i class="fa-solid fa-box-open"></i> Відділ Запаковки</div><div id="list-zapakovka">⏳</div></div>
           </div>
           
-          <!-- КНОПКА ВІДПРАВКИ ЗВІТУ В ТЕЛЕГРАМ -->
-          <button id="btnSendTg" class="btn-success" style="width: 100%; padding: 16px; margin-top: 20px; font-size: 15px;" onclick="sendDailyReportTg()">
-             <i class="fa-solid fa-paper-plane"></i> Затвердити та надіслати файл .txt у Telegram
+          <!-- КНОПКА ВІДПРАВКИ .TXT ФАЙЛУ -->
+          <button id="btnSendTg" class="btn-success" style="width: 100%; padding: 16px; margin-top: 10px; font-size: 14px;" onclick="sendDailyReportTxt()">
+             <i class="fa-solid fa-file-lines"></i> Затвердити та надіслати файл .txt у Telegram
           </button>
         </div>
       </div>
 
-      <!-- 2. ДАШБОРД (Детальна статистика моделей) -->
+      <!-- 2. ДАШБОРД -->
       <div id="dashboard" class="section">
         <div class="header"><h1>Аналітика та Графіки</h1></div>
-        <div class="card" style="padding: 20px;">
+        <div class="card">
           <div class="setup-grid" style="margin-bottom: 0;">
             <div><label style="font-size:12px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
             <div><label style="font-size:12px; color:var(--text-muted);">До:</label><input type="date" id="dashEnd"></div>
@@ -156,38 +184,37 @@
             <div style="display:flex; align-items:flex-end;"><button class="btn-primary" style="width:100%; height: 42px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Показати</button></div>
           </div>
         </div>
-        <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:25px;">
-           <div class="stat-card" style="border-color:var(--success);"><h4 style="color:var(--success);"><i class="fa-solid fa-chart-line"></i> Всього виготовлено</h4><div class="value" id="dashTotalScore">0 шт</div></div>
-           <div class="stat-card" style="border-color:gold;"><h4 style="color:gold;"><i class="fa-solid fa-crown"></i> Лідер періоду</h4><div class="value" id="dashTopWorker" style="color:#FFF;">⏳</div><div style="font-size:12px; color:var(--text-muted); margin-top:5px;" id="dashTopWorkerScore">...</div></div>
-           <div class="stat-card" style="border-color:var(--info);"><h4 style="color:var(--info)"><i class="fa-solid fa-battery-full"></i> Топ збірка</h4><div class="value" id="dashTopModel" style="color:#FFF;">⏳</div><div style="font-size:12px; color:var(--text-muted); margin-top:5px;" id="dashTopModelScore">...</div></div>
+        <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
+           <div class="stat-card" style="border-color:var(--success);"><h4 style="color:var(--success);"><i class="fa-solid fa-chart-line"></i> Всього</h4><div class="value" id="dashTotalScore">0 шт</div></div>
+           <div class="stat-card" style="border-color:gold;"><h4 style="color:gold;"><i class="fa-solid fa-crown"></i> Лідер</h4><div class="value" id="dashTopWorker" style="color:#FFF;">⏳</div><div style="font-size:11px; color:var(--text-muted); margin-top:5px;" id="dashTopWorkerScore">...</div></div>
+           <div class="stat-card" style="border-color:var(--info);"><h4 style="color:var(--info)"><i class="fa-solid fa-battery-full"></i> Топ збірка</h4><div class="value" id="dashTopModel" style="color:#FFF;">⏳</div><div style="font-size:11px; color:var(--text-muted); margin-top:5px;" id="dashTopModelScore">...</div></div>
         </div>
-        <div class="card"><div class="card-title">Динаміка виробництва по днях (шт)</div><div style="position:relative; height:250px; width:100%; margin-top:20px;"><canvas id="trendChart"></canvas></div></div>
-        <div style="display:flex; gap:20px; flex-wrap:wrap;">
-           <div class="card" style="flex:2; min-width:300px;"><div class="card-title">Рейтинг команди</div><div style="position:relative; height:300px; width:100%;"><canvas id="workersChart"></canvas></div></div>
-           <div class="card" style="flex:1; min-width:300px;"><div class="card-title">Продукція (%)</div><div style="position:relative; height:300px; width:100%;"><canvas id="modelsChart"></canvas></div></div>
+        <div class="card"><div class="card-title">Динаміка виробництва по днях (шт)</div><div style="position:relative; height:200px; width:100%; margin-top:20px;"><canvas id="trendChart"></canvas></div></div>
+        <div style="display:flex; gap:15px; flex-wrap:wrap;">
+           <div class="card" style="flex:2; min-width:100%;"><div class="card-title">Рейтинг команди</div><div style="position:relative; height:250px; width:100%;"><canvas id="workersChart"></canvas></div></div>
         </div>
 
-        <div class="card" style="margin-top: 25px;">
+        <div class="card">
           <div class="card-header">
-            <div class="card-title">Детальна статистика по акумуляторах (Моделі)</div>
+            <div class="card-title">Детальна статистика (Моделі)</div>
             <div style="display:flex; gap:10px; align-items:center; flex-wrap: wrap;">
-               <div><label style="font-size:11px; color:var(--text-muted);">Період Від:</label><input type="date" id="statModStart" style="padding: 8px;"></div>
-               <div><label style="font-size:11px; color:var(--text-muted);">Період До:</label><input type="date" id="statModEnd" style="padding: 8px;"></div>
-               <div style="display:flex; align-items:flex-end;"><button class="btn-info" style="height: 35px;" onclick="loadDetailedModelStats()">Аналізувати</button></div>
+               <div><input type="date" id="statModStart" style="padding: 8px; font-size: 12px;"></div>
+               <div><input type="date" id="statModEnd" style="padding: 8px; font-size: 12px;"></div>
+               <button class="btn-info" style="height: 35px; padding: 0 15px;" onclick="loadDetailedModelStats()">Аналіз</button>
             </div>
           </div>
           <div class="table-container" id="detailedModelStatsContainer">
-              <span style="color:var(--text-muted); font-size:13px;">Оберіть період та натисніть "Аналізувати"...</span>
+              <span style="color:var(--text-muted); font-size:13px;">Оберіть період та натисніть "Аналіз"...</span>
           </div>
         </div>
       </div>
 
       <!-- 3. ТАБЕЛЬ -->
       <div id="tabel" class="section">
-        <div class="header"><h1>Табель обліку</h1><p>Окремі відомості виробництва за місяць</p></div>
-        <div class="card" style="padding: 20px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
-            <div><label style="font-size:12px; color:var(--text-muted);">Місяць для табелю:</label><br><input type="month" id="tabelMonth" onchange="loadTabel()" style="max-width: 200px;"></div>
-            <div style="display:flex; align-items:flex-end;"><button class="btn-secondary" style="height:42px;" onclick="openMassUpdate()"><i class="fa-solid fa-list-check"></i> Масовий статус (Відпустки)</button></div>
+        <div class="header"><h1>Табель обліку</h1><p>Окремі відомості виробництва</p></div>
+        <div class="card" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+            <div><label style="font-size:12px; color:var(--text-muted);">Місяць:</label><br><input type="month" id="tabelMonth" onchange="loadTabel()" style="width: 160px;"></div>
+            <button class="btn-secondary" style="height:42px;" onclick="openMassUpdate()"><i class="fa-solid fa-list-check"></i> Масовий статус</button>
         </div>
         
         <div class="dept-block" style="border-color: #A1A5B7;"><div class="dept-block-header" style="color:#A1A5B7;"><i class="fa-solid fa-user-shield"></i> Табель: Адмін</div><div class="table-container" id="tabel-admin-container">⏳...</div></div>
@@ -198,7 +225,7 @@
 
       <!-- 4. КОМАНДА -->
       <div id="workers" class="section">
-        <div class="header"><h1>Команда L2</h1><p>Управління допусками та кадрами</p></div>
+        <div class="header"><h1>Команда L2</h1><p>Управління допусками</p></div>
         <div class="dept-block" style="border-color: #A1A5B7;"><div class="dept-block-header" style="color:#A1A5B7;"><i class="fa-solid fa-user-shield"></i> Адміністратори</div><div id="team-admin"></div></div>
         <div class="dept-block" style="border-color: var(--warning);"><div class="dept-block-header" style="color:var(--warning);"><i class="fa-solid fa-bolt"></i> Зварювальники</div><div id="team-zvarka"></div></div>
         <div class="dept-block" style="border-color: var(--info);"><div class="dept-block-header" style="color:var(--info);"><i class="fa-solid fa-fire"></i> Пайщики</div><div id="team-payka"></div></div>
@@ -207,75 +234,72 @@
 
       <!-- 5. БАЗА ЗБІРОК -->
       <div id="archive" class="section">
-        <div class="header"><h1>База збірок та конфігурацій</h1><p>Керування технічним прайсом</p></div>
+        <div class="header"><h1>База збірок</h1><p>Довідник моделей</p></div>
         <div class="setup-grid" style="align-items: flex-start;">
-          <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 20px;">Нова конфігурація</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newConfigInput" placeholder="6s2p (v)"><button class="btn-primary" onclick="addArch('config')">+</button></div></div>
-          <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 20px;">Новий елемент (Банка)</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newElementInput" placeholder="Molicel P42A"><button class="btn-primary" onclick="addArch('element')">+</button></div></div>
+          <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Нова конфігурація</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newConfigInput" placeholder="6s2p (v)"><button class="btn-primary" onclick="addArch('config')">+</button></div></div>
+          <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Новий елемент</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newElementInput" placeholder="Molicel P42A"><button class="btn-primary" onclick="addArch('element')">+</button></div></div>
         </div>
-        <div class="card"><div class="card-title" style="margin-bottom: 20px;">Повний довідник виробництва</div><div id="archiveListContainer">⏳ Завантаження...</div></div>
+        <div class="card"><div class="card-title" style="margin-bottom: 15px;">Повний довідник</div><div id="archiveListContainer">⏳ Завантаження...</div></div>
       </div>
 
       <!-- 6. СКЛАД -->
       <div id="inventory" class="section">
-        <div class="header"><h1>Склад WMS</h1><p>Рух елементів та залишків банок</p></div>
+        <div class="header"><h1>Склад WMS</h1><p>Рух елементів</p></div>
         <div class="card">
-          <div class="card-title" style="margin-bottom:20px;">Нова складська операція</div>
           <div class="modal-tabs">
             <div class="modal-tab active" onclick="switchInvTab('supply')">📥 Поставка</div>
             <div class="modal-tab" onclick="switchInvTab('transfer')">🔄 Переміщення</div>
-            <div class="modal-tab" onclick="switchInvTab('issue')">📤 Видача (Списання)</div>
+            <div class="modal-tab" onclick="switchInvTab('issue')">📤 Списання</div>
           </div>
           <div id="inv-supply" class="modal-tab-content active">
-            <div class="setup-grid"><div><label style="font-size:12px; color:var(--text-muted);">Елемент (З бази)</label><select id="invSupEl"></select></div><div><label style="font-size:12px; color:var(--text-muted);">Кількість</label><input type="number" id="invSupQty" placeholder="0"></div><div><label style="font-size:12px; color:var(--text-muted);">На яку точку</label><input type="text" id="invSupTo" placeholder="Головний склад"></div></div>
+            <div class="setup-grid"><div><select id="invSupEl"></select></div><div><input type="number" id="invSupQty" placeholder="Кількість"></div><div><input type="text" id="invSupTo" placeholder="Головний склад"></div></div>
             <button class="btn-info" onclick="saveInv('Поставка')">Зафіксувати прийом</button>
           </div>
           <div id="inv-transfer" class="modal-tab-content">
-            <div class="setup-grid"><div><label style="font-size:12px; color:var(--text-muted);">Елемент</label><select id="invTrEl"></select></div><div><label style="font-size:12px; color:var(--text-muted);">Кількість</label><input type="number" id="invTrQty"></div><div><label style="font-size:12px; color:var(--text-muted);">Звідки</label><input type="text" id="invTrFrom" placeholder="Напр. Головний склад"></div><div><label style="font-size:12px; color:var(--text-muted);">Куди</label><input type="text" id="invTrTo" placeholder="Напр. Цех пайки"></div></div>
+            <div class="setup-grid"><div><select id="invTrEl"></select></div><div><input type="number" id="invTrQty" placeholder="Кількість"></div><div><input type="text" id="invTrFrom" placeholder="Звідки"></div><div><input type="text" id="invTrTo" placeholder="Куди"></div></div>
             <button class="btn-primary" onclick="saveInv('Переміщення')">Виконати переміщення</button>
           </div>
           <div id="inv-issue" class="modal-tab-content">
-            <div class="setup-grid"><div><label style="font-size:12px; color:var(--text-muted);">Елемент</label><select id="invIssEl"></select></div><div><label style="font-size:12px; color:var(--text-muted);">Кількість</label><input type="number" id="invIssQty"></div><div><label style="font-size:12px; color:var(--text-muted);">З якої локації</label><input type="text" id="invIssFrom"></div></div>
-            <button class="btn-danger" onclick="saveInv('Видача')">Списати видачу</button>
+            <div class="setup-grid"><div><select id="invIssEl"></select></div><div><input type="number" id="invIssQty" placeholder="Кількість"></div><div><input type="text" id="invIssFrom" placeholder="Звідки списати"></div></div>
+            <button class="btn-danger" onclick="saveInv('Видача')">Списати</button>
           </div>
         </div>
-        <div class="card"><div class="card-header"><div class="card-title">Залишки банок на локаціях</div></div><div id="inventoryBalances" style="display:flex; gap:15px; flex-wrap:wrap;"></div></div>
-        <div class="card"><div class="card-header"><div class="card-title">Логи складського руху</div><input type="date" id="invHistoryDate" onchange="loadInventory()" style="max-width:200px;"></div><div id="inventoryHistory"></div></div>
+        <div class="card"><div class="card-title" style="margin-bottom:15px;">Залишки на локаціях</div><div id="inventoryBalances" style="display:flex; gap:10px; flex-wrap:wrap;"></div></div>
+        <div class="card"><div class="card-header" style="margin-bottom:10px;"><div class="card-title">Історія</div><input type="date" id="invHistoryDate" onchange="loadInventory()" style="max-width:140px; padding:6px;"></div><div id="inventoryHistory"></div></div>
       </div>
 
     </main>
   </div>
 
-  <!-- МОДАЛКА МАСОВОГО СТАТУСУ (ПЕРІОД) -->
+  <!-- МОДАЛКА МАСОВОГО СТАТУСУ -->
   <div class="modal" id="massUpdateCard">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('massUpdateCard').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-        <div class="modal-title">Масове заповнення статусів (Період)</div>
-        <div style="display:flex; gap:15px; margin-bottom: 20px;">
-            <div style="flex:1;"><label style="font-size:12px; color:var(--text-muted);">Від (Початок):</label><input type="date" id="massStartDate"></div>
-            <div style="flex:1;"><label style="font-size:12px; color:var(--text-muted);">До (Кінець):</label><input type="date" id="massEndDate"></div>
+        <div class="card-title" style="margin-bottom:20px;">Масовий статус (Період)</div>
+        <div style="display:flex; gap:10px; margin-bottom: 20px;">
+            <div style="flex:1;"><label style="font-size:11px; color:var(--text-muted);">Від:</label><input type="date" id="massStartDate"></div>
+            <div style="flex:1;"><label style="font-size:11px; color:var(--text-muted);">До:</label><input type="date" id="massEndDate"></div>
         </div>
         <div id="massWorkersList"></div>
-        <button class="btn-success" style="width:100%; margin-top:20px;" onclick="saveMassStatuses()">Затвердити статуси</button>
+        <button class="btn-success" style="width:100%; margin-top:15px;" onclick="saveMassStatuses()">Затвердити</button>
     </div>
   </div>
 
-  <!-- МОДАЛКА КАЛЕНДАРЯ (ОНОВЛЕНО ЯК НА СКРІНШОТІ) -->
+  <!-- МОДАЛКА КАЛЕНДАРЯ (ОНОВЛЕНА ЯК НА ФОТО) -->
   <div class="modal" id="calModal">
-    <div class="modal-content" style="max-width: 420px;">
+    <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('calModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-        <div class="modal-title" id="calModalTitle" style="font-size: 18px; margin-bottom: 5px;"></div>
+        <div id="calModalTitle" style="font-size: 18px; font-weight:700; margin-bottom: 5px;"></div>
         <input type="hidden" id="calModalName"><input type="hidden" id="calModalDate"><input type="hidden" id="calModalDept">
         
-        <div id="calModalDetailsBlock" style="display:none; margin-top:15px;">
-            <div style="font-size: 13px; color: var(--success); margin-bottom: 15px; font-weight:600;">
-                <i class="fa-solid fa-check"></i> Виробничий лог дня:
-            </div>
-            <div class="details-list" id="calModalDetailsList" style="background:var(--bg-hover); border:none;"></div>
+        <div id="calModalDetailsBlock" style="display:none;">
+            <div style="font-size: 13px; color: var(--success); margin-bottom: 10px; font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div>
+            <div class="cal-details-box" id="calModalDetailsList"></div>
         </div>
         
-        <div style="margin-top: 25px;">
+        <div style="margin-top: 15px;">
             <div style="margin-bottom: 8px; font-size: 12px; color: var(--text-muted);">Зміна статусу дня:</div>
-            <select id="calModalStatus" style="margin-bottom: 20px;">
+            <select id="calModalStatus" style="margin-bottom: 15px;">
                 <option value="-- Немає (Пусто) --">-- Очистити записи --</option>
                 <option value="Вихідний">Вихідний</option>
                 <option value="Примусовий вихідний">Примусовий вихідний</option>
@@ -288,77 +312,72 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА ПРОФІЛЮ ПРАЦІВНИКА (З ДЕТАЛІЗАЦІЄЮ ЗБІРОК) -->
+  <!-- МОДАЛКА ПРОФІЛЮ -->
   <div class="modal" id="workerModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('workerModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-        <div class="modal-title" id="wModalTitle">Картка</div>
+        <div class="card-title" id="wModalTitle" style="margin-bottom:15px;">Картка</div>
         <input type="hidden" id="wModalId">
         <div class="modal-tabs">
             <div class="modal-tab active" id="tabInfoBtn" onclick="switchWorkerTab('info')">Аналітика</div>
-            <div class="modal-tab" id="tabEditBtn" onclick="switchWorkerTab('edit')">Допуски</div>
+            <div class="modal-tab" id="tabEditBtn" onclick="switchWorkerTab('edit')">Налаштування</div>
         </div>
         <div id="wTabInfo" class="modal-tab-content active">
-            <div class="details-list" style="border:none; background:var(--bg-hover);">
-                <div class="details-item"><span>Цех виробництва:</span><span id="wInfoDept" style="font-weight:700; color:var(--info);"></span></div>
-                <div class="details-item"><span>Статус профілю:</span><span id="wInfoStatus" style="font-weight:700;"></span></div>
-                <div class="details-item"><span>Динаміка:</span><span id="wInfoTrend" style="font-weight:700;">⏳...</span></div>
+            <div style="background:var(--bg-hover); padding:15px; border-radius:10px; margin-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;"><span>Відділ:</span><span id="wInfoDept" style="font-weight:700; color:var(--info);"></span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;"><span>Статус:</span><span id="wInfoStatus" style="font-weight:700;"></span></div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;"><span>Динаміка:</span><span id="wInfoTrend" style="font-weight:700;">⏳...</span></div>
             </div>
             
-            <div class="card-title" style="font-size:14px; margin-bottom:10px;">Статистика за місяць:</div>
-            <div style="background: rgba(80, 205, 137, 0.05); border: 1px solid rgba(80, 205, 137, 0.2); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Статистика за місяць:</div>
+            <div class="cal-details-box" style="margin-top:0;">
                 <div id="wInfoModelsList" style="margin-bottom: 10px;"></div>
-                <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; display: flex; justify-content: space-between; font-weight: 700;">
-                    <span>Всього зроблено:</span> <span id="wInfoItems" style="color:var(--success);">0 шт</span>
-                </div>
+                <div class="cal-total-row"><span>Всього:</span> <span id="wInfoItems">0 шт</span></div>
             </div>
-            
-            <div class="card-title" style="font-size:14px; margin-bottom:10px;">Графік продуктивності по днях</div>
-            <div style="position:relative; height:180px; width:100%;"><canvas id="personalChart"></canvas></div>
+            <div style="position:relative; height:150px; width:100%;"><canvas id="personalChart"></canvas></div>
         </div>
         <div id="wTabEdit" class="modal-tab-content">
-            <label style="font-size:12px; color:var(--text-muted);">ПІБ працівника</label><input type="text" id="wEditName" style="margin-bottom:15px;">
-            <label style="font-size:12px; color:var(--text-muted);">Цех</label>
-            <select id="wEditDept" style="margin-bottom:15px;"><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option><option value="Адмін">Адмін</option></select>
-            <label style="font-size:12px; color:var(--text-muted);">Статус доступу</label>
-            <select id="wEditStatus" style="margin-bottom:25px;"><option value="Активний">Активний</option><option value="Очікує">Очікує</option><option value="Звільнений">Звільнений</option></select>
-            <button class="btn-success" style="width: 100%;" onclick="saveWorkerProfile()">Зберегти налаштування кадрів</button>
+            <label style="font-size:11px; color:var(--text-muted);">ПІБ</label><input type="text" id="wEditName" style="margin-bottom:10px;">
+            <label style="font-size:11px; color:var(--text-muted);">Цех</label>
+            <select id="wEditDept" style="margin-bottom:10px;"><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option><option value="Адмін">Адмін</option></select>
+            <label style="font-size:11px; color:var(--text-muted);">Статус</label>
+            <select id="wEditStatus" style="margin-bottom:20px;"><option value="Активний">Активний</option><option value="Очікує">Очікує</option><option value="Звільнений">Звільнений</option></select>
+            <button class="btn-success" style="width: 100%;" onclick="saveWorkerProfile()">Зберегти</button>
         </div>
     </div>
   </div>
 
-  <!-- СКРИПТ АВТОМАТИЗАЦІЇ -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-    // === КЛЮЧІ ===
     const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
-    const TELEGRAM_TOKEN = '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y'; // Оновлений токен
+    const TELEGRAM_TOKEN = '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y'; 
     const ADMIN_CHAT_ID = '738066424';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let d = new Date(); let m = d.getMonth() + 1; let mStr = d.getFullYear() + "-" + (m < 10 ? "0" + m : m);
-    let todayStr = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-${(d.getDate() < 10 ? "0" + d.getDate() : d.getDate())}`;
-    
     document.getElementById('repDate').valueAsDate = d;
     document.getElementById('tabelMonth').value = mStr;
     document.getElementById('dashStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`;
     document.getElementById('dashEnd').valueAsDate = d;
-    
-    document.getElementById('massStartDate').valueAsDate = d;
-    document.getElementById('massEndDate').valueAsDate = d;
-    
-    document.getElementById('statModStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`;
-    document.getElementById('statModEnd').valueAsDate = d;
+    document.getElementById('massStartDate').valueAsDate = d; document.getElementById('massEndDate').valueAsDate = d;
+    document.getElementById('statModStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`; document.getElementById('statModEnd').valueAsDate = d;
 
     window.globalWorkers = []; window.globalTabelData = {}; 
     let chartWorkers = null; let chartModels = null; let chartTrend = null; let chartPersonal = null;
+
+    // Меню для мобільних
+    window.toggleMenu = function() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('mobileOverlay').classList.toggle('active');
+    }
 
     window.switchTab = function(tab) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
       event.currentTarget.classList.add('active'); document.getElementById(tab).classList.add('active');
+      document.getElementById('sidebar').classList.remove('open'); document.getElementById('mobileOverlay').classList.remove('active');
       if(tab==='daily') loadDaily(); if(tab==='tabel') loadTabel(); if(tab==='dashboard') { loadDashboard(); loadDetailedModelStats(); }
       if(tab==='archive') loadArchive(); if(tab==='inventory') loadInventory(); if(tab==='workers') loadWorkers();
     }
@@ -370,15 +389,15 @@
       if(s==='Простой') return '<span class="st-badge st-p">П</span>'; return '';
     }
 
-    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ (ДЕТАЛЬНИЙ ЗВІТ) ===
+    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
-      document.getElementById('list-admin').innerHTML="⏳ Завантаження..."; document.getElementById('list-zvarka').innerHTML="⏳ Завантаження..."; document.getElementById('list-payka').innerHTML="⏳ Завантаження..."; document.getElementById('list-zapakovka').innerHTML="⏳ Завантаження...";
+      document.getElementById('list-admin').innerHTML="⏳..."; document.getElementById('list-zvarka').innerHTML="⏳..."; document.getElementById('list-payka').innerHTML="⏳..."; document.getElementById('list-zapakovka').innerHTML="⏳...";
 
       const { data: pending } = await supabase.from('workers').select('*').eq('status', 'Очікує');
       if (pending && pending.length > 0) {
         document.getElementById('pendingCard').style.display = 'block';
-        document.getElementById('pendingList').innerHTML = pending.map(p => `<div class="row"><div class="worker-name">${p.name}</div><div style="display:flex; gap:10px;"><select id="newdept-${p.id}"><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select><button class="btn-success" onclick="approveWorker(${p.id})"><i class="fa-solid fa-check"></i></button></div></div>`).join('');
+        document.getElementById('pendingList').innerHTML = pending.map(p => `<div class="row"><div>${p.name}</div><div style="display:flex; gap:10px;"><select id="newdept-${p.id}"><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select><button class="btn-success" style="padding:8px 12px;" onclick="approveWorker(${p.id})"><i class="fa-solid fa-check"></i></button></div></div>`).join('');
       } else document.getElementById('pendingCard').style.display = 'none';
 
       const { data: models } = await supabase.from('active_models').select('model');
@@ -393,34 +412,35 @@
       let adm = "", zv = "", pa = "", zap = "";
       window.globalWorkers.forEach(w => {
          let rep = all.filter(r => (r.name || r.solderer_name || r.packager_name) === w.name); 
-         let detailsHtml = "";
+         let detailsHtml = ""; let nameDisplay = w.name;
          
          if(rep.length > 0) {
             let isAbsence = rep[0].status && rep[0].status !== 'Працював' && (!rep[0].count || rep[0].count == 0);
             if(isAbsence) {
-                detailsHtml = `<span style="color:var(--danger); font-weight:600; padding:4px 8px; background:rgba(241,65,108,0.1); border-radius:6px;">${rep[0].status}</span>`;
+                nameDisplay = `${w.name} <span style="color:var(--danger); font-size:11px; text-transform:lowercase;">(${rep[0].status})</span>`;
+                detailsHtml = `<span style="color:var(--text-muted); font-size: 13px;">0 шт</span>`;
             } else {
                 let mDict = {}; let tot = 0;
                 rep.forEach(r => { let c = parseInt(r.count)||0; if(c>0){ mDict[r.config||'Інше'] = (mDict[r.config||'Інше']||0)+c; tot+=c; }});
-                let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:13px; margin-bottom:3px;">${k} - <span style="font-weight:600;">${mDict[k]} шт</span></div>`).join('');
-                detailsHtml = `<div style="background:rgba(80, 205, 137, 0.05); border: 1px solid rgba(80, 205, 137, 0.2); padding:10px 15px; border-radius:8px; min-width: 180px;"><div style="color:var(--success); font-weight:700; font-size:12px; margin-bottom:8px;"><i class="fa-solid fa-check-circle"></i> Зроблено:</div>${mList}<div style="border-top:1px dashed rgba(255,255,255,0.1); margin-top:8px; padding-top:8px; font-weight:700; font-size:13px; color:var(--success);">Всього: ${tot} шт</div></div>`;
+                let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:12px; margin-bottom:4px;">${k} - <span style="font-weight:600;">${mDict[k]} шт</span></div>`).join('');
+                detailsHtml = `<div style="background:rgba(80, 205, 137, 0.05); border: 1px solid rgba(80, 205, 137, 0.2); padding:10px; border-radius:8px; min-width: 150px;"><div style="color:var(--success); font-weight:700; font-size:11px; margin-bottom:6px;"><i class="fa-solid fa-check"></i> Зроблено:</div>${mList}<div style="border-top:1px dashed rgba(255,255,255,0.1); margin-top:6px; padding-top:6px; font-weight:700; font-size:12px; color:var(--success);">Всього: ${tot} шт</div></div>`;
             }
          } else {
-            detailsHtml = `<span style="color:var(--text-muted); font-size: 13px;">Звіту немає (0 шт)</span>`;
+            detailsHtml = `<span style="color:var(--text-muted); font-size: 13px;">Звіту немає</span>`;
          }
          
-         let row = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${w.name}</span></div><div>${detailsHtml}</div></div>`;
+         let row = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${nameDisplay}</span></div><div>${detailsHtml}</div></div>`;
          let dp = w.dept.toLowerCase(); if(dp==='адмін') adm+=row; else if(dp==='зварка') zv+=row; else if(dp==='пайка') pa+=row; else if(dp==='запаковка') zap+=row;
       });
       
-      document.getElementById('list-admin').innerHTML = adm || "<div style='color:var(--text-muted); font-size:13px;'>Порожньо</div>"; 
-      document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:13px;'>Порожньо</div>";
-      document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:13px;'>Порожньо</div>"; 
-      document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:13px;'>Порожньо</div>";
+      document.getElementById('list-admin').innerHTML = adm || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
+      document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+      document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
+      document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
     }
 
-    // === ФОРМАТУВАННЯ ЗВІТУ ЯК У ТЕКСТОВОМУ ФАЙЛІ ===
-    window.sendDailyReportTg = async function() {
+    // === ГЕНЕРАЦІЯ .TXT ФАЙЛУ ДЛЯ ТЕЛЕГРАМ ===
+    window.sendDailyReportTxt = async function() {
         const dStr = document.getElementById('repDate').value;
         const [year, month, day] = dStr.split('-');
         const dateFormatted = `${day}.${month}.${year}`;
@@ -436,61 +456,63 @@
             { id: 'Запаковка', title: 'запаковка', data: rZa }
         ];
 
-        let sent = 0;
-        document.getElementById('btnSendTg').innerHTML = "⏳ Формування та надсилання...";
+        document.getElementById('btnSendTg').innerHTML = "⏳ Формування файлу...";
+        
+        let fullText = "";
 
         for (let dpt of depts) {
             let deptWorkers = workers.filter(w => w.dept === dpt.id);
             if (deptWorkers.length === 0) continue;
 
-            let text = `Л2 ${dpt.title} ${dateFormatted}\n\n`;
-            let hasData = false;
+            fullText += `Л2 ${dpt.title} ${dateFormatted}\n\n`;
 
             deptWorkers.forEach(w => {
                 let wReps = (dpt.data || []).filter(r => (r.name || r.solderer_name || r.packager_name) === w.name);
                 
                 if (wReps.length === 0) {
-                    text += `${w.name} ( звіту немає )\n0 - шт\n\n`;
+                    fullText += `${w.name} ( звіту немає )\n0 - шт\n\n`;
                 } else {
                     let firstRep = wReps[0];
                     if (firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
-                        text += `${w.name} ( ${firstRep.status.toLowerCase()} )\n0 - шт\n\n`;
+                        fullText += `${w.name} ( ${firstRep.status.toLowerCase()} )\n0 - шт\n\n`;
                     } else {
-                        text += `${w.name}\n`;
-                        let models = {};
-                        let total = 0;
+                        fullText += `${w.name}\n`;
+                        let models = {}; let total = 0;
                         wReps.forEach(r => {
-                            let m = r.config || 'Інше';
-                            let c = parseInt(r.count) || 0;
+                            let m = r.config || 'Інше'; let c = parseInt(r.count) || 0;
                             if (c > 0) { models[m] = (models[m] || 0) + c; total += c; }
                         });
-                        for (let m in models) {
-                            text += `${m} - ${models[m]} шт\n`;
-                        }
-                        if (total === 0) text += `0 - шт\n`;
-                        text += `\n`;
+                        for (let m in models) fullText += `${m} - ${models[m]} шт\n`;
+                        if (total === 0) fullText += `0 - шт\n`;
+                        fullText += `\n`;
                     }
                 }
-                hasData = true;
             });
-
-            if (hasData) {
-                try {
-                    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: text.trim() })
-                    });
-                    sent++;
-                } catch(e) { console.error(e); }
-            }
+            fullText += `----------------------\n\n`;
         }
-        
-        document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-paper-plane"></i> Затвердити та надіслати файл .txt у Telegram`;
-        alert(`✅ Звіти успішно надіслано в Telegram (${sent} відділів)!`);
+
+        try {
+            // Створюємо текстовий файл у пам'яті
+            const blob = new Blob([fullText.trim()], { type: 'text/plain' });
+            const formData = new FormData();
+            formData.append('chat_id', ADMIN_CHAT_ID);
+            formData.append('document', blob, `Звіт_Л2_${dateFormatted}.txt`);
+            formData.append('caption', `📊 Виробничий звіт за ${dateFormatted}`);
+
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-file-lines"></i> Затвердити та надіслати файл .txt у Telegram`;
+            alert(`✅ Файл зі звітом успішно надіслано в Telegram!`);
+        } catch(e) { 
+            console.error(e); 
+            document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; 
+        }
     }
 
-    // === 2. ДАШБОРД ===
+    // === ДАШБОРД ТА СТАТИСТИКА ===
     window.loadDashboard = async function() {
        const start = document.getElementById('dashStart').value; const end = document.getElementById('dashEnd').value;
        const filterDept = document.getElementById('dashDept').value; if(!start || !end) return;
@@ -520,27 +542,23 @@
        chartWorkers = new Chart(document.getElementById('workersChart'), { type:'bar', data:{ labels:Object.keys(wS), datasets:[{label: 'Виготовлено', data:Object.values(wS), backgroundColor:'#009EF7', borderRadius:4}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
        
        if(chartModels) chartModels.destroy();
-       chartModels = new Chart(document.getElementById('modelsChart'), { type:'doughnut', data:{ labels:Object.keys(mS), datasets:[{data:Object.values(mS), backgroundColor:['#009EF7','#50CD89','#FFC700','#F1416C','#7239EA']}] }, options:{ responsive:true, maintainAspectRatio:false, plugins: { legend: { position: 'right', labels: { color: '#8a8d93' } } } } });
+       chartModels = new Chart(document.getElementById('modelsChart'), { type:'doughnut', data:{ labels:Object.keys(mS), datasets:[{data:Object.values(mS), backgroundColor:['#009EF7','#50CD89','#FFC700','#F1416C','#7239EA']}] }, options:{ responsive:true, maintainAspectRatio:false, plugins: { legend: { display: false } } } });
        
        let sDates = Object.keys(dS).sort();
        if(chartTrend) chartTrend.destroy();
        chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:sDates.map(x=>dS[x]), borderColor:'#50CD89', backgroundColor:'rgba(80,205,137,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
     }
 
-    // === ДЕТАЛЬНА СТАТИСТИКА ПО МОДЕЛЯХ ===
     window.loadDetailedModelStats = async function() {
         const start = document.getElementById('statModStart').value;
         const end = document.getElementById('statModEnd').value;
         if(!start || !end) return;
-
         document.getElementById('detailedModelStatsContainer').innerHTML = "⏳ Збір даних...";
-
         const { data: rZv } = await supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end);
         const { data: rPa } = await supabase.from('reports_payka').select('*').gte('date', start).lte('date', end);
         const { data: rZa } = await supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end);
         
         let stats = {};
-        
         function processArray(arr, type) {
             if(!arr) return;
             arr.forEach(r => {
@@ -552,34 +570,23 @@
         }
         processArray(rZv, 'zv'); processArray(rPa, 'pa'); processArray(rZa, 'za');
 
-        let html = `<table class="tabel-table" style="text-align: left;"><thead><tr><th style="text-align:left; padding-left:20px;">Модель (Збірка)</th><th style="text-align:center;">Зварка (шт)</th><th style="text-align:center;">Пайка (шт)</th><th style="text-align:center;">Запаковка (шт)</th></tr></thead><tbody>`;
-        
+        let html = `<table class="tabel-table"><thead><tr><th class="name-cell">Модель (Збірка)</th><th>Зварка</th><th>Пайка</th><th>Запаковка</th></tr></thead><tbody>`;
         let totalZv = 0, totalPa = 0, totalZa = 0;
-        
         let sortedModels = Object.keys(stats).sort();
-        if(sortedModels.length === 0) {
-            document.getElementById('detailedModelStatsContainer').innerHTML = "<div style='color:var(--text-muted); font-size:13px;'>За цей період немає виготовлених збірок.</div>";
-            return;
-        }
+        if(sortedModels.length === 0) return document.getElementById('detailedModelStatsContainer').innerHTML = "<div style='color:var(--text-muted); font-size:13px;'>Пусто.</div>";
 
         sortedModels.forEach(m => {
-            html += `<tr><td style="text-align:left; padding-left:20px; font-weight:600; color:var(--text-main);">${m}</td><td style="text-align:center; color:var(--warning);">${stats[m].zv}</td><td style="text-align:center; color:var(--info);">${stats[m].pa}</td><td style="text-align:center; color:var(--success); font-weight:700;">${stats[m].za}</td></tr>`;
+            html += `<tr><td class="name-cell" style="font-size:12px;">${m}</td><td style="color:var(--warning);">${stats[m].zv}</td><td style="color:var(--info);">${stats[m].pa}</td><td style="color:var(--success); font-weight:700;">${stats[m].za}</td></tr>`;
             totalZv += stats[m].zv; totalPa += stats[m].pa; totalZa += stats[m].za;
         });
-
-        html += `<tr><td style="text-align:left; padding-left:20px; font-weight:700; color:var(--success); background:rgba(80, 205, 137, 0.1);">ЗАГАЛОМ:</td><td style="text-align:center; font-weight:700; background:rgba(80, 205, 137, 0.1);">${totalZv}</td><td style="text-align:center; font-weight:700; background:rgba(80, 205, 137, 0.1);">${totalPa}</td><td style="text-align:center; font-weight:700; color:var(--success); background:rgba(80, 205, 137, 0.1);">${totalZa}</td></tr>`;
-        html += `</tbody></table>`;
-        
+        html += `<tr><td class="name-cell" style="color:var(--success);">ЗАГАЛОМ:</td><td style="font-weight:700;">${totalZv}</td><td style="font-weight:700;">${totalPa}</td><td style="font-weight:700; color:var(--success);">${totalZa}</td></tr></tbody></table>`;
         document.getElementById('detailedModelStatsContainer').innerHTML = html;
     }
 
-    // === 3. ТАБЕЛЬ ===
+    // === ТАБЕЛЬ ===
     window.loadTabel = async function() {
       const mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
-      document.getElementById('tabel-admin-container').innerHTML = "⏳ Завантаження..."; 
-      document.getElementById('tabel-zvarka-container').innerHTML = "⏳ Завантаження..."; 
-      document.getElementById('tabel-payka-container').innerHTML = "⏳ Завантаження..."; 
-      document.getElementById('tabel-zapakovka-container').innerHTML = "⏳ Завантаження...";
+      document.getElementById('tabel-admin-container').innerHTML="⏳..."; document.getElementById('tabel-zvarka-container').innerHTML="⏳..."; document.getElementById('tabel-payka-container').innerHTML="⏳..."; document.getElementById('tabel-zapakovka-container').innerHTML="⏳...";
 
       const [y, mo] = mVal.split('-'); const days = new Date(y, mo, 0).getDate();
       const start = `${y}-${mo}-01`; const end = `${y}-${mo}-${days}`;
@@ -616,8 +623,7 @@
       for (let dpt in depts) {
          let targetDiv = document.getElementById(`tabel-${mapIds[dpt]}-container`);
          if(!targetDiv) continue; 
-         
-         if(depts[dpt].length === 0) { targetDiv.innerHTML = "<div style='color:var(--text-muted); font-size:13px;'>Немає працівників</div>"; continue; }
+         if(depts[dpt].length === 0) { targetDiv.innerHTML = "<div style='color:var(--text-muted); font-size:12px;'>Немає працівників</div>"; continue; }
          
          let html = `<table class="tabel-table"><thead><tr><th class="name-cell">Працівник</th>`;
          for(let i=1; i<=days; i++) html += `<th>${i}</th>`;
@@ -640,7 +646,7 @@
       }
     }
 
-    // === ПРЯМИЙ ЗВ'ЯЗОК ДЛЯ МОДАЛКИ (ВИПРАВЛЕННЯ БАГА) ===
+    // === ВІДДІЛЕНЕ МОДАЛЬНЕ ВІКНО КАЛЕНДАРЯ (ЯК НА ФОТО) ===
     window.openCalModal = function(n, dt, dpt) { 
         document.getElementById('calModalName').value=n; 
         document.getElementById('calModalDate').value=dt; 
@@ -653,25 +659,28 @@
 
         document.getElementById('calModalStatus').value = dayData.status || '-- Немає (Пусто) --'; 
         
-        let dbList=document.getElementById('calModalDetailsList'); 
+        let dbList = document.getElementById('calModalDetailsList'); 
         if (dayData.count > 0 || Object.keys(dayData.models).length > 0) { 
             document.getElementById('calModalDetailsBlock').style.display='block'; 
             let h='', t=0; 
             for(let k in dayData.models) { 
-                h+=`<div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
-                        <span style="color:var(--text-main); font-weight:500;">${k}</span>
-                        <span style="font-weight:600;">${dayData.models[k]} шт</span>
-                    </div>`; 
-                t+=dayData.models[k]; 
+                h += `<div class="cal-row"><span>${k}</span><span>${dayData.models[k]} шт</span></div>`; 
+                t += dayData.models[k]; 
             } 
-            h+=`<div style="display:flex; justify-content:space-between; margin-top:12px; font-size:15px; font-weight:700; color:var(--success); background:rgba(80, 205, 137, 0.1); padding: 8px; border-radius: 6px;">
-                    <span>Всього:</span><span>${t} шт</span>
-                </div>`; 
+            h += `<div class="cal-total-row"><span>Всього:</span><span>${t} шт</span></div>`; 
             dbList.innerHTML=h; 
         } else {
             document.getElementById('calModalDetailsBlock').style.display='none'; 
         }
         document.getElementById('calModal').classList.add('active'); 
+    }
+    
+    window.saveCalModal = async function() { 
+        let n=document.getElementById('calModalName').value, dt=document.getElementById('calModalDate').value, dpt=document.getElementById('calModalDept').value, s=document.getElementById('calModalStatus').value, t=getTableName(dpt); 
+        if(!t) return;
+        await supabase.from(t).delete().eq(dpt==='Пайка'?'solderer_name':(dpt==='Запаковка'?'packager_name':'name'),n).eq('date',dt).in('status',['Вихідний','Примусовий вихідний','Відпустка','Лікарняний','Простой']); 
+        if(s!=='-- Немає (Пусто) --') await supabase.from(t).insert([{date:dt, [dpt==='Пайка'?'solderer_name':(dpt==='Запаковка'?'packager_name':'name')]:n, dept:dpt, status:s, count:0}]); 
+        document.getElementById('calModal').classList.remove('active'); loadTabel(); loadDaily();
     }
 
     // === ПРОФІЛЬ (З ДЕТАЛІЗАЦІЄЮ МІСЯЦЯ) ===
@@ -685,14 +694,14 @@
 
       let modelsHtml = "";
       if (Object.keys(uData.modelsMonthly).length > 0) {
-          modelsHtml = Object.keys(uData.modelsMonthly).map(m => `<div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;"><span>${m}</span><span style="font-weight:600;">${uData.modelsMonthly[m]} шт</span></div>`).join('');
+          modelsHtml = Object.keys(uData.modelsMonthly).map(m => `<div class="cal-row"><span>${m}</span><span>${uData.modelsMonthly[m]} шт</span></div>`).join('');
       } else {
-          modelsHtml = `<span style="color:var(--text-muted); font-size:13px;">Немає звітів за цей місяць</span>`;
+          modelsHtml = `<span style="color:var(--text-muted); font-size:12px;">Немає звітів за місяць</span>`;
       }
       document.getElementById('wInfoModelsList').innerHTML = modelsHtml;
 
       document.getElementById('wEditName').value = worker.name; document.getElementById('wEditDept').value = worker.dept; document.getElementById('wEditStatus').value = worker.status;
-      document.getElementById('wInfoTrend').innerHTML = '⏳ Аналіз...';
+      document.getElementById('wInfoTrend').innerHTML = '⏳...';
       switchWorkerTab('info'); document.getElementById('workerModal').classList.add('active');
 
       if(chartPersonal) chartPersonal.destroy();
@@ -716,7 +725,7 @@
        let adm="", zv="", pa="", zap="";
        if(data) {
           data.forEach(w => {
-             let el = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${w.name}</span></div><div style="color:var(--text-muted); font-size:13px;">${w.status}</div></div>`;
+             let el = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${w.name}</span></div><div style="color:var(--text-muted); font-size:12px;">${w.status}</div></div>`;
              let d = w.dept.toLowerCase(); if(d==='адмін') adm+=el; else if(d==='зварка') zv+=el; else if(d==='пайка') pa+=el; else if(d==='запаковка') zap+=el;
           });
        }
@@ -726,28 +735,24 @@
 
     // === МАСОВИЙ СТАТУС (ПЕРІОДОМ) ===
     window.openMassUpdate = async function() { 
-        document.getElementById('massUpdateCard').classList.add('active'); document.getElementById('massWorkersList').innerHTML = "⏳ Завантаження працівників..."; 
+        document.getElementById('massUpdateCard').classList.add('active'); document.getElementById('massWorkersList').innerHTML = "⏳ Завантаження..."; 
         const { data: w } = await supabase.from('workers').select('*').eq('status', 'Активний').order('name'); let html = ''; 
-        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 200px;"><option value="">-- Не змінювати --</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Примусовий вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
+        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 140px; padding:8px; font-size:12px;"><option value="">- Без змін -</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Прим. вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
         document.getElementById('massWorkersList').innerHTML = html; 
     }
     window.saveMassStatuses = async function() { 
         let startStr = document.getElementById('massStartDate').value;
         let endStr = document.getElementById('massEndDate').value;
-        if (!startStr || !endStr) return alert("Будь ласка, вкажіть період Від і До!");
-        
-        let startDate = new Date(startStr);
-        let endDate = new Date(endStr);
-        if (startDate > endDate) return alert("Дата 'Від' не може бути більшою за дату 'До'!");
+        if (!startStr || !endStr) return alert("Вкажіть період Від і До!");
+        let startDate = new Date(startStr); let endDate = new Date(endStr);
+        if (startDate > endDate) return alert("Дата 'Від' не може бути більшою за 'До'!");
 
         let rows = document.querySelectorAll('.mass-worker-row'); 
         document.getElementById('massUpdateCard').classList.remove('active'); 
 
         let d = new Date(startDate);
         while (d <= endDate) {
-            let y = d.getFullYear();
-            let mo = String(d.getMonth() + 1).padStart(2, '0');
-            let day = String(d.getDate()).padStart(2, '0');
+            let y = d.getFullYear(); let mo = String(d.getMonth() + 1).padStart(2, '0'); let day = String(d.getDate()).padStart(2, '0');
             let dateVal = `${y}-${mo}-${day}`;
 
             for(let row of rows) { 
@@ -759,7 +764,7 @@
             }
             d.setDate(d.getDate() + 1);
         }
-        loadTabel(); 
+        loadTabel(); loadDaily();
     }
 
     // === БАЗА ЗБІРОК ТА СКЛАД ===
@@ -774,8 +779,8 @@
            let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:var(--bg-hover); border:1px solid var(--border-thin); margin:4px;">${r.config} <i class="fa-solid fa-xmark" style="color:var(--danger); cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`;
            if(lw.includes('v') || lw.includes('в')) cV.push(tag); else if(lw.includes('h') || lw.includes('г')) cH.push(tag); else cOther.push(tag);
         });
-        html += `<div style="margin-bottom:20px;"><strong>Вертикальні конфігурації (V):</strong><br>${cV.join('') || '—'}</div>`;
-        html += `<div style="margin-bottom:20px;"><strong>Горизонтальні конфігурації (H):</strong><br>${cH.join('') || '—'}</div>`;
+        html += `<div style="margin-bottom:20px;"><strong>Вертикальні (V):</strong><br>${cV.join('') || '—'}</div>`;
+        html += `<div style="margin-bottom:20px;"><strong>Горизонтальні (H):</strong><br>${cH.join('') || '—'}</div>`;
         html += `<div style="margin-bottom:20px;"><strong>Інші збірки:</strong><br>${cOther.join('') || '—'}</div>`;
 
         let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px;">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`).join('');
@@ -805,18 +810,9 @@
       document.getElementById('inventoryHistory').innerHTML = filtered ? filtered.slice(0,20).map(l => `<div class="row"><div><strong>${l.action}:</strong> ${l.element} x ${l.qty} шт</div><div style="color:var(--text-muted); font-size:12px;">${new Date(l.created_at).toLocaleDateString()}</div></div>`).join('') : 'Немає записів';
     }
 
-    // ДОДАТКОВІ ФУНКЦІЇ КНОПОК
+    // ІНШІ ФУНКЦІЇ
     window.switchWorkerTab = function(t) { document.querySelectorAll('.modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.modal-tab-content').forEach(e=>e.classList.remove('active')); document.getElementById(t==='info'?'tabInfoBtn':'tabEditBtn').classList.add('active'); document.getElementById(t==='info'?'wTabInfo':'wTabEdit').classList.add('active'); }
     window.switchInvTab = function(t) { document.querySelectorAll('#inventory .modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('#inventory .modal-tab-content').forEach(e=>e.classList.remove('active')); event.currentTarget.classList.add('active'); document.getElementById(`inv-${t}`).classList.add('active'); }
-    
-    window.saveCalModal = async function() { 
-        let n=document.getElementById('calModalName').value, dt=document.getElementById('calModalDate').value, dpt=document.getElementById('calModalDept').value, s=document.getElementById('calModalStatus').value, t=getTableName(dpt); 
-        if(!t) return;
-        await supabase.from(t).delete().eq(dpt==='Пайка'?'solderer_name':(dpt==='Запаковка'?'packager_name':'name'),n).eq('date',dt).in('status',['Вихідний','Примусовий вихідний','Відпустка','Лікарняний','Простой']); 
-        if(s!=='-- Немає (Пусто) --') await supabase.from(t).insert([{date:dt, [dpt==='Пайка'?'solderer_name':(dpt==='Запаковка'?'packager_name':'name')]:n, dept:dpt, status:s, count:0}]); 
-        document.getElementById('calModal').classList.remove('active'); loadTabel(); 
-    }
-    
     window.approveWorker = async function(id) { const dept = document.getElementById(`newdept-${id}`).value; await supabase.from('workers').update({ status: 'Активний', dept: dept }).eq('id', id); loadDaily(); }
     window.addActiveModel = async function() { let m = document.getElementById('webConfig').value + " " + document.getElementById('webElement').value; if(m.includes("Завантаження")) return; await supabase.from('active_models').insert([{model: m}]); loadDaily(); }
     window.clearModels = async function() { await supabase.from('active_models').delete().neq('model','dummy'); loadDaily(); }
@@ -824,7 +820,7 @@
     window.deleteArchive = async function(id) { if(confirm("Видалити з прайсу?")) { await supabase.from('archive_models').delete().eq('id', id); loadArchive(); } }
     window.saveInv = async function(action) { let el, qty, loc_from="Головний", loc_to="Головний"; if(action === 'Поставка') { el=document.getElementById('invSupEl').value; qty=document.getElementById('invSupQty').value; loc_to=document.getElementById('invSupTo').value||"Головний"; } else if(action === 'Переміщення') { el=document.getElementById('invTrEl').value; qty=document.getElementById('invTrQty').value; loc_from=document.getElementById('invTrFrom').value; loc_to=document.getElementById('invTrTo').value; } else { el=document.getElementById('invIssEl').value; qty=document.getElementById('invIssQty').value; loc_from=document.getElementById('invIssFrom').value; } if(!el || !qty) return alert("Заповніть поля!"); await supabase.from('inventory_logs').insert([{ action, element: el, qty: parseInt(qty), loc_from, loc_to }]); document.querySelectorAll('#inventory input').forEach(i=>i.value=''); loadInventory(); }
     window.saveWorkerProfile = async function() { let id=document.getElementById('wModalId').value, newName=document.getElementById('wEditName').value.trim(), newDept=document.getElementById('wEditDept').value, newStatus=document.getElementById('wEditStatus').value; if(!newName) return alert("Ім'я не може бути пустим!"); await supabase.from('workers').update({ name: newName, dept: newDept, status: newStatus }).eq('id', id); document.getElementById('workerModal').classList.remove('active'); loadDaily(); loadTabel(); loadWorkers(); }
-    
+
     loadArchive(); loadDaily();
   </script>
 </body>
