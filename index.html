@@ -68,7 +68,6 @@
     .st-vx { background: rgba(255,255,255,0.1); color: #fff; } .st-v { background: rgba(0,158,247,0.15); color: var(--info); } .st-pv { background: rgba(241,65,108,0.15); color: var(--danger); } .st-l { background: rgba(255,199,0,0.15); color: var(--warning); } .st-p { background: rgba(114,57,234,0.15); color: #7239EA; }
     .sum-cell { background: rgba(80,205,137,0.08); color: var(--success); font-weight: 700; border-radius: 6px; }
 
-    /* МОДАЛКИ */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
     .modal-content { background: var(--bg-surface); padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; border: 1px solid var(--border-thin); position: relative; max-height: 85vh; overflow-y: auto;}
@@ -276,7 +275,6 @@
                 <div class="details-item"><span>Динаміка:</span><span id="wInfoTrend" style="font-weight:700;">⏳...</span></div>
             </div>
             
-            <!-- Деталізація збірок працівника -->
             <div class="card-title" style="font-size:14px; margin-bottom:10px;">Статистика за місяць:</div>
             <div style="background: rgba(80, 205, 137, 0.05); border: 1px solid rgba(80, 205, 137, 0.2); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
                 <div id="wInfoModelsList" style="margin-bottom: 10px;"></div>
@@ -475,7 +473,10 @@
     // === 3. ТАБЕЛЬ (ПОДІЛЕНИЙ) ===
     window.loadTabel = async function() {
       const mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
-      document.getElementById('tabel-admin-container').innerHTML = "⏳ Завантаження..."; document.getElementById('tabel-zvarka-container').innerHTML = "⏳ Завантаження..."; document.getElementById('tabel-payka-container').innerHTML = "⏳ Завантаження..."; document.getElementById('tabel-zapakovka-container').innerHTML = "⏳ Завантаження...";
+      document.getElementById('tabel-admin-container').innerHTML = "⏳ Завантаження..."; 
+      document.getElementById('tabel-zvarka-container').innerHTML = "⏳ Завантаження..."; 
+      document.getElementById('tabel-payka-container').innerHTML = "⏳ Завантаження..."; 
+      document.getElementById('tabel-zapakovka-container').innerHTML = "⏳ Завантаження...";
 
       const [y, mo] = mVal.split('-'); const days = new Date(y, mo, 0).getDate();
       const start = `${y}-${mo}-01`; const end = `${y}-${mo}-${days}`;
