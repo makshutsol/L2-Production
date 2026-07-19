@@ -9,10 +9,16 @@ const ADMIN_CHAT_ID = '738066424';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// === 1. ВЕБ-СЕРВЕР ===
+// === 1. ЗАПУСК ВЕБ-СЕРВЕРА ТА АДМІН-ПАНЕЛІ ===
+const path = require('path');
 const app = express();
-app.get('/', (req, res) => res.send('L2 ERP Bot: ACTIVE 🚀'));
-app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-сервер запущено'));
+
+// Тепер сервер буде віддавати твій файл index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-сервер та Адмін-панель запущені'));
 
 // Відв'язка старого Google-бота
 fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook`).catch(()=>{});
