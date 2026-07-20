@@ -111,12 +111,12 @@ async function handleMessage(msg) {
                 return sendMessage(chatId, "👤 **Оберіть працівника зі списку:**", buildKeyboard(activeWorkers.map(w=>w.name), 2));
             } else {
                 states[chatId] = { step: "ADMIN_MSG_TEXT", target: text };
-                return sendMessage(chatId, `📝 Напишіть текст повідомлення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
+                return sendMessage(chatId, `📝 Напишіть text повідомлення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
             }
         }
         if (dpt === "адмін" && state && state.step === "ADMIN_MSG_USER") {
             states[chatId] = { step: "ADMIN_MSG_TEXT", target: text };
-            return sendMessage(chatId, `📝 Напишіть текст повідомлення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
+            return sendMessage(chatId, `📝 Напишіть text повідомлення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
         }
         if (dpt === "адмін" && state && state.step === "ADMIN_MSG_TEXT") {
             let target = state.target;
@@ -141,7 +141,7 @@ async function handleMessage(msg) {
             return sendMenuByDept(chatId, user.dept);
         }
 
-        // --- ЗВАРКА ---
+        // --- ЗВАРКА (ЗАПИС В КОЛОНКУ 'name') ---
         if (dpt === "зварка" && text === "📝 Здати роботу") {
             const { data: models } = await supabase.from('active_models').select('model');
             if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог зміни порожній. Адмін ще не додав збірки на сьогодні.");
@@ -155,7 +155,10 @@ async function handleMessage(msg) {
         if (dpt === "зварка" && state && state.step === "WELDER_COUNT") {
             let count = parseInt(text); if (isNaN(count) || count <= 0) return sendMessage(chatId, "⚠️ Введіть число.");
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
-            await supabase.from('reports_zvarka').insert([{ date: today, name: user.name, dept: user.dept, config: state.model, count: count, status: "Працював" }]);
+            
+            // Запис зварки в поле 'name'
+            await supabase.from('reports_zvarka').insert([{ date: today, name: user.name, dept: 'Зварка', config: state.model, count: count, status: "Працював" }]);
+            
             delete states[chatId]; await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`);
             return sendMenuByDept(chatId, user.dept);
         }
@@ -206,7 +209,7 @@ async function handleMessage(msg) {
         // --- ПАЙКА: ОСКАРЖЕННЯ ---
         if (state && state.step === "WAITING_REASON") {
             let batch = disputeBatches[state.batchId]; if(!batch) { delete states[chatId]; return sendMessage(chatId, "⚠️ Дані застаріли."); }
-            let item = batch.items[state.itemIndex]; delete states[chatId];
+            let item = batch.items[state.itemIndex]; delete states[states];
             let alertMsg = `⚠️ **КОНФЛІКТ!**\n\n👨‍🏭 Пайщик: ${user.name}\n📦 Запаковщик: ${batch.pName}\n🔋 Збірка: ${item.model} (${item.count} шт)\n\n🛑 Причина: _${text}_`;
             await sendMessage(ADMIN_CHAT_ID, alertMsg);
             await sendMessage(batch.pChatId, `🛑 Пайщик ${user.name} оскаржив запис (${item.model})!\nПричина: _${text}_`);
@@ -218,7 +221,7 @@ async function handleMessage(msg) {
     }
 }
 
-// === 5. ОБРОБКА ІНЛАЙН КНОПОК ===
+// === 5. ОБРОБКА ІНЛАЙН КНОПОК ПІДТВЕРДЖЕННЯ (ЗАПИС У ТОЧНІ КОЛОНКИ БД) ===
 async function handleCallbackQuery(query) {
     try {
         const chatId = query.message.chat.id.toString(); const msgId = query.message.message_id; const data = query.data;
@@ -231,8 +234,9 @@ async function handleCallbackQuery(query) {
         if (action === "CONFIRM") {
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
             for (let it of batch.items) {
-                await supabase.from('reports_payka').insert([{ date: today, solderer_name: batch.sName, dept: 'Пайка', config: it.model, count: it.count, status: "Працював" }]);
-                await supabase.from('reports_zapakovka').insert([{ date: today, packager_name: batch.pName, dept: 'Запаковка', config: it.model, count: it.count, status: "Працював" }]);
+                // Виправлено: Пайка пишеться в 'solderer_name' (або 'name'), Запаковка в 'packager_name' (або 'name') відповідно до структури Supabase
+                await supabase.from('reports_payka').insert([{ date: today, name: batch.sName, solderer_name: batch.sName, dept: 'Пайка', config: it.model, count: it.count, status: "Працював" }]);
+                await supabase.from('reports_zapakovka').insert([{ date: today, name: batch.pName, packager_name: batch.pName, dept: 'Запаковка', config: it.model, count: it.count, status: "Працював" }]);
             }
             await editMessageText(chatId, msgId, `✅ **ЗВІТ ПІДТВЕРДЖЕНО**`);
             await sendMessage(batch.pChatId, `✅ Пайщик **${batch.sName}** підтвердив звіт!`);
@@ -253,7 +257,7 @@ async function handleCallbackQuery(query) {
     }
 }
 
-// === 6. БЕЗКІНЕЧНИЙ СЛУХАЧ (ПОЛІНГ) ===
+// === 6. БЕЗКІНЕЧНИЙ СЛУХАЧ ===
 let lastUpdateId = 0;
 async function poll() {
     try {
