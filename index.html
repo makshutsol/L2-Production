@@ -9,9 +9,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
-    :root { --bg-base:#0f0f13; --bg-surface:#18181d; --bg-hover:#22222a; --text-main:#FFFFFF; --text-muted:#8a8d93; --border-thin:rgba(255,255,255,0.05); --danger:#ff4444; --success:#50CD89; --warning:#f6c000; --info:#009EF7; }
+    :root { --bg-base:#0f0f13; --bg-surface:#18181d; --bg-hover:#22222a; --text-main:#FFFFFF; --text-muted:#8a8d93; --border-thin:rgba(255,255,255,0.05); --danger:#f1416c; --success:#50CD89; --warning:#f6c000; --info:#009EF7; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased;}
     h1, h2, h3, .logo-text, .card-title { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -0.5px; }
 
     /* БОКОВЕ МЕНЮ */
@@ -23,9 +23,9 @@
     .nav-item.active { background: var(--text-main); color: #000; font-weight: 600; }
     
     .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-    .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; }
+    .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; }
     .header { margin-bottom: 30px; }
-    .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
     .header p { color: var(--text-muted); font-size: 14px; }
     .section { display: none; animation: fadeIn 0.3s ease-out; }
     .section.active { display: block; }
@@ -34,7 +34,7 @@
     /* КАРТКИ ТА ЕЛЕМЕНТИ */
     .card { background: var(--bg-surface); border: 1px solid var(--border-thin); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-thin); flex-wrap: wrap; gap: 15px; }
-    .card-title { font-size: 17px; font-weight: 700; }
+    .card-title { font-size: 16px; font-weight: 700; }
     
     select, input { background: var(--bg-base); border: 1px solid var(--border-thin); color: var(--text-main); padding: 12px 16px; border-radius: 10px; font-size: 14px; width: 100%; outline: none; }
     button { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
@@ -44,13 +44,13 @@
     
     .setup-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;}
     .setup-grid > * { flex: 1; min-width: 150px; }
-    .row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--bg-base); border: 1px solid var(--border-thin); border-radius: 12px; margin-bottom: 10px; gap: 15px; }
+    .row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--bg-base); border: 1px solid var(--border-thin); border-radius: 12px; margin-bottom: 10px; gap: 15px; flex-wrap: wrap;}
     
     .dept-block { background: rgba(255,255,255,0.02); border: 1px solid var(--border-thin); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
     .dept-block-header { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-thin);}
     
     .clickable-name { font-weight: 600; font-size: 15px; color: var(--text-main); cursor: pointer; transition: 0.2s; }
-    .clickable-name:hover { color: var(--info); }
+    .clickable-name:hover { color: var(--info); text-decoration: underline;}
     
     .stat-card { background: var(--bg-base); border: 1px solid var(--border-thin); padding: 20px; border-radius: 12px; flex: 1; min-width: 140px;}
     .stat-card h4 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;}
@@ -59,7 +59,7 @@
 
     /* ТАБЛИЦІ */
     .table-container { overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; min-width: 900px; text-align: left; }
+    table { width: 100%; border-collapse: collapse; min-width: 800px; text-align: left; }
     th { color: var(--text-muted); font-size: 11px; padding: 12px 6px; border-bottom: 1px dotted var(--border-thin); font-weight: 500;}
     td { padding: 8px 4px; border-bottom: 1px dotted var(--border-thin); font-size: 13px; }
     .tabel-table td { text-align: center; cursor: pointer; }
@@ -83,7 +83,7 @@
     .modal-tab-content { display: none; } .modal-tab-content.active { display: block; }
     
     /* КАЛЕНДАР-МОДАЛКА (ЯК НА СКРІНШОТІ) */
-    .cal-details-box { background: #1c1c21; border-radius: 12px; padding: 15px; margin-top: 15px; margin-bottom: 20px; }
+    .cal-details-box { background: #1c1c21; border-radius: 12px; padding: 15px; margin-top: 10px; margin-bottom: 20px; }
     .cal-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-main); font-weight: 500;}
     .cal-total-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--success); padding-top: 12px; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); }
 
@@ -99,17 +99,14 @@
       .sidebar.open { transform: translateX(0); }
       .overlay.active { display: block; }
       
-      .main-content { padding: 20px 15px; } 
+      .main-content { padding: 15px; } 
       .header h1 { font-size: 24px; }
       .card { padding: 15px; border-radius: 12px; }
-      .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
       
       .setup-grid { flex-direction: column; gap: 10px; }
       .setup-grid > * { width: 100%; }
       .row { flex-direction: column; align-items: flex-start; gap: 10px; padding: 15px; }
       .stat-card { width: 100%; margin-bottom: 10px; }
-      
-      table { min-width: 600px; } /* Трохи менша мінімальна ширина для телефону */
     }
   </style>
 </head>
@@ -166,7 +163,6 @@
              <div class="dept-block"><div class="dept-block-header" style="color:var(--success)"><i class="fa-solid fa-box-open"></i> Відділ Запаковки</div><div id="list-zapakovka">⏳</div></div>
           </div>
           
-          <!-- КНОПКА ВІДПРАВКИ .TXT ФАЙЛУ -->
           <button id="btnSendTg" class="btn-success" style="width: 100%; padding: 16px; margin-top: 10px; font-size: 14px;" onclick="sendDailyReportTxt()">
              <i class="fa-solid fa-file-lines"></i> Затвердити та надіслати файл .txt у Telegram
           </button>
@@ -178,10 +174,10 @@
         <div class="header"><h1>Аналітика та Графіки</h1></div>
         <div class="card">
           <div class="setup-grid" style="margin-bottom: 0;">
-            <div><label style="font-size:12px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
-            <div><label style="font-size:12px; color:var(--text-muted);">До:</label><input type="date" id="dashEnd"></div>
-            <div><label style="font-size:12px; color:var(--text-muted);">Відділ:</label><select id="dashDept"><option value="Всі">Всі відділи</option><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select></div>
-            <div style="display:flex; align-items:flex-end;"><button class="btn-primary" style="width:100%; height: 42px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Показати</button></div>
+            <div><label style="font-size:11px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
+            <div><label style="font-size:11px; color:var(--text-muted);">До:</label><input type="date" id="dashEnd"></div>
+            <div><label style="font-size:11px; color:var(--text-muted);">Відділ:</label><select id="dashDept"><option value="Всі">Всі відділи</option><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select></div>
+            <div style="display:flex; align-items:flex-end;"><button class="btn-primary" style="width:100%; height: 40px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Показати</button></div>
           </div>
         </div>
         <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
@@ -189,7 +185,7 @@
            <div class="stat-card" style="border-color:gold;"><h4 style="color:gold;"><i class="fa-solid fa-crown"></i> Лідер</h4><div class="value" id="dashTopWorker" style="color:#FFF;">⏳</div><div style="font-size:11px; color:var(--text-muted); margin-top:5px;" id="dashTopWorkerScore">...</div></div>
            <div class="stat-card" style="border-color:var(--info);"><h4 style="color:var(--info)"><i class="fa-solid fa-battery-full"></i> Топ збірка</h4><div class="value" id="dashTopModel" style="color:#FFF;">⏳</div><div style="font-size:11px; color:var(--text-muted); margin-top:5px;" id="dashTopModelScore">...</div></div>
         </div>
-        <div class="card"><div class="card-title">Динаміка виробництва по днях (шт)</div><div style="position:relative; height:200px; width:100%; margin-top:20px;"><canvas id="trendChart"></canvas></div></div>
+        <div class="card"><div class="card-title">Динаміка виробництва по днях (шт)</div><div style="position:relative; height:200px; width:100%; margin-top:15px;"><canvas id="trendChart"></canvas></div></div>
         <div style="display:flex; gap:15px; flex-wrap:wrap;">
            <div class="card" style="flex:2; min-width:100%;"><div class="card-title">Рейтинг команди</div><div style="position:relative; height:250px; width:100%;"><canvas id="workersChart"></canvas></div></div>
         </div>
@@ -213,8 +209,8 @@
       <div id="tabel" class="section">
         <div class="header"><h1>Табель обліку</h1><p>Окремі відомості виробництва</p></div>
         <div class="card" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
-            <div><label style="font-size:12px; color:var(--text-muted);">Місяць:</label><br><input type="month" id="tabelMonth" onchange="loadTabel()" style="width: 160px;"></div>
-            <button class="btn-secondary" style="height:42px;" onclick="openMassUpdate()"><i class="fa-solid fa-list-check"></i> Масовий статус</button>
+            <div><label style="font-size:11px; color:var(--text-muted);">Місяць:</label><br><input type="month" id="tabelMonth" onchange="loadTabel()" style="width: 160px;"></div>
+            <button class="btn-secondary" style="height:40px;" onclick="openMassUpdate()"><i class="fa-solid fa-list-check"></i> Масовий статус</button>
         </div>
         
         <div class="dept-block" style="border-color: #A1A5B7;"><div class="dept-block-header" style="color:#A1A5B7;"><i class="fa-solid fa-user-shield"></i> Табель: Адмін</div><div class="table-container" id="tabel-admin-container">⏳...</div></div>
@@ -389,7 +385,7 @@
       if(s==='Простой') return '<span class="st-badge st-p">П</span>'; return '';
     }
 
-    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ ===
+    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ (ЗІ ЗМІНОЮ СТАТУСУ ЗІ СПИСКУ) ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
       document.getElementById('list-admin').innerHTML="⏳..."; document.getElementById('list-zvarka').innerHTML="⏳..."; document.getElementById('list-payka').innerHTML="⏳..."; document.getElementById('list-zapakovka').innerHTML="⏳...";
@@ -411,25 +407,49 @@
 
       let adm = "", zv = "", pa = "", zap = "";
       window.globalWorkers.forEach(w => {
-         let rep = all.filter(r => (r.name || r.solderer_name || r.packager_name) === w.name); 
-         let detailsHtml = ""; let nameDisplay = w.name;
-         
+         let rep = all.filter(r => r.name === w.name); 
+         let detailsHtml = ""; 
+         let currentStatus = "Працював";
+         let isAbsence = false;
+
          if(rep.length > 0) {
-            let isAbsence = rep[0].status && rep[0].status !== 'Працював' && (!rep[0].count || rep[0].count == 0);
-            if(isAbsence) {
-                nameDisplay = `${w.name} <span style="color:var(--danger); font-size:11px; text-transform:lowercase;">(${rep[0].status})</span>`;
-                detailsHtml = `<span style="color:var(--text-muted); font-size: 13px;">0 шт</span>`;
+            let firstRep = rep[0];
+            if(firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
+                isAbsence = true;
+                currentStatus = firstRep.status;
+                detailsHtml = `<div style="color:var(--danger); font-size:12px; font-weight:600; margin-bottom:4px;">🔴 Звіту немає (0 шт)</div>`;
             } else {
                 let mDict = {}; let tot = 0;
                 rep.forEach(r => { let c = parseInt(r.count)||0; if(c>0){ mDict[r.config||'Інше'] = (mDict[r.config||'Інше']||0)+c; tot+=c; }});
-                let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:12px; margin-bottom:4px;">${k} - <span style="font-weight:600;">${mDict[k]} шт</span></div>`).join('');
-                detailsHtml = `<div style="background:rgba(80, 205, 137, 0.05); border: 1px solid rgba(80, 205, 137, 0.2); padding:10px; border-radius:8px; min-width: 150px;"><div style="color:var(--success); font-weight:700; font-size:11px; margin-bottom:6px;"><i class="fa-solid fa-check"></i> Зроблено:</div>${mList}<div style="border-top:1px dashed rgba(255,255,255,0.1); margin-top:6px; padding-top:6px; font-weight:700; font-size:12px; color:var(--success);">Всього: ${tot} шт</div></div>`;
+                let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:12px; margin-bottom:4px; font-weight:600;">${k} - ${mDict[k]} шт</div>`).join('');
+                detailsHtml = `<div style="color:var(--success); font-size:12px; font-weight:700; margin-bottom:6px;">✅ Зроблено:</div>${mList}`;
             }
          } else {
-            detailsHtml = `<span style="color:var(--text-muted); font-size: 13px;">Звіту немає</span>`;
+            isAbsence = true;
+            detailsHtml = `<div style="color:var(--danger); font-size:12px; font-weight:600; margin-bottom:4px;">🔴 Звіту немає (0 шт)</div>`;
          }
          
-         let row = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${nameDisplay}</span></div><div>${detailsHtml}</div></div>`;
+         let boxBg = isAbsence ? "var(--bg-base)" : "rgba(80, 205, 137, 0.08)";
+         let boxBorder = isAbsence ? "1px solid var(--border-thin)" : "1px solid rgba(80, 205, 137, 0.3)";
+         
+         let selectHtml = `<select onchange="updateDailyStatus('${w.name}', '${w.dept}', this.value)" style="width: 130px; font-size:11px; padding:6px; background:var(--bg-surface);">
+            <option value="Працював" ${!isAbsence || currentStatus==='Працював' ? 'selected' : ''}>Працював</option>
+            <option value="Вихідний" ${currentStatus==='Вихідний' ? 'selected' : ''}>Вихідний</option>
+            <option value="Примусовий вихідний" ${currentStatus==='Примусовий вихідний' ? 'selected' : ''}>Прим. вихідний</option>
+            <option value="Відпустка" ${currentStatus==='Відпустка' ? 'selected' : ''}>Відпустка</option>
+            <option value="Лікарняний" ${currentStatus==='Лікарняний' ? 'selected' : ''}>Лікарняний</option>
+            <option value="Простой" ${currentStatus==='Простой' ? 'selected' : ''}>Простой</option>
+         </select>`;
+
+         let row = `
+         <div style="background:${boxBg}; border:${boxBorder}; border-radius:10px; padding:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div style="flex:1;">
+                <div class="clickable-name" style="font-size:14px; margin-bottom:8px;" onclick="openWorkerProfile('${w.name}')">${w.name}</div>
+                ${detailsHtml}
+            </div>
+            <div>${selectHtml}</div>
+         </div>`;
+         
          let dp = w.dept.toLowerCase(); if(dp==='адмін') adm+=row; else if(dp==='зварка') zv+=row; else if(dp==='пайка') pa+=row; else if(dp==='запаковка') zap+=row;
       });
       
@@ -437,6 +457,21 @@
       document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
       document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
       document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+    }
+
+    // === ОНОВЛЕННЯ СТАТУСУ ЗІ СПИСКУ ЗВІТІВ ЗА ДЕНЬ ===
+    window.updateDailyStatus = async function(name, dept, status) {
+        const dStr = document.getElementById('repDate').value;
+        const table = getTableName(dept);
+        if(!table) return;
+
+        if (status !== 'Працював') {
+            await supabase.from(table).delete().eq('name', name).eq('date', dStr);
+            await supabase.from(table).insert([{ date: dStr, name: name, dept: dept, status: status, count: 0 }]);
+        } else {
+            await supabase.from(table).delete().eq('name', name).eq('date', dStr).in('status', ['Вихідний', 'Примусовий вихідний', 'Відпустка', 'Лікарняний', 'Простой']);
+        }
+        loadDaily(); loadTabel();
     }
 
     // === ГЕНЕРАЦІЯ .TXT ФАЙЛУ ДЛЯ ТЕЛЕГРАМ ===
@@ -467,7 +502,7 @@
             fullText += `Л2 ${dpt.title} ${dateFormatted}\n\n`;
 
             deptWorkers.forEach(w => {
-                let wReps = (dpt.data || []).filter(r => (r.name || r.solderer_name || r.packager_name) === w.name);
+                let wReps = (dpt.data || []).filter(r => r.name === w.name);
                 
                 if (wReps.length === 0) {
                     fullText += `${w.name} ( звіту немає )\n0 - шт\n\n`;
@@ -492,7 +527,6 @@
         }
 
         try {
-            // Створюємо текстовий файл у пам'яті
             const blob = new Blob([fullText.trim()], { type: 'text/plain' });
             const formData = new FormData();
             formData.append('chat_id', ADMIN_CHAT_ID);
@@ -528,7 +562,7 @@
        let wS = {}; let mS = {}; let dS = {}; let total = 0;
        all.forEach(r => {
           let c = parseInt(r.count || 0); if(c<=0) return;
-          let n = r.name || r.solderer_name || r.packager_name; let m = r.config || 'Інше'; let dt = r.date;
+          let n = r.name; let m = r.config || 'Інше'; let dt = r.date;
           wS[n] = (wS[n]||0)+c; mS[m] = (mS[m]||0)+c; dS[dt] = (dS[dt]||0)+c; total+=c;
        });
 
@@ -583,7 +617,7 @@
         document.getElementById('detailedModelStatsContainer').innerHTML = html;
     }
 
-    // === ТАБЕЛЬ ===
+    // === 3. ТАБЕЛЬ ===
     window.loadTabel = async function() {
       const mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
       document.getElementById('tabel-admin-container').innerHTML="⏳..."; document.getElementById('tabel-zvarka-container').innerHTML="⏳..."; document.getElementById('tabel-payka-container').innerHTML="⏳..."; document.getElementById('tabel-zapakovka-container').innerHTML="⏳...";
@@ -599,7 +633,7 @@
 
       let tData = {}; if (window.globalWorkers) window.globalWorkers.forEach(w => { tData[w.name] = { dept: w.dept, days: {}, sum: 0, details: {}, modelsMonthly: {} }; });
       all.forEach(r => {
-         let name = r.name || r.solderer_name || r.packager_name;
+         let name = r.name;
          if(tData[name]) {
             let d = parseInt(r.date.split('-')[2]); let c = parseInt(r.count || 0);
             if(!tData[name].days[d]) tData[name].days[d] = { count: 0, status: null, models: {} };
@@ -678,8 +712,8 @@
     window.saveCalModal = async function() { 
         let n=document.getElementById('calModalName').value, dt=document.getElementById('calModalDate').value, dpt=document.getElementById('calModalDept').value, s=document.getElementById('calModalStatus').value, t=getTableName(dpt); 
         if(!t) return;
-        await supabase.from(t).delete().eq(dpt==='Пайка'?'solderer_name':(dpt==='Запаковка'?'packager_name':'name'),n).eq('date',dt).in('status',['Вихідний','Примусовий вихідний','Відпустка','Лікарняний','Простой']); 
-        if(s!=='-- Немає (Пусто) --') await supabase.from(t).insert([{date:dt, [dpt==='Пайка'?'solderer_name':(dpt==='Запаковка'?'packager_name':'name')]:n, dept:dpt, status:s, count:0}]); 
+        await supabase.from(t).delete().eq('name', n).eq('date', dt).in('status', ['Вихідний','Примусовий вихідний','Відпустка','Лікарняний','Простой']); 
+        if(s!=='-- Немає (Пусто) --') await supabase.from(t).insert([{date:dt, name: n, dept:dpt, status:s, count:0}]); 
         document.getElementById('calModal').classList.remove('active'); loadTabel(); loadDaily();
     }
 
@@ -712,7 +746,7 @@
       if(tbl) {
          let [y, mo] = document.getElementById('tabelMonth').value.split('-'); let prevD = new Date(y, mo-1, 0);
          let pS = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-01`; let pE = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-${prevD.getDate()}`;
-         const { data: pData } = await supabase.from(tbl).select('count').eq(worker.dept==='Пайка'?'solderer_name':(worker.dept==='Запаковка'?'packager_name':'name'), name).gte('date', pS).lte('date', pE);
+         const { data: pData } = await supabase.from(tbl).select('count').eq('name', name).gte('date', pS).lte('date', pE);
          let pTotal = 0; if(pData) pData.forEach(r => pTotal += (parseInt(r.count)||0));
          let diff = uData.sum - pTotal;
          document.getElementById('wInfoTrend').innerHTML = diff > 0 ? `<span style="color:var(--success)">📈 Рост (+${diff} шт)</span>` : (diff < 0 ? `<span style="color:var(--danger)">📉 Спад (${diff} шт)</span>` : `<span style="color:var(--text-muted)">Без змін</span>`);
@@ -758,8 +792,8 @@
             for(let row of rows) { 
                 let name = row.dataset.name; let dept = row.dataset.dept; let status = row.querySelector('.mass-status-select').value; let table = getTableName(dept); 
                 if (status && table) { 
-                    await supabase.from(table).delete().eq(dept==='Пайка'?'solderer_name':(dept==='Запаковка'?'packager_name':'name'), name).eq('date', dateVal).in('status', ['Вихідний', 'Примусовий вихідний', 'Відпустка', 'Лікарняний', 'Простой']); 
-                    await supabase.from(table).insert([{ date: dateVal, [dept==='Пайка'?'solderer_name':(dept==='Запаковка'?'packager_name':'name')]: name, dept, status: status, count: 0 }]); 
+                    await supabase.from(table).delete().eq('name', name).eq('date', dateVal).in('status', ['Вихідний', 'Примусовий вихідний', 'Відпустка', 'Лікарняний', 'Простой']); 
+                    await supabase.from(table).insert([{ date: dateVal, name: name, dept, status: status, count: 0 }]); 
                 } 
             }
             d.setDate(d.getDate() + 1);
@@ -779,8 +813,8 @@
            let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:var(--bg-hover); border:1px solid var(--border-thin); margin:4px;">${r.config} <i class="fa-solid fa-xmark" style="color:var(--danger); cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`;
            if(lw.includes('v') || lw.includes('в')) cV.push(tag); else if(lw.includes('h') || lw.includes('г')) cH.push(tag); else cOther.push(tag);
         });
-        html += `<div style="margin-bottom:20px;"><strong>Вертикальні (V):</strong><br>${cV.join('') || '—'}</div>`;
-        html += `<div style="margin-bottom:20px;"><strong>Горизонтальні (H):</strong><br>${cH.join('') || '—'}</div>`;
+        html += `<div style="margin-bottom:20px;"><strong>Вертикальні конфігурації (V):</strong><br>${cV.join('') || '—'}</div>`;
+        html += `<div style="margin-bottom:20px;"><strong>Горизонтальні конфігурації (H):</strong><br>${cH.join('') || '—'}</div>`;
         html += `<div style="margin-bottom:20px;"><strong>Інші збірки:</strong><br>${cOther.join('') || '—'}</div>`;
 
         let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px;">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`).join('');
