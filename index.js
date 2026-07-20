@@ -231,8 +231,8 @@ async function handleCallbackQuery(query) {
         if (action === "CONFIRM") {
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
             for (let it of batch.items) {
-                await supabase.from('reports_payka').insert([{ date: today, name: batch.sName, dept: 'Пайка', config: it.model, count: it.count, status: "Працював" }]);
-                await supabase.from('reports_zapakovka').insert([{ date: today, name: batch.pName, dept: 'Запаковка', config: it.model, count: it.count, status: "Працював" }]);
+                await supabase.from('reports_payka').insert([{ date: today, solderer_name: batch.sName, dept: 'Пайка', config: it.model, count: it.count, status: "Працював" }]);
+                await supabase.from('reports_zapakovka').insert([{ date: today, packager_name: batch.pName, dept: 'Запаковка', config: it.model, count: it.count, status: "Працював" }]);
             }
             await editMessageText(chatId, msgId, `✅ **ЗВІТ ПІДТВЕРДЖЕНО**`);
             await sendMessage(batch.pChatId, `✅ Пайщик **${batch.sName}** підтвердив звіт!`);
