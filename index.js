@@ -25,16 +25,11 @@ async function tg(method, payload = {}) {
     } catch(e) { return { ok: false }; }
 }
 
-async function sendMessage(chat_id, text, reply_markup = null) {
-    let payload = { chat_id, text, parse_mode: 'Markdown' };
-    if(reply_markup) payload.reply_markup = reply_markup;
+async function sendMessage(chat_id, text, reply_markup = null, parse_mode = 'Markdown') {
+    let payload = { chat_id, text };
+    if (parse_mode) payload.parse_mode = parse_mode;
+    if (reply_markup) payload.reply_markup = reply_markup;
     return await tg('sendMessage', payload);
-}
-
-async function editMessageText(chat_id, message_id, text, reply_markup = null) {
-    let payload = { chat_id, message_id, text, parse_mode: 'Markdown' };
-    if(reply_markup) payload.reply_markup = reply_markup;
-    return await tg('editMessageText', payload);
 }
 
 // === 3. МЕНЮ ===
@@ -159,15 +154,19 @@ async function handleMessage(msg) {
             let count = parseInt(text); if (isNaN(count) || count <= 0) return sendMessage(chatId, "⚠️ Введіть число.");
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
             
-            const { error } = await supabase.from('reports_zvarka').insert([{ date: today, name: user.name, dept: user.dept, config: state.model, count: count, status: "Працював" }]);
+            // ВИПРАВЛЕНО: Використовуємо 'model' замість 'config'
+            const { error } = await supabase.from('reports_zvarka').insert([{ date: today, name: user.name, dept: user.dept, model: state.model, count: count, status: "Працював" }]);
             
             if (error) {
                 console.error("DB Zvarka Error:", error);
-                await sendMessage(chatId, `❌ Помилка бази: ${error.message}`);
+                // Відключаємо Markdown для помилок, щоб телеграм не зависав
+                await sendMessage(chatId, `❌ Помилка бази: ${error.message}`, null, null);
+                return; // Не скидаємо стан, даємо можливість повторити
             } else {
-                delete states[chatId]; await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`);
+                delete states[chatId]; 
+                await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`);
+                return sendMenuByDept(chatId, user.dept);
             }
-            return sendMenuByDept(chatId, user.dept);
         }
 
         // --- ЗАПАКОВКА ---
@@ -223,7 +222,7 @@ async function handleMessage(msg) {
             await sendMessage(chatId, "✅ Скаргу передано адміністратору.");
             return sendMenuByDept(chatId, user.dept);
         }
-    } catch (error) { console.error(error); }
+    } catch (error) { console.error("Critical Message Error:", error); }
 }
 
 // === 5. ОБРОБКА ІНЛАЙН КНОПОК ===
@@ -241,8 +240,9 @@ async function handleCallbackQuery(query) {
             let hasError = false;
             
             for (let it of batch.items) {
-                let res1 = await supabase.from('reports_payka').insert([{ date: today, solderer_name: batch.sName, dept: 'Пайка', config: it.model, count: it.count, status: "Працював" }]);
-                let res2 = await supabase.from('reports_zapakovka').insert([{ date: today, packager_name: batch.pName, dept: 'Запаковка', config: it.model, count: it.count, status: "Працював" }]);
+                // ВИПРАВЛЕНО: Використовуємо 'model' замість 'config'
+                let res1 = await supabase.from('reports_payka').insert([{ date: today, solderer_name: batch.sName, dept: 'Пайка', model: it.model, count: it.count, status: "Працював" }]);
+                let res2 = await supabase.from('reports_zapakovka').insert([{ date: today, packager_name: batch.pName, dept: 'Запаковка', model: it.model, count: it.count, status: "Працював" }]);
                 
                 if (res1.error || res2.error) {
                     console.error("DB Confirm Error:", res1.error, res2.error);
@@ -268,10 +268,10 @@ async function handleCallbackQuery(query) {
             states[chatId] = { step: "WAITING_REASON", batchId: bId, itemIndex: idx };
             await sendMessage(chatId, `✍️ Напишіть причину незгоди:`, { keyboard: [[{text: "❌ Скасувати"}]], resize_keyboard: true });
         }
-    } catch (error) { console.error(error); }
+    } catch (error) { console.error("Callback Error:", error); }
 }
 
-// === 6. ЗАПУСК БОТА ===
+// === 6. БЕЗКІНЕЧНИЙ СЛУХАЧ ===
 let lastUpdateId = 0;
 async function poll() {
     try {
@@ -287,7 +287,6 @@ async function poll() {
     setTimeout(poll, 1000);
 }
 
-// Вбиваємо вебхук при старті
 async function startSystem() {
     console.log("🧹 Очищення старого Webhook...");
     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook?drop_pending_updates=true`);
