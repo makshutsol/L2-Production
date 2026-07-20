@@ -14,6 +14,7 @@
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased;}
     h1, h2, h3, .logo-text, .card-title { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -0.5px; }
 
+    /* МЕНЮ */
     .sidebar { width: 260px; background-color: var(--bg-surface); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 30px 20px; z-index: 1000; transition: transform 0.3s ease; }
     .logo-text { font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 30px; letter-spacing: 2px;}
     .nav-menu { display: flex; flex-direction: column; gap: 6px; }
@@ -30,6 +31,7 @@
     .section.active { display: block; }
     @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
     
+    /* КАРТКИ */
     .card { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 15px; }
     .card-title { font-size: 16px; font-weight: 700; text-transform: uppercase; }
@@ -39,26 +41,29 @@
     .btn-primary { background: var(--text-main); color: #000; } .btn-primary:hover { background: #e0e0e0; }
     .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.05); }
     .btn-success { background: var(--success); color: #fff; } 
+    .btn-danger { background: rgba(241,65,108,0.1); color: var(--danger); border: 1px solid rgba(241,65,108,0.3); } 
+    .btn-info { background: rgba(0,158,247,0.1); color: var(--info); border: 1px solid rgba(0,158,247,0.3); }
     
     .setup-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;}
     .setup-grid > * { flex: 1; min-width: 150px; }
     
-    /* ДИЗАЙН ЗВІТУ ЯК У ТВОЄМУ ПРИКЛАДІ */
+    /* ЗВІТИ (ЯК НА СКРІНІ) */
     .row { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
     .row.has-report { background: rgba(80, 205, 137, 0.08); border: 1px solid rgba(80, 205, 137, 0.3); }
     .worker-info { width: 55%; min-width: 200px; }
-    .worker-name { font-weight: 700; font-size: 16px; color: var(--text-main); cursor: pointer; text-decoration: underline transparent; transition: 0.2s;}
-    .worker-name:hover { text-decoration: underline var(--info); color: var(--info); }
-    .worker-details { font-size: 13px; color: #ccc; margin-top: 6px; line-height: 1.6;}
-    .status-select { background: var(--bg-surface); padding: 8px; font-size: 13px; border-radius: 6px; width: 140px; border: 1px solid rgba(255,255,255,0.1); color: #fff; }
+    .worker-name { font-weight: 700; font-size: 16px; color: var(--text-main); cursor: pointer; transition: 0.2s; display: inline-block; margin-bottom: 4px;}
+    .worker-name:hover { color: var(--info); text-decoration: underline; }
+    .worker-details { font-size: 13px; color: #ccc; line-height: 1.6;}
+    .status-select { background: var(--bg-surface); padding: 8px; font-size: 13px; border-radius: 6px; width: 150px; border: 1px solid rgba(255,255,255,0.1); color: #fff; }
     
     .dept-block { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
     .dept-block-header { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);}
     
     .stat-card { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; flex: 1; min-width: 140px;}
     .stat-card .value { font-size: 24px; font-weight: 700; color: var(--success); }
+    .badge { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
 
-    /* ТАБЛИЦІ (ТАБЕЛЬ) */
+    /* ТАБЛИЦІ */
     .table-container { overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; min-width: 800px; text-align: left; }
     th { color: var(--text-muted); font-size: 12px; padding: 12px 6px; border-bottom: 1px dotted rgba(255,255,255,0.1); font-weight: 500; text-align: center;}
@@ -66,23 +71,21 @@
     .tabel-table td { text-align: center; cursor: pointer; transition: 0.2s;}
     .tabel-table td:hover { background: rgba(255,255,255,0.05); transform: scale(1.1); font-weight: bold; }
     .name-cell { position: sticky; left: 0; background: var(--bg-surface); padding-left: 15px; border-right: 1px solid rgba(255,255,255,0.1); z-index: 2; min-width: 150px; font-weight: 600; text-align: left !important; cursor: default !important;}
-    .name-cell:hover { transform: none !important; background: var(--bg-surface) !important; }
     
     .st-num { color: var(--success); font-weight: 700; }
     .st-badge { padding: 5px; border-radius: 4px; font-size: 11px; font-weight: 700; display: inline-block; min-width: 26px; text-align: center;}
     .st-vx { background: rgba(255,255,255,0.1); color: #fff; } .st-v { background: rgba(0,158,247,0.15); color: var(--info); } .st-pv { background: rgba(241,65,108,0.15); color: var(--danger); } .st-l { background: rgba(255,199,0,0.15); color: var(--warning); } .st-p { background: rgba(114,57,234,0.15); color: #7239EA; }
     .sum-cell { background: rgba(80,205,137,0.08); color: var(--success); font-weight: 700; border-radius: 6px; }
 
-    /* МОДАЛКИ ЯК НА ФОТО */
+    /* МОДАЛКИ (ЯК НА СКРІНШОТІ) */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
     .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; position: absolute; right: 20px; top: 15px;}
     
-    .modal-list { list-style: none; padding: 0; margin: 10px 0 0 0; background: #1c1c21; border-radius: 10px; padding: 15px;}
-    .modal-list li { padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 14px; display: flex; justify-content: space-between; color: #fff;}
-    .modal-list li:last-child { border-bottom: none; }
-    .modal-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--success); padding-top: 12px; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .cal-details-box { background: var(--bg-base); border-radius: 12px; padding: 15px; margin-top: 10px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .cal-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-main); font-weight: 500;}
+    .cal-total-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--success); padding-top: 12px; margin-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1); }
     
     .modal-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; overflow-x: auto;}
     .modal-tab { padding: 10px 15px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 14px; border-bottom: 2px solid transparent; white-space: nowrap;}
@@ -138,7 +141,7 @@
         <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі</p></div>
         
         <div id="pendingCard" class="card" style="display:none; border-color: var(--warning);">
-            <div class="card-title" style="color:var(--warning); margin-bottom: 15px;">Нові заявки</div>
+            <div class="card-title" style="color:var(--warning); margin-bottom: 15px;">Нові заявки (Авторизація)</div>
             <div id="pendingList"></div>
         </div>
 
@@ -183,7 +186,7 @@
            <div class="stat-card" style="border-color:gold;"><h4 style="color:gold;">Лідер</h4><div class="value" id="dashTopWorker" style="color:#FFF;">⏳</div></div>
            <div class="stat-card" style="border-color:var(--info);"><h4 style="color:var(--info)">Топ збірка</h4><div class="value" id="dashTopModel" style="color:#FFF;">⏳</div></div>
         </div>
-        <div class="card"><div class="card-title">Динаміка виробництва по днях</div><div style="position:relative; height:200px; width:100%; margin-top:15px;"><canvas id="trendChart"></canvas></div></div>
+        <div class="card"><div class="card-title">Динаміка виробництва</div><div style="position:relative; height:200px; width:100%; margin-top:15px;"><canvas id="trendChart"></canvas></div></div>
         
         <div class="card">
           <div class="card-header">
@@ -269,26 +272,26 @@
             <div style="flex:1;"><label style="font-size:11px; color:var(--text-muted);">Від:</label><input type="date" id="massStartDate"></div>
             <div style="flex:1;"><label style="font-size:11px; color:var(--text-muted);">До:</label><input type="date" id="massEndDate"></div>
         </div>
-        <div id="massWorkersList" style="margin-bottom: 20px;"></div>
+        <div id="massWorkersList" style="margin-bottom: 20px; max-height:300px; overflow-y:auto;"></div>
         <button class="btn-success" style="width:100%; padding:14px;" onclick="saveMassStatuses()">Затвердити</button>
     </div>
   </div>
 
-  <!-- МОДАЛКА КАЛЕНДАРЯ -->
+  <!-- МОДАЛКА КАЛЕНДАРЯ (ЯК НА ФОТО) -->
   <div class="modal" id="calModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('calModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-        <div id="calModalTitle" style="font-size: 20px; font-weight:700; margin-bottom: 10px;"></div>
+        <div id="calModalTitle" style="font-size: 18px; font-weight:700; margin-bottom: 5px;"></div>
         <input type="hidden" id="calModalName"><input type="hidden" id="calModalDate"><input type="hidden" id="calModalDept">
         
         <div id="calModalDetailsBlock" style="display:none;">
-            <div style="font-size: 14px; color: var(--success); font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div>
-            <ul class="modal-list" id="calModalDetailsList"></ul>
+            <div style="font-size: 13px; color: var(--success); font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div>
+            <div class="cal-details-box" id="calModalDetailsList"></div>
         </div>
         
         <div style="margin-top: 15px;">
             <div style="margin-bottom: 8px; font-size: 13px; color: var(--text-muted);">Зміна статусу дня:</div>
-            <select id="calModalStatus" style="margin-bottom: 20px; font-size:15px; padding:12px;">
+            <select id="calModalStatus" style="margin-bottom: 20px; font-size:14px; padding:12px;">
                 <option value="-- Немає (Пусто) --">-- Очистити записи --</option>
                 <option value="Вихідний">Вихідний</option>
                 <option value="Примусовий вихідний">Примусовий вихідний</option>
@@ -319,9 +322,10 @@
             </div>
             
             <div style="font-size:14px; font-weight:700; margin-bottom:10px;">Статистика за місяць:</div>
-            <ul class="modal-list" id="wInfoModelsList" style="margin-bottom: 20px;"></ul>
-            
-            <div class="card-title" style="font-size:14px; margin-bottom:10px;">Графік продуктивності по днях</div>
+            <div class="cal-details-box" style="margin-top:0; border:none; background:rgba(80, 205, 137, 0.08);">
+                <div id="wInfoModelsList" style="margin-bottom: 10px;"></div>
+                <div class="cal-total-row"><span>Всього:</span> <span id="wInfoItems">0 шт</span></div>
+            </div>
             <div style="position:relative; height:180px; width:100%;"><canvas id="personalChart"></canvas></div>
         </div>
         <div id="wTabEdit" class="modal-tab-content">
@@ -358,7 +362,6 @@
     window.globalWorkers = []; window.globalTabelData = {}; 
     let chartWorkers = null; let chartModels = null; let chartTrend = null; let chartPersonal = null;
 
-    // Меню для мобільних
     window.toggleMenu = function() {
         document.getElementById('sidebar').classList.toggle('open');
         document.getElementById('mobileOverlay').classList.toggle('active');
@@ -455,7 +458,7 @@
       document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
     }
 
-    // === ОНОВЛЕННЯ СТАТУСУ ===
+    // ОНОВЛЕННЯ СТАТУСУ ЗІ СПИСКУ
     window.updateDailyStatus = async function(name, dept, status) {
         const dStr = document.getElementById('repDate').value;
         const table = getTableName(dept);
@@ -471,7 +474,7 @@
         loadDaily(); loadTabel();
     }
 
-    // === ГЕНЕРАЦІЯ .TXT ФАЙЛУ ДЛЯ ТЕЛЕГРАМ (ТОЧНО ЯК В ПРИКЛАДІ) ===
+    // === ГЕНЕРАЦІЯ .TXT ФАЙЛУ (ТОЧНО ЯК В ПРИКЛАДІ) ===
     window.sendDailyReportTxt = async function() {
         const dStr = document.getElementById('repDate').value;
         const [year, month, day] = dStr.split('-');
@@ -502,7 +505,7 @@
                 let wReps = (dpt.data || []).filter(r => r[dpt.nameField] === w.name);
                 
                 if (wReps.length === 0) {
-                    fullText += `${w.name} ( звіту немає )\n0 - шт\n\n`;
+                    fullText += `${w.name} ( вихідний )\n0 - шт\n\n`;
                 } else {
                     let firstRep = wReps[0];
                     if (firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
@@ -515,7 +518,6 @@
                             if (c > 0) { models[m] = (models[m] || 0) + c; total += c; }
                         });
                         for (let m in models) fullText += `${m} - ${models[m]} шт\n`;
-                        if (total === 0) fullText += `0 - шт\n`;
                         fullText += `\n`;
                     }
                 }
@@ -537,13 +539,10 @@
             
             document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-file-lines"></i> Затвердити та надіслати файл .txt у Telegram`;
             alert(`✅ Файл зі звітом успішно надіслано в Telegram!`);
-        } catch(e) { 
-            console.error(e); 
-            document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; 
-        }
+        } catch(e) { document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; }
     }
 
-    // === ДАШБОРД ===
+    // === ДАШБОРД ТА ДЕТАЛЬНА СТАТИСТИКА ===
     window.loadDashboard = async function() {
        const start = document.getElementById('dashStart').value; const end = document.getElementById('dashEnd').value;
        const filterDept = document.getElementById('dashDept').value; if(!start || !end) return;
@@ -572,17 +571,13 @@
        if(chartWorkers) chartWorkers.destroy();
        chartWorkers = new Chart(document.getElementById('workersChart'), { type:'bar', data:{ labels:Object.keys(wS), datasets:[{label: 'Виготовлено', data:Object.values(wS), backgroundColor:'#009EF7', borderRadius:4}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
        
-       if(chartModels) chartModels.destroy();
-       chartModels = new Chart(document.getElementById('modelsChart'), { type:'doughnut', data:{ labels:Object.keys(mS), datasets:[{data:Object.values(mS), backgroundColor:['#009EF7','#50CD89','#FFC700','#F1416C','#7239EA']}] }, options:{ responsive:true, maintainAspectRatio:false, plugins: { legend: { display: false } } } });
-       
        let sDates = Object.keys(dS).sort();
        if(chartTrend) chartTrend.destroy();
        chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:sDates.map(x=>dS[x]), borderColor:'#50CD89', backgroundColor:'rgba(80,205,137,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
     }
 
     window.loadDetailedModelStats = async function() {
-        const start = document.getElementById('statModStart').value;
-        const end = document.getElementById('statModEnd').value;
+        const start = document.getElementById('statModStart').value; const end = document.getElementById('statModEnd').value;
         if(!start || !end) return;
         document.getElementById('detailedModelStatsContainer').innerHTML = "⏳ Збір даних...";
         const { data: rZv } = await supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end);
@@ -592,18 +587,12 @@
         let stats = {};
         function processArray(arr, type) {
             if(!arr) return;
-            arr.forEach(r => {
-                let c = parseInt(r.count) || 0; if(c <= 0) return;
-                let m = r.config || 'Інше';
-                if(!stats[m]) stats[m] = { zv: 0, pa: 0, za: 0 };
-                stats[m][type] += c;
-            });
+            arr.forEach(r => { let c = parseInt(r.count) || 0; if(c <= 0) return; let m = r.config || 'Інше'; if(!stats[m]) stats[m] = { zv: 0, pa: 0, za: 0 }; stats[m][type] += c; });
         }
         processArray(rZv, 'zv'); processArray(rPa, 'pa'); processArray(rZa, 'za');
 
         let html = `<table class="tabel-table"><thead><tr><th class="name-cell">Модель (Збірка)</th><th>Зварка</th><th>Пайка</th><th>Запаковка</th></tr></thead><tbody>`;
-        let totalZv = 0, totalPa = 0, totalZa = 0;
-        let sortedModels = Object.keys(stats).sort();
+        let totalZv = 0, totalPa = 0, totalZa = 0; let sortedModels = Object.keys(stats).sort();
         if(sortedModels.length === 0) return document.getElementById('detailedModelStatsContainer').innerHTML = "<div style='color:var(--text-muted); font-size:13px;'>Пусто.</div>";
 
         sortedModels.forEach(m => {
@@ -614,7 +603,7 @@
         document.getElementById('detailedModelStatsContainer').innerHTML = html;
     }
 
-    // === 3. ТАБЕЛЬ ===
+    // === 3. ТАБЕЛЬ (БЕЗ ПОМИЛОК ІМЕН) ===
     window.loadTabel = async function() {
       const mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
       document.getElementById('tabel-admin-container').innerHTML="⏳..."; document.getElementById('tabel-zvarka-container').innerHTML="⏳..."; document.getElementById('tabel-payka-container').innerHTML="⏳..."; document.getElementById('tabel-zapakovka-container').innerHTML="⏳...";
@@ -648,7 +637,6 @@
 
       let depts = { "Адмін": [], "Зварка": [], "Пайка": [], "Запаковка": [] };
       Object.keys(tData).forEach(n => { if(depts[tData[n].dept]) depts[tData[n].dept].push(n); });
-
       let mapIds = {"Адмін": "admin", "Зварка": "zvarka", "Пайка": "payka", "Запаковка": "zapakovka"};
 
       for (let dpt in depts) {
@@ -679,30 +667,22 @@
 
     // === ВІДДІЛЕНЕ МОДАЛЬНЕ ВІКНО КАЛЕНДАРЯ (ЯК НА ФОТО) ===
     window.openCalModal = function(n, dt, dpt) { 
-        document.getElementById('calModalName').value=n; 
-        document.getElementById('calModalDate').value=dt; 
-        document.getElementById('calModalDept').value=dpt; 
+        document.getElementById('calModalName').value=n; document.getElementById('calModalDate').value=dt; document.getElementById('calModalDept').value=dpt; 
         document.getElementById('calModalTitle').innerText=`${n} (${dt.split('-').reverse().slice(0,2).join('.')})`; 
         
-        let day = parseInt(dt.split('-')[2]);
-        let uD = window.globalTabelData[n];
+        let day = parseInt(dt.split('-')[2]); let uD = window.globalTabelData[n];
         let dayData = uD && uD.days[day] ? uD.days[day] : { count: 0, status: null, models: {} };
 
         document.getElementById('calModalStatus').value = dayData.status || '-- Немає (Пусто) --'; 
-        
         let dbList = document.getElementById('calModalDetailsList'); 
         if (dayData.count > 0 || Object.keys(dayData.models).length > 0) { 
             document.getElementById('calModalDetailsBlock').style.display='block'; 
             let h='', t=0; 
-            for(let k in dayData.models) { 
-                h += `<li><span>${k}</span><span><b>${dayData.models[k]} шт</b></span></li>`; 
-                t += dayData.models[k]; 
-            } 
-            h += `<div class="modal-total"><span>Всього:</span><span>${t} шт</span></div>`; 
+            for(let k in dayData.models) { h += `<div class="cal-row"><span>${k}</span><span>${dayData.models[k]} шт</span></div>`; t += dayData.models[k]; } 
+            h += `<div class="cal-total-row"><span>Всього:</span><span>${t} шт</span></div>`; 
             dbList.innerHTML=h; 
-        } else {
-            document.getElementById('calModalDetailsBlock').style.display='none'; 
-        }
+        } else document.getElementById('calModalDetailsBlock').style.display='none'; 
+        
         document.getElementById('calModal').classList.add('active'); 
     }
     
@@ -715,7 +695,7 @@
         document.getElementById('calModal').classList.remove('active'); loadTabel(); loadDaily();
     }
 
-    // === ПРОФІЛЬ ===
+    // === ПРОФІЛЬ (З ДЕТАЛІЗАЦІЄЮ) ===
     window.openWorkerProfile = async function(name) {
       let worker = window.globalWorkers.find(w => w.name === name); if(!worker) return;
       document.getElementById('wModalTitle').innerText = worker.name; document.getElementById('wModalId').value = worker.id;
@@ -726,15 +706,12 @@
 
       let modelsHtml = "";
       if (Object.keys(uData.modelsMonthly).length > 0) {
-          modelsHtml = Object.keys(uData.modelsMonthly).map(m => `<li><span>${m}</span><span><b>${uData.modelsMonthly[m]} шт</b></span></li>`).join('');
-      } else {
-          modelsHtml = `<span style="color:var(--text-muted); font-size:12px;">Немає звітів за місяць</span>`;
-      }
+          modelsHtml = Object.keys(uData.modelsMonthly).map(m => `<div class="cal-row"><span>${m}</span><span>${uData.modelsMonthly[m]} шт</span></div>`).join('');
+      } else modelsHtml = `<span style="color:var(--text-muted); font-size:12px;">Немає звітів за місяць</span>`;
       document.getElementById('wInfoModelsList').innerHTML = modelsHtml;
 
       document.getElementById('wEditName').value = worker.name; document.getElementById('wEditDept').value = worker.dept; document.getElementById('wEditStatus').value = worker.status;
-      document.getElementById('wInfoTrend').innerHTML = '⏳...';
-      switchWorkerTab('info'); document.getElementById('workerModal').classList.add('active');
+      document.getElementById('wInfoTrend').innerHTML = '⏳...'; switchWorkerTab('info'); document.getElementById('workerModal').classList.add('active');
 
       if(chartPersonal) chartPersonal.destroy();
       let labels = Object.keys(uData.details).sort(); let dataPoints = labels.map(l => uData.details[l]);
@@ -758,7 +735,7 @@
        let adm="", zv="", pa="", zap="";
        if(data) {
           data.forEach(w => {
-             let el = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${w.name}</span></div><div style="color:var(--text-muted); font-size:13px;">${w.status}</div></div>`;
+             let el = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${w.name}</span></div><div style="color:var(--text-muted); font-size:12px;">${w.status}</div></div>`;
              let d = w.dept.toLowerCase(); if(d==='адмін') adm+=el; else if(d==='зварка') zv+=el; else if(d==='пайка') pa+=el; else if(d==='запаковка') zap+=el;
           });
        }
@@ -770,18 +747,16 @@
     window.openMassUpdate = async function() { 
         document.getElementById('massUpdateCard').classList.add('active'); document.getElementById('massWorkersList').innerHTML = "⏳ Завантаження..."; 
         const { data: w } = await supabase.from('workers').select('*').eq('status', 'Активний').order('name'); let html = ''; 
-        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 140px; padding:8px; font-size:13px; border-radius:6px; background:var(--bg-surface); color:#fff; border:1px solid rgba(255,255,255,0.1);"><option value="">- Без змін -</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Прим. вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
+        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 140px; padding:8px; font-size:12px; border-radius:6px; background:var(--bg-surface); color:#fff; border:1px solid rgba(255,255,255,0.1);"><option value="">- Без змін -</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Прим. вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
         document.getElementById('massWorkersList').innerHTML = html; 
     }
     window.saveMassStatuses = async function() { 
-        let startStr = document.getElementById('massStartDate').value;
-        let endStr = document.getElementById('massEndDate').value;
+        let startStr = document.getElementById('massStartDate').value; let endStr = document.getElementById('massEndDate').value;
         if (!startStr || !endStr) return alert("Вкажіть період Від і До!");
         let startDate = new Date(startStr); let endDate = new Date(endStr);
         if (startDate > endDate) return alert("Дата 'Від' не може бути більшою за 'До'!");
 
-        let rows = document.querySelectorAll('.mass-worker-row'); 
-        document.getElementById('massUpdateCard').classList.remove('active'); 
+        let rows = document.querySelectorAll('.mass-worker-row'); document.getElementById('massUpdateCard').classList.remove('active'); 
 
         let d = new Date(startDate);
         while (d <= endDate) {
@@ -804,8 +779,7 @@
     // === БАЗА ЗБІРОК ТА СКЛАД ===
     window.loadArchive = async function() {
       document.getElementById('archiveListContainer').innerHTML = "⏳...";
-      const { data } = await supabase.from('archive_models').select('*');
-      let html = '';
+      const { data } = await supabase.from('archive_models').select('*'); let html = '';
       if (data) {
         let confs = data.filter(r => r.config).sort((a,b) => a.config.localeCompare(b.config, undefined, {numeric:true}));
         let cV = [], cH = [], cOther = [];
@@ -818,9 +792,7 @@
         html += `<div style="margin-bottom:20px;"><strong>Інші збірки:</strong><br>${cOther.join('') || '—'}</div>`;
 
         let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px;">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`).join('');
-        html += `<div><strong>Банки (Елементи):</strong><br>${elements || '—'}</div>`;
-        document.getElementById('archiveListContainer').innerHTML = html;
-        
+        html += `<div><strong>Банки (Елементи):</strong><br>${elements || '—'}</div>`; document.getElementById('archiveListContainer').innerHTML = html;
         document.getElementById('webConfig').innerHTML = confs.map(x=>`<option>${x.config}</option>`).join('');
         document.getElementById('webElement').innerHTML = data.filter(r=>r.element).map(x=>`<option>${x.element}</option>`).join('');
         let elsHtml = '<option value="">Оберіть...</option>' + data.filter(r=>r.element).map(x=>`<option>${x.element}</option>`).join('');
@@ -832,14 +804,8 @@
       document.getElementById('inventoryBalances').innerHTML = "⏳..."; document.getElementById('inventoryHistory').innerHTML = "⏳...";
       const { data: logs } = await supabase.from('inventory_logs').select('*').order('created_at', { ascending: false });
       let b = {};
-      if(logs) {
-         logs.forEach(l => {
-            let q = parseInt(l.qty); if(!b[l.element]) b[l.element] = 0;
-            if(l.action==='Поставка') b[l.element]+=q; else b[l.element]-=q;
-         });
-      }
+      if(logs) { logs.forEach(l => { let q = parseInt(l.qty); if(!b[l.element]) b[l.element] = 0; if(l.action==='Поставка') b[l.element]+=q; else b[l.element]-=q; }); }
       document.getElementById('inventoryBalances').innerHTML = Object.keys(b).map(k=>`<div class="stat-card"><h4>${k}</h4><div class="value">${b[k]} шт</div></div>`).join('') || "Склад порожній";
-      
       let fDate = document.getElementById('invHistoryDate').value; let filtered = fDate ? logs.filter(x=>x.created_at.startsWith(fDate)) : logs;
       document.getElementById('inventoryHistory').innerHTML = filtered ? filtered.slice(0,20).map(l => `<div class="row"><div><strong>${l.action}:</strong> ${l.element} x ${l.qty} шт</div><div style="color:var(--text-muted); font-size:12px;">${new Date(l.created_at).toLocaleDateString()}</div></div>`).join('') : 'Немає записів';
     }
