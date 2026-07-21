@@ -47,13 +47,12 @@
     .setup-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;}
     .setup-grid > * { flex: 1; min-width: 150px; }
     
-    /* ОПЕРАЦІЇ */
     .row { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
     .row.has-report { background: rgba(80, 205, 137, 0.08); border: 1px solid rgba(80, 205, 137, 0.3); }
     .worker-info { width: 55%; min-width: 200px; }
-    .worker-name { font-weight: 700; font-size: 16px; color: var(--text-main); cursor: pointer; transition: 0.2s; display: inline-block; margin-bottom: 4px;}
-    .worker-name:hover { color: var(--info); text-decoration: underline; }
-    .worker-details { font-size: 13px; color: #ccc; line-height: 1.6;}
+    .worker-name { font-weight: 700; font-size: 16px; color: var(--text-main); cursor: pointer; text-decoration: underline transparent; transition: 0.2s;}
+    .worker-name:hover { text-decoration: underline var(--info); color: var(--info); }
+    .worker-details { font-size: 13px; color: #ccc; margin-top: 6px; line-height: 1.6;}
     .status-select { background: var(--bg-surface); padding: 8px; font-size: 13px; border-radius: 6px; width: 140px; border: 1px solid rgba(255,255,255,0.1); color: #fff; }
     
     .dept-block { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
@@ -62,6 +61,12 @@
     .stat-card { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; flex: 1; min-width: 140px;}
     .stat-card .value { font-size: 24px; font-weight: 700; color: var(--success); }
     .badge { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
+
+    /* РЕЙТИНГ (ЛІДЕРБОРД) */
+    .leaderboard-item { display: flex; justify-content: space-between; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 8px; align-items: center; border: 1px solid rgba(255,255,255,0.02);}
+    .leader-rank-1 { border-color: gold; background: rgba(255, 215, 0, 0.05); }
+    .leader-rank-2 { border-color: silver; background: rgba(192, 192, 192, 0.05); }
+    .leader-rank-3 { border-color: #cd7f32; background: rgba(205, 127, 50, 0.05); }
 
     /* ТАБЛИЦІ */
     .table-container { overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
@@ -80,7 +85,7 @@
     /* МОДАЛКИ */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
-    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; position: absolute; right: 20px; top: 15px;}
     
     .cal-details-box { background: var(--bg-base); border-radius: 12px; padding: 15px; margin-top: 10px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
@@ -121,7 +126,7 @@
 
   <div class="mobile-header">
     <div class="logo-text" style="margin:0; font-size:20px;">L2 PRO</div>
-    <button onclick="toggleMenu()" style="background:transparent; border:none; color:#fff; font-size:24px;"><i class="fa-solid fa-bars"></i></button>
+    <button onclick="toggleMenu()" style="background:transparent; border:none; color:#fff; font-size:24px; padding:0;"><i class="fa-solid fa-bars"></i></button>
   </div>
   <div class="overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
 
@@ -152,16 +157,6 @@
         </div>
 
         <div class="card">
-          <div class="card-header"><div class="card-title">Каталог Зміни</div><button class="btn-secondary" onclick="clearModels()">Скинути</button></div>
-          <div class="setup-grid">
-            <div><select id="webConfig"><option>Завантаження...</option></select></div>
-            <div><select id="webElement"><option>Завантаження...</option></select></div>
-            <button class="btn-primary" onclick="addActiveModel()">Додати в роботу</button>
-          </div>
-          <div id="activeTags" style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;"></div>
-        </div>
-
-        <div class="card">
           <div class="card-header"><div class="card-title">Звіти за день</div><input type="date" id="repDate" onchange="loadDaily()" style="max-width: 160px;"></div>
           <div id="deptWorkersContainer">
              <div class="dept-block"><div class="dept-block-header" style="color:#A1A5B7"><i class="fa-solid fa-user-shield"></i> Адміністрація</div><div id="list-admin">⏳</div></div>
@@ -178,68 +173,79 @@
 
       <!-- НОВЕ: 1.5 РОЗПОДІЛ РОБОТИ -->
       <div id="distrib" class="section">
-        <div class="header"><h1>Розподіл роботи</h1><p>Генератор планів для цехів</p></div>
+        <div class="header"><h1>Розподіл роботи</h1><p>Генератор планів (перемішує працівників)</p></div>
         <div class="card">
-            <div class="setup-grid">
-                <div>
-                    <label style="font-size:12px; color:var(--text-muted);">Відділ:</label>
-                    <select id="distDept" onchange="loadDistribWorkers()">
-                        <option value="Зварка">Зварка</option>
-                        <option value="Пайка">Пайка</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="font-size:12px; color:var(--text-muted);">Збірка (Текст):</label>
-                    <input type="text" id="distModel" placeholder="Напр. 6s4p 50pl (Зв ширину)">
-                </div>
-                <div>
-                    <label style="font-size:12px; color:var(--text-muted);">Загальна кількість (шт):</label>
-                    <input type="number" id="distQty" placeholder="Напр. 300">
+            <div style="margin-bottom: 15px;">
+                <label style="font-size:12px; color:var(--text-muted);">Відділ:</label>
+                <select id="distDept" onchange="loadDistribWorkers()" style="max-width:200px; margin-top:5px;">
+                    <option value="Зварка">Зварка</option>
+                    <option value="Пайка">Пайка</option>
+                </select>
+            </div>
+
+            <div id="distOrdersContainer">
+                <div class="dist-order-row setup-grid" style="align-items:flex-end;">
+                    <div style="flex:2;">
+                        <label style="font-size:12px; color:var(--text-muted);">Збірка (Оберіть з бази):</label>
+                        <select class="dist-model-select distModelList" style="margin-top:5px;"></select>
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:12px; color:var(--text-muted);">Кількість (шт):</label>
+                        <input type="number" class="dist-qty-input" placeholder="Напр. 100" style="margin-top:5px;">
+                    </div>
                 </div>
             </div>
             
+            <button class="btn-secondary" style="margin-bottom: 20px;" onclick="addDistOrderRow()">+ Додати ще замовлення</button>
+            
             <div style="margin-bottom: 20px;">
                 <label style="font-size:12px; color:var(--text-muted);">Додаткові вказівки (Необов'язково):</label>
-                <input type="text" id="distNotes" placeholder="Всі елементи проклеєні...">
+                <input type="text" id="distNotes" placeholder="Наприклад: Всі елементи проклеєні..." style="margin-top:5px;">
             </div>
 
-            <label style="font-size:12px; color:var(--text-muted); margin-bottom:10px; display:block;">Оберіть працівників для розподілу:</label>
+            <label style="font-size:12px; color:var(--text-muted); margin-bottom:10px; display:block;">Оберіть працівників для розподілу (вони будуть перемішані):</label>
             <div class="checkbox-list" id="distWorkersList">⏳ Оберіть відділ...</div>
 
-            <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="generateDistrib()">Згенерувати текст розподілу</button>
+            <button class="btn-primary" style="width:100%; margin-top:20px; padding:15px; font-size:15px;" onclick="generateDistrib()">🎲 Згенерувати розподіл</button>
 
             <div style="margin-top: 20px;">
-                <textarea id="distResult" rows="10" style="height: 200px; resize: none;" readonly placeholder="Тут з'явиться готовий текст для копіювання в Telegram..."></textarea>
-                <button class="btn-success" style="width:100%; margin-top:10px;" onclick="copyDistrib()"><i class="fa-solid fa-copy"></i> Скопіювати текст</button>
+                <textarea id="distResult" rows="12" style="height: auto; resize: vertical; line-height:1.5;" readonly placeholder="Тут з'явиться готовий текст для Telegram..."></textarea>
+                <button class="btn-success" style="width:100%; margin-top:10px; padding:15px;" onclick="copyDistrib()"><i class="fa-solid fa-copy"></i> Скопіювати текст</button>
             </div>
         </div>
       </div>
 
-      <!-- 2. ДАШБОРД ТА ГРАФІКИ -->
+      <!-- 2. ДАШБОРД (Додано Таблицю Лідерів) -->
       <div id="dashboard" class="section">
-        <div class="header"><h1>Аналітика та Графіки</h1><p>Система показує загальну статистику. "Детальна статистика" нижче рахує всі знайдені звіти за вказаний період і показує, скільки акумуляторів кожної моделі було виготовлено.</p></div>
+        <div class="header"><h1>Аналітика та Рейтинги</h1><p>Система показує загальну статистику та рейтинг найкращих працівників.</p></div>
         <div class="card">
           <div class="setup-grid" style="margin-bottom: 0;">
-            <div><label style="font-size:11px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
-            <div><label style="font-size:11px; color:var(--text-muted);">До:</label><input type="date" id="dashEnd"></div>
-            <div><label style="font-size:11px; color:var(--text-muted);">Відділ:</label><select id="dashDept"><option value="Всі">Всі відділи</option><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select></div>
-            <button class="btn-primary" style="height: 40px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Аналіз</button>
+            <div><label style="font-size:12px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
+            <div><label style="font-size:12px; color:var(--text-muted);">До:</label><input type="date" id="dashEnd"></div>
+            <div><label style="font-size:12px; color:var(--text-muted);">Відділ:</label><select id="dashDept"><option value="Всі">Всі відділи</option><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select></div>
+            <button class="btn-primary" style="height: 44px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Аналіз</button>
           </div>
         </div>
         
         <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
            <div class="stat-card" style="border-color:var(--success);"><h4 style="color:var(--success);">Всього</h4><div class="value" id="dashTotalScore">0 шт</div></div>
-           <div class="stat-card" style="border-color:gold;"><h4 style="color:gold;">Лідер</h4><div class="value" id="dashTopWorker" style="color:#FFF;">⏳</div></div>
-           
-           <div class="stat-card" style="border-color:var(--info);">
-               <h4 style="color:var(--info)">Персональна динаміка</h4>
-               <select id="dashSelectWorker" style="margin-top:5px; padding:6px; font-size:12px;" onchange="loadPersonalChartDashboard()">
-                   <option value="">Оберіть працівника...</option>
-               </select>
-           </div>
+           <div class="stat-card" style="border-color:var(--info);"><h4 style="color:var(--info)">Топ збірка</h4><div class="value" id="dashTopModel" style="color:#FFF;">⏳</div></div>
         </div>
-        
-        <div class="card"><div class="card-title" id="chartTitle1">Динаміка виробництва (Всі)</div><div style="position:relative; height:200px; width:100%; margin-top:15px;"><canvas id="trendChart"></canvas></div></div>
+
+        <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom: 20px;">
+            <!-- Графік -->
+            <div class="card" style="flex:2; min-width:300px; margin-bottom:0;">
+                <div class="card-title" id="chartTitle1" style="margin-bottom:15px;">Динаміка виробництва</div>
+                <select id="dashSelectWorker" style="padding:8px; font-size:13px; width:100%; margin-bottom:15px;" onchange="loadPersonalChartDashboard()"><option value="">-- Всі працівники --</option></select>
+                <div style="position:relative; height:200px; width:100%;"><canvas id="trendChart"></canvas></div>
+            </div>
+            
+            <!-- Таблиця Лідерів -->
+            <div class="card" style="flex:1; min-width:280px; margin-bottom:0; background: linear-gradient(145deg, rgba(255,215,0,0.05) 0%, var(--bg-surface) 100%);">
+                <div class="card-title" style="margin-bottom:15px; color:gold;"><i class="fa-solid fa-trophy"></i> Таблиця Лідерів</div>
+                <div id="leaderboardContainer">⏳ Завантаження...</div>
+            </div>
+        </div>
         
         <div class="card">
           <div class="card-header">
@@ -247,10 +253,10 @@
             <div style="display:flex; gap:10px; align-items:center; flex-wrap: wrap;">
                <div><input type="date" id="statModStart" style="padding: 10px; font-size: 13px;"></div>
                <div><input type="date" id="statModEnd" style="padding: 10px; font-size: 13px;"></div>
-               <button class="btn-info" style="height: 40px;" onclick="loadDetailedModelStats()">Рахувати</button>
+               <button class="btn-info" style="height: 40px; padding: 0 15px;" onclick="loadDetailedModelStats()">Рахувати</button>
             </div>
           </div>
-          <div class="table-container" id="detailedModelStatsContainer"><span style="color:var(--text-muted); font-size:13px;">Оберіть період...</span></div>
+          <div class="table-container" id="detailedModelStatsContainer"><span style="color:var(--text-muted); font-size:13px;">Оберіть період та натисніть "Рахувати"...</span></div>
         </div>
       </div>
 
@@ -270,18 +276,18 @@
 
       <!-- 4. КОМАНДА -->
       <div id="workers" class="section">
-        <div class="header"><h1>Команда L2</h1><p>Управління допусками</p></div>
+        <div class="header"><h1>Команда L2</h1><p>Управління допусками та швидка статистика</p></div>
         <div id="team-cards-container" style="display:flex; flex-wrap:wrap; gap:15px;">⏳...</div>
       </div>
 
-      <!-- 5. БАЗА ЗБІРОК (АВТОМНОЖЕННЯ) -->
+      <!-- 5. БАЗА ЗБІРОК (Конструктор та Автомноження) -->
       <div id="archive" class="section">
         <div class="header"><h1>База збірок</h1><p>Довідник моделей (Автоматично рахує банки з назви, напр. 6s6p = 36)</p></div>
         <div class="setup-grid" style="align-items: flex-start;">
           <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Нова конфігурація</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newConfigInput" placeholder="6s2p (v)"><button class="btn-primary" onclick="addArch('config')">+</button></div></div>
           <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Новий елемент</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newElementInput" placeholder="Molicel P42A"><button class="btn-primary" onclick="addArch('element')">+</button></div></div>
         </div>
-        <div class="card"><div class="card-title" style="margin-bottom: 15px;">Повний довідник</div><div id="archiveListContainer">⏳ Завантаження...</div></div>
+        <div class="card"><div class="card-title" style="margin-bottom: 15px;">Повний довідник (Клікніть для налаштування)</div><div id="archiveListContainer">⏳ Завантаження...</div></div>
       </div>
 
       <!-- 6. СКЛАД -->
@@ -325,9 +331,7 @@
             <button class="btn-danger" onclick="saveInv('Видача')">Списати</button>
           </div>
           
-          <!-- Даталісти для пам'яті браузера -->
-          <datalist id="supList"></datalist>
-          <datalist id="clientList"></datalist>
+          <datalist id="supList"></datalist><datalist id="clientList"></datalist>
         </div>
         
         <div class="card"><div class="card-title" style="margin-bottom:15px;">Залишки на локаціях</div><div id="inventoryBalances" style="display:flex; gap:10px; flex-wrap:wrap;"></div></div>
@@ -378,7 +382,7 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА ПРОФІЛЮ / АРХІВУ -->
+  <!-- МОДАЛКА ПРОФІЛЮ -->
   <div class="modal" id="workerModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('workerModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
@@ -400,6 +404,7 @@
                 <div id="wInfoModelsList" style="margin-bottom: 10px;"></div>
                 <div class="cal-total-row"><span>Всього:</span> <span id="wInfoItems">0 шт</span></div>
             </div>
+            <div style="position:relative; height:180px; width:100%;"><canvas id="personalChart"></canvas></div>
         </div>
         
         <div id="wTabEdit" class="modal-tab-content">
@@ -410,14 +415,37 @@
             <select id="wEditStatus" style="margin-bottom:25px;"><option value="Активний">Активний</option><option value="Очікує">Очікує</option><option value="Звільнений">Звільнений</option></select>
             <button class="btn-success" style="width: 100%; padding:14px;" onclick="saveWorkerProfile()">Зберегти налаштування</button>
         </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА АРХІВУ (КОНСТРУКТОР ТА ЕЛЕМЕНТИ) -->
+  <div class="modal" id="archiveModal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('archiveModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="card-title" id="archModalTitle" style="margin-bottom:20px; font-size: 18px; color:var(--info);">Налаштування</div>
+        <input type="hidden" id="archModalName">
+        <input type="hidden" id="archModalType">
         
-        <!-- Вкладка для АРХІВУ (Інструкції) -->
-        <div id="wTabArchive" class="modal-tab-content">
-            <label style="font-size:13px; color:var(--text-muted);">Посилання на фото/інструкцію:</label>
-            <input type="text" id="archPhotoLink" placeholder="https://..." style="margin-bottom:15px;">
-            <label style="font-size:13px; color:var(--text-muted);">Текст інструкції:</label>
-            <textarea id="archDetails" rows="4" style="margin-bottom:15px;"></textarea>
-            <button class="btn-success" style="width: 100%; padding:14px;" onclick="saveArchDetails()">Зберегти інструкцію</button>
+        <!-- ДЛЯ ЗБІРКИ (КОНСТРУКТОР КРОКІВ) -->
+        <div id="archConfigBlock" style="display:none;">
+            <div style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Додавайте кроки інструкції. Можна вставити текст або посилання на фотографію.</div>
+            <div id="archStepsContainer" style="max-height:300px; overflow-y:auto; margin-bottom:15px;"></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-secondary" style="flex:1;" onclick="addArchStep('text')">+ Текст</button>
+                <button class="btn-secondary" style="flex:1;" onclick="addArchStep('image')">+ Фото (URL)</button>
+            </div>
+            <button class="btn-success" style="width: 100%; padding:14px; margin-top:20px;" onclick="saveArchConfig()">Зберегти схему</button>
+        </div>
+
+        <!-- ДЛЯ ЕЛЕМЕНТА (БАНКИ) -->
+        <div id="archElementBlock" style="display:none;">
+            <label style="font-size:13px; color:var(--text-muted);">Розмір (напр. 21700):</label>
+            <input type="text" id="archElSize" style="margin-bottom:15px;">
+            <label style="font-size:13px; color:var(--text-muted);">Ємність (mAh):</label>
+            <input type="number" id="archElMah" style="margin-bottom:15px;">
+            <label style="font-size:13px; color:var(--text-muted);">Посилання на фото (URL):</label>
+            <input type="text" id="archElPhoto" style="margin-bottom:25px;" placeholder="https://...">
+            <button class="btn-success" style="width: 100%; padding:14px;" onclick="saveArchElement()">Зберегти елемент</button>
         </div>
     </div>
   </div>
@@ -435,25 +463,20 @@
     let d = new Date(); let m = d.getMonth() + 1; let mStr = d.getFullYear() + "-" + (m < 10 ? "0" + m : m);
     let todayStr = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-${(d.getDate() < 10 ? "0" + d.getDate() : d.getDate())}`;
     
-    document.getElementById('repDate').valueAsDate = d;
-    document.getElementById('tabelMonth').value = mStr;
-    document.getElementById('dashStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`;
-    document.getElementById('dashEnd').valueAsDate = d;
+    document.getElementById('repDate').valueAsDate = d; document.getElementById('tabelMonth').value = mStr;
+    document.getElementById('dashStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`; document.getElementById('dashEnd').valueAsDate = d;
     document.getElementById('massStartDate').valueAsDate = d; document.getElementById('massEndDate').valueAsDate = d;
     document.getElementById('statModStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`; document.getElementById('statModEnd').valueAsDate = d;
 
-    window.globalWorkers = []; window.globalTabelData = {}; window.globalArchive = [];
-    let chartTrend = null;
+    window.globalWorkers = []; window.globalTabelData = {}; window.globalArchive = []; window.invBalances = {};
+    let chartTrend = null; let chartPersonal = null;
 
     // ВІДНОВЛЕННЯ ПАМ'ЯТІ (Склад)
-    let savedSups = JSON.parse(localStorage.getItem('L2_sups') || '[]');
-    let savedClients = JSON.parse(localStorage.getItem('L2_clients') || '[]');
+    let savedSups = JSON.parse(localStorage.getItem('L2_sups') || '[]'); let savedClients = JSON.parse(localStorage.getItem('L2_clients') || '[]');
     document.getElementById('supList').innerHTML = savedSups.map(x=>`<option value="${x}">`).join('');
     document.getElementById('clientList').innerHTML = savedClients.map(x=>`<option value="${x}">`).join('');
 
-    window.toggleMenu = function() {
-        document.getElementById('sidebar').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('active');
-    }
+    window.toggleMenu = function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('active'); }
 
     window.switchTab = function(tab) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -473,7 +496,7 @@
       if(s==='Простой') return '<span class="st-badge st-p">П</span>'; return '';
     }
 
-    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ ===
+    // === 1. ОПЕРАЦІЇ ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
       document.getElementById('list-admin').innerHTML="⏳..."; document.getElementById('list-zvarka').innerHTML="⏳..."; document.getElementById('list-payka').innerHTML="⏳..."; document.getElementById('list-zapakovka').innerHTML="⏳...";
@@ -483,9 +506,6 @@
         document.getElementById('pendingCard').style.display = 'block';
         document.getElementById('pendingList').innerHTML = pending.map(p => `<div class="row"><div>${p.name}</div><div style="display:flex; gap:10px;"><select id="newdept-${p.id}"><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select><button class="btn-success" style="padding:8px 12px;" onclick="approveWorker(${p.id})"><i class="fa-solid fa-check"></i></button></div></div>`).join('');
       } else document.getElementById('pendingCard').style.display = 'none';
-
-      const { data: models } = await supabase.from('active_models').select('model');
-      document.getElementById('activeTags').innerHTML = (!models || models.length===0) ? "—" : models.map(m => `<div class="badge" style="background:#fff; color:#000;">${m.model}</div>`).join('');
 
       const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name'); window.globalWorkers = workers || [];
       const { data: rZv } = await supabase.from('reports_zvarka').select('*').eq('date', dStr);
@@ -511,8 +531,7 @@
                 detailsHtml = `<div style="color:var(--success); font-size:14px; font-weight:700; margin-bottom:8px;">✅ Зроблено:</div>${mList}`;
             }
          } else {
-            isAbsence = true;
-            detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
+            isAbsence = true; detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
          }
          
          let boxClass = isAbsence ? "row" : "row has-report";
@@ -527,11 +546,7 @@
             <option value="Простой" ${currentStatus==='Простой' ? 'selected' : ''}>Простой</option>
          </select>`;
 
-         let row = `
-         <div class="${boxClass}">
-            <div class="worker-info"><div class="worker-name" onclick="openWorkerProfile('${w.name}')">${nameDisplay}</div><div class="worker-details">${detailsHtml}</div></div>
-            <div>${selectHtml}</div>
-         </div>`;
+         let row = `<div class="${boxClass}"><div class="worker-info"><div class="worker-name" onclick="openWorkerProfile('${w.name}')">${nameDisplay}</div><div class="worker-details">${detailsHtml}</div></div><div>${selectHtml}</div></div>`;
          let dp = w.dept.toLowerCase(); if(dp==='адмін') adm+=row; else if(dp==='зварка') zv+=row; else if(dp==='пайка') pa+=row; else if(dp==='запаковка') zap+=row;
       });
       
@@ -549,7 +564,6 @@
         loadDaily(); loadTabel();
     }
 
-    // === ГЕНЕРАЦІЯ .TXT ФАЙЛУ ===
     window.sendDailyReportTxt = async function() {
         const dStr = document.getElementById('repDate').value; const [year, month, day] = dStr.split('-'); const dateFormatted = `${day}.${month}.${year}`;
         const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name');
@@ -580,6 +594,7 @@
             });
             fullText += `----------------------\n\n`;
         }
+
         try {
             const blob = new Blob([fullText.trim()], { type: 'text/plain' }); const formData = new FormData();
             formData.append('chat_id', ADMIN_CHAT_ID); formData.append('document', blob, `Звіт_Л2_${dateFormatted}.txt`); formData.append('caption', `📋 Фінальний звіт за ${dateFormatted}`);
@@ -588,9 +603,69 @@
         } catch(e) { document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; }
     }
 
-    // === ДАШБОРД ===
+    // === НОВЕ: 1.5 РОЗПОДІЛ РОБОТИ (РАНДОМ + МУЛЬТИ-ЗАМОВЛЕННЯ) ===
+    window.loadDistribWorkers = function() {
+        let dept = document.getElementById('distDept').value;
+        let workers = window.globalWorkers.filter(w => w.dept === dept);
+        let html = "";
+        workers.forEach(w => { html += `<label class="check-item"><input type="checkbox" class="dist-check" value="${w.name}" checked> ${w.name}</label>`; });
+        document.getElementById('distWorkersList').innerHTML = html || "Немає активних працівників.";
+        
+        let confHtml = window.globalArchive.filter(r=>r.config).map(x=>`<option value="${x.config}">${x.config}</option>`).join('');
+        document.querySelectorAll('.distModelList').forEach(el => el.innerHTML = confHtml);
+    }
+
+    window.addDistOrderRow = function() {
+        let confHtml = window.globalArchive.filter(r=>r.config).map(x=>`<option value="${x.config}">${x.config}</option>`).join('');
+        let newRow = document.createElement('div'); newRow.className = "dist-order-row setup-grid"; newRow.style.alignItems = "flex-end";
+        newRow.innerHTML = `<div style="flex:2;"><select class="dist-model-select distModelList" style="margin-top:5px;">${confHtml}</select></div><div style="flex:1;"><input type="number" class="dist-qty-input" placeholder="Кількість (шт)" style="margin-top:5px;"></div><button class="btn-danger" style="padding:12px; flex:none;" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>`;
+        document.getElementById('distOrdersContainer').appendChild(newRow);
+    }
+
+    window.generateDistrib = function() {
+        let dept = document.getElementById('distDept').value; let notes = document.getElementById('distNotes').value.trim();
+        let orders = []; let totalQty = 0;
+        document.querySelectorAll('.dist-order-row').forEach(row => {
+            let m = row.querySelector('.dist-model-select').value; let q = parseInt(row.querySelector('.dist-qty-input').value);
+            if(m && q > 0) { orders.push({model: m, qty: q}); totalQty += q; }
+        });
+        if(orders.length === 0) return alert("Заповніть хоча б одне замовлення з правильною кількістю!");
+
+        let checks = document.querySelectorAll('.dist-check:checked');
+        if (checks.length === 0) return alert("Оберіть працівників!");
+        
+        // Рандомізація масиву працівників
+        let workerNames = Array.from(checks).map(c => c.value);
+        workerNames.sort(() => Math.random() - 0.5);
+
+        let finalDistrib = {}; workerNames.forEach(n => finalDistrib[n] = 0);
+        
+        let text = ``;
+        orders.forEach(ord => {
+            text += `${ord.model} - ${ord.qty}шт.\n`;
+            let baseQty = Math.floor(ord.qty / workerNames.length);
+            let remainder = ord.qty % workerNames.length;
+            workerNames.forEach((name, index) => {
+                let pQty = baseQty + (index < remainder ? 1 : 0);
+                finalDistrib[name] += pQty;
+            });
+        });
+        
+        if (notes) text += `\nВказівки: ${notes}\n`;
+        text += `\nРозподіл (${workerNames.length} ${dept === 'Зварка' ? 'сварщики' : 'пайщики'}):\n`;
+        for (let name in finalDistrib) {
+            text += `• ${name} — ${finalDistrib[name]} шт.\n`;
+        }
+        document.getElementById('distResult').value = text;
+    }
+
+    window.copyDistrib = function() {
+        let res = document.getElementById('distResult'); res.select(); document.execCommand("copy"); alert("Текст скопійовано!");
+    }
+
+    // === 2. ДАШБОРД (ГЕЙМІФІКАЦІЯ / ЛІДЕРБОРД) ===
     window.populateDashWorkers = function() {
-        let html = '<option value="">Вся команда</option>';
+        let html = '<option value="">-- Всі працівники --</option>';
         window.globalWorkers.forEach(w => { html += `<option value="${w.name}">${w.name}</option>`; });
         let sel = document.getElementById('dashSelectWorker'); if(sel) sel.innerHTML = html;
     }
@@ -618,14 +693,24 @@
        });
 
        document.getElementById('dashTotalScore').innerText = total + ' шт';
-       let tW = {name:'Немає', val:0}; for(let w in wS) if(wS[w]>tW.val) tW={name:w, val:wS[w]};
-       document.getElementById('dashTopWorker').innerText = tW.name; 
        let tM = {name:'Немає', val:0}; for(let m in mS) if(mS[m]>tM.val) tM={name:m, val:mS[m]};
        document.getElementById('dashTopModel').innerText = tM.name; 
 
-       if(chartWorkers) chartWorkers.destroy();
-       chartWorkers = new Chart(document.getElementById('workersChart'), { type:'bar', data:{ labels:Object.keys(wS), datasets:[{label: 'Виготовлено', data:Object.values(wS), backgroundColor:'#009EF7', borderRadius:4}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
-       
+       // РЕЙТИНГОВА ТАБЛИЦЯ (ЛІДЕРБОРД)
+       let sortedWorkers = Object.keys(wS).map(k => ({name: k, score: wS[k]})).sort((a,b) => b.score - a.score);
+       let lbHtml = "";
+       let medals = ["🥇", "🥈", "🥉", "4.", "5."];
+       for(let i=0; i<Math.min(sortedWorkers.length, 5); i++) {
+           let rankClass = i < 3 ? `leader-rank-${i+1}` : "";
+           let color = i===0 ? 'gold' : (i===1 ? 'silver' : (i===2 ? '#cd7f32' : 'var(--text-main)'));
+           lbHtml += `<div class="leaderboard-item ${rankClass}">
+               <div style="font-weight:700; color:${color}; font-size:15px;">${medals[i]} ${sortedWorkers[i].name}</div>
+               <div style="font-weight:700; color:var(--success);">${sortedWorkers[i].score} шт</div>
+           </div>`;
+       }
+       document.getElementById('leaderboardContainer').innerHTML = lbHtml || "<div style='color:var(--text-muted); font-size:13px;'>Немає даних</div>";
+       if(sortedWorkers.length > 0) { document.getElementById('dashTopWorker').innerText = sortedWorkers[0].name; }
+
        loadPersonalChartDashboard();
     }
 
@@ -670,52 +755,6 @@
         });
         html += `<tr><td class="name-cell" style="color:var(--success);">ЗАГАЛОМ:</td><td style="font-weight:700;">${totalZv}</td><td style="font-weight:700;">${totalPa}</td><td style="font-weight:700; color:var(--success);">${totalZa}</td></tr></tbody></table>`;
         document.getElementById('detailedModelStatsContainer').innerHTML = html;
-    }
-
-    // === НОВЕ: РОЗПОДІЛ РОБОТИ ===
-    window.loadDistribWorkers = function() {
-        let dept = document.getElementById('distDept').value;
-        let workers = window.globalWorkers.filter(w => w.dept === dept);
-        let html = "";
-        workers.forEach(w => {
-            html += `<label class="check-item"><input type="checkbox" class="dist-check" value="${w.name}" checked> ${w.name}</label>`;
-        });
-        document.getElementById('distWorkersList').innerHTML = html || "Немає активних працівників.";
-    }
-
-    window.generateDistrib = function() {
-        let dept = document.getElementById('distDept').value;
-        let model = document.getElementById('distModel').value.trim();
-        let qty = parseInt(document.getElementById('distQty').value);
-        let notes = document.getElementById('distNotes').value.trim();
-        
-        if (!model || isNaN(qty) || qty <= 0) return alert("Заповніть модель та правильну кількість!");
-        
-        let checks = document.querySelectorAll('.dist-check:checked');
-        if (checks.length === 0) return alert("Оберіть хоча б одного працівника!");
-        
-        let workerNames = Array.from(checks).map(c => c.value);
-        let baseQty = Math.floor(qty / workerNames.length);
-        let remainder = qty % workerNames.length;
-        
-        let d = new Date(); let day = d.getDate(); let month = d.toLocaleString('uk', { month: 'long' });
-        
-        let text = `${model} - ${qty}шт.\n`;
-        if (notes) text += `${notes}\n`;
-        text += `\nРозподіл (${workerNames.length} ${dept === 'Зварка' ? 'сварщики' : 'пайщики'}):\n`;
-        
-        workerNames.forEach((name, index) => {
-            let pQty = baseQty + (index < remainder ? 1 : 0);
-            text += `• ${name} — ${pQty} шт.\n`;
-        });
-        
-        document.getElementById('distResult').value = text;
-    }
-
-    window.copyDistrib = function() {
-        let res = document.getElementById('distResult');
-        res.select(); document.execCommand("copy");
-        alert("Текст скопійовано!");
     }
 
     // === 3. ТАБЕЛЬ ===
@@ -778,7 +817,6 @@
       }
     }
 
-    // ВІДДІЛЕНЕ МОДАЛЬНЕ ВІКНО КАЛЕНДАРЯ
     window.openCalModal = function(n, dt, dpt) { 
         document.getElementById('calModalName').value=n; document.getElementById('calModalDate').value=dt; document.getElementById('calModalDept').value=dpt; 
         document.getElementById('calModalTitle').innerText=`${n} (${dt.split('-').reverse().slice(0,2).join('.')})`; 
@@ -796,7 +834,7 @@
             dbList.innerHTML=h; 
         } else { document.getElementById('calModalDetailsBlock').style.display='none'; }
         
-        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); // закриваємо інші
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
         document.getElementById('calModal').classList.add('active'); 
     }
     
@@ -809,36 +847,96 @@
         document.getElementById('calModal').classList.remove('active'); loadTabel(); loadDaily();
     }
 
-    // === КОМАНДА (КАРТКИ) ===
+    // === КОМАНДА (КАРТКИ ІЗ ВЕЛИКИМИ ЦИФРАМИ) ===
     window.loadWorkersCards = async function() {
+       document.getElementById('team-cards-container').innerHTML = "⏳ Завантаження...";
+       let mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
+       const [y, mo] = mVal.split('-'); const days = new Date(y, mo, 0).getDate();
+       const start = `${y}-${mo}-01`; const end = `${y}-${mo}-${days}`;
+
        const { data } = await supabase.from('workers').select('*').order('name');
+       
+       // Дістаємо швидко суму для кожного за місяць
+       const { data: rZv } = await supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end);
+       const { data: rPa } = await supabase.from('reports_payka').select('*').gte('date', start).lte('date', end);
+       const { data: rZa } = await supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end);
+       let all = [...(rZv||[]), ...(rPa||[]), ...(rZa||[])];
+
        let html = "";
        if(data) {
           data.forEach(w => {
              let stColor = w.status === 'Активний' ? 'var(--success)' : (w.status === 'Очікує' ? 'var(--warning)' : 'var(--danger)');
+             let workerNameField = w.dept === 'Пайка' ? 'solderer_name' : (w.dept === 'Запаковка' ? 'packager_name' : 'name');
+             let wReps = all.filter(r => r[workerNameField] === w.name);
+             let sum = 0; wReps.forEach(r => sum += (parseInt(r.count)||0));
+
              html += `
-             <div class="card" style="padding:15px; margin-bottom:0; width: calc(33% - 10px); min-width: 250px;">
-                <div style="font-size:16px; font-weight:700; margin-bottom:10px;">${w.name}</div>
+             <div class="card" style="padding:20px; margin-bottom:0; width: calc(33.3% - 10px); min-width: 280px; position:relative;">
+                <div style="position:absolute; top:20px; right:20px; text-align:right;">
+                    <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">За місяць</div>
+                    <div style="font-size:20px; font-weight:700; color:var(--success);">${sum}</div>
+                </div>
+                <div style="font-size:16px; font-weight:700; margin-bottom:15px; width:70%;">${w.name}</div>
                 <div style="font-size:13px; color:var(--text-muted); margin-bottom:5px;">Відділ: <span style="color:#fff;">${w.dept}</span></div>
-                <div style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Статус: <span style="color:${stColor}; font-weight:600;">${w.status}</span></div>
-                <button class="btn-secondary" style="width:100%; padding:8px; font-size:12px;" onclick="openWorkerProfile('${w.name}')">Редагувати профіль</button>
+                <div style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Статус: <span style="color:${stColor}; font-weight:600;">${w.status}</span></div>
+                <button class="btn-secondary" style="width:100%; padding:10px; font-size:13px;" onclick="openWorkerProfile('${w.name}')">Відкрити профіль</button>
              </div>`;
           });
        }
        document.getElementById('team-cards-container').innerHTML = html || "Немає працівників";
     }
 
-    // === ПРОФІЛЬ ===
+    // === ПРОФІЛЬ (ТЯГНЕ ДАНІ НАПРЯМУ) ===
     window.openWorkerProfile = async function(name) {
       let worker = window.globalWorkers.find(w => w.name === name); if(!worker) return;
       document.getElementById('wModalTitle').innerText = worker.name; document.getElementById('wModalId').value = worker.id;
       
       document.getElementById('wEditName').value = worker.name; document.getElementById('wEditDept').value = worker.dept; document.getElementById('wEditStatus').value = worker.status;
+      document.getElementById('wInfoDept').innerText = worker.dept; document.getElementById('wInfoStatus').innerText = worker.status;
+      document.getElementById('wInfoItems').innerText = "⏳..."; document.getElementById('wInfoModelsList').innerHTML = ""; document.getElementById('wInfoTrend').innerHTML = '⏳...';
       
-      // Сховати вкладки якщо це виклик не з табеля
       document.getElementById('workerTabs').style.display = 'flex';
-      switchWorkerTab('edit'); 
-      document.getElementById('workerModal').classList.add('active');
+      switchWorkerTab('info'); document.getElementById('workerModal').classList.add('active');
+
+      // Тягнемо з бази
+      let mVal = document.getElementById('tabelMonth').value; 
+      let [y, mo] = mVal.split('-'); let days = new Date(y, mo, 0).getDate();
+      let start = `${y}-${mo}-01`; let end = `${y}-${mo}-${days}`;
+      let tbl = getTableName(worker.dept); let workerNameField = worker.dept === 'Пайка' ? 'solderer_name' : (worker.dept === 'Запаковка' ? 'packager_name' : 'name');
+      
+      if(tbl) {
+          const { data: pData } = await supabase.from(tbl).select('*').eq(workerNameField, name).gte('date', start).lte('date', end);
+          let sum = 0; let mDict = {}; let dDict = {};
+          if(pData) {
+              pData.forEach(r => {
+                  let c = parseInt(r.count)||0;
+                  if(c>0) {
+                      sum += c; 
+                      let mod = r.model || r.config || 'Інше'; mDict[mod] = (mDict[mod]||0)+c;
+                      dDict[r.date] = (dDict[r.date]||0)+c;
+                  }
+              });
+          }
+          document.getElementById('wInfoItems').innerText = sum + ' шт';
+          
+          let modelsHtml = "";
+          if (Object.keys(mDict).length > 0) {
+              modelsHtml = Object.keys(mDict).map(m => `<div class="cal-row"><span>${m}</span><span>${mDict[m]} шт</span></div>`).join('');
+          } else modelsHtml = `<span style="color:var(--text-muted); font-size:12px;">Немає звітів за місяць</span>`;
+          document.getElementById('wInfoModelsList').innerHTML = modelsHtml;
+
+          if(chartPersonal) chartPersonal.destroy();
+          let labels = Object.keys(dDict).sort(); let dataPoints = labels.map(l => dDict[l]);
+          chartPersonal = new Chart(document.getElementById('personalChart'), { type:'line', data:{ labels:labels.map(x=>x.split('-')[2]), datasets:[{label: 'Виготовлено', data:dataPoints, borderColor:'#009EF7', tension:0.2, fill:false}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
+
+          // Порівняння з минулим місяцем
+          let prevD = new Date(y, mo-1, 0);
+          let pS = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-01`; let pE = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-${prevD.getDate()}`;
+          const { data: pDataOld } = await supabase.from(tbl).select('count').eq(workerNameField, name).gte('date', pS).lte('date', pE);
+          let pTotal = 0; if(pDataOld) pDataOld.forEach(r => pTotal += (parseInt(r.count)||0));
+          let diff = sum - pTotal;
+          document.getElementById('wInfoTrend').innerHTML = diff > 0 ? `<span style="color:var(--success)">📈 Рост (+${diff} шт)</span>` : (diff < 0 ? `<span style="color:var(--danger)">📉 Спад (${diff} шт)</span>` : `<span style="color:var(--text-muted)">Без змін</span>`);
+      }
     }
 
     window.saveWorkerProfile = async function() { 
@@ -848,40 +946,7 @@
         document.getElementById('workerModal').classList.remove('active'); loadDaily(); loadTabel(); loadWorkersCards(); 
     }
 
-    // === МАСОВИЙ СТАТУС (ПЕРІОДОМ) ===
-    window.openMassUpdate = async function() { 
-        document.getElementById('massUpdateCard').classList.add('active'); document.getElementById('massWorkersList').innerHTML = "⏳ Завантаження..."; 
-        const { data: w } = await supabase.from('workers').select('*').eq('status', 'Активний').order('name'); let html = ''; 
-        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 140px; padding:8px; font-size:12px; border-radius:6px; background:var(--bg-surface); color:#fff; border:1px solid rgba(255,255,255,0.1);"><option value="">- Без змін -</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Прим. вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
-        document.getElementById('massWorkersList').innerHTML = html; 
-    }
-    window.saveMassStatuses = async function() { 
-        let startStr = document.getElementById('massStartDate').value; let endStr = document.getElementById('massEndDate').value;
-        if (!startStr || !endStr) return alert("Вкажіть період Від і До!");
-        let startDate = new Date(startStr); let endDate = new Date(endStr);
-        if (startDate > endDate) return alert("Дата 'Від' не може бути більшою за 'До'!");
-
-        let rows = document.querySelectorAll('.mass-worker-row'); document.getElementById('massUpdateCard').classList.remove('active'); 
-
-        let d = new Date(startDate);
-        while (d <= endDate) {
-            let y = d.getFullYear(); let mo = String(d.getMonth() + 1).padStart(2, '0'); let day = String(d.getDate()).padStart(2, '0');
-            let dateVal = `${y}-${mo}-${day}`;
-
-            for(let row of rows) { 
-                let name = row.dataset.name; let dept = row.dataset.dept; let status = row.querySelector('.mass-status-select').value; let table = getTableName(dept); 
-                if (status && table) { 
-                    let workerNameField = dept === 'Пайка' ? 'solderer_name' : (dept === 'Запаковка' ? 'packager_name' : 'name');
-                    await supabase.from(table).delete().eq(workerNameField, name).eq('date', dateVal).in('status', ['Вихідний', 'Примусовий вихідний', 'Відпустка', 'Лікарняний', 'Простой']); 
-                    await supabase.from(table).insert([{ date: dateVal, [workerNameField]: name, dept, status: status, count: 0 }]); 
-                } 
-            }
-            d.setDate(d.getDate() + 1);
-        }
-        loadTabel(); loadDaily();
-    }
-
-    // === БАЗА ЗБІРОК ТА СКЛАД (З АВТОКОНВЕРТАЦІЄЮ) ===
+    // === БАЗА ЗБІРОК ТА СКЛАД (З АВТОКОНВЕРТАЦІЄЮ ТА КОНСТРУКТОРОМ) ===
     function extractCells(configStr) {
         let match = configStr.match(/(\d+)[sS](\d+)[pP]/);
         if(match) return parseInt(match[1]) * parseInt(match[2]);
@@ -897,52 +962,72 @@
         let cV = [], cH = [], cOther = [];
         confs.forEach(r => {
            let cells = extractCells(r.config);
-           let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.config}')">${r.config} <span style="color:var(--text-muted); font-size:10px; margin-left:5px;">(${cells} елем.)</span> <i class="fa-solid fa-xmark" style="color:var(--danger); margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`;
+           let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.config}', 'config')">${r.config} <span style="color:var(--text-muted); font-size:10px; margin-left:5px;">(${cells} елем.)</span> <i class="fa-solid fa-xmark" style="color:var(--danger); margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`;
            if(lw.includes('v') || lw.includes('в')) cV.push(tag); else if(lw.includes('h') || lw.includes('г')) cH.push(tag); else cOther.push(tag);
         });
         html += `<div style="margin-bottom:20px;"><strong>Вертикальні (V):</strong><br>${cV.join('') || '—'}</div><div style="margin-bottom:20px;"><strong>Горизонтальні (H):</strong><br>${cH.join('') || '—'}</div><div style="margin-bottom:20px;"><strong>Інші збірки:</strong><br>${cOther.join('') || '—'}</div>`;
 
-        let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px;">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`).join('');
+        let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.element}', 'element')">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`).join('');
         html += `<div><strong>Банки (Елементи):</strong><br>${elements || '—'}</div>`; document.getElementById('archiveListContainer').innerHTML = html;
         
-        let confHtml = confs.map(x=>`<option>${x.config}</option>`).join(''); document.getElementById('webConfig').innerHTML = confHtml;
+        let confHtml = confs.map(x=>`<option value="${x.config}">${x.config}</option>`).join(''); document.getElementById('webConfig').innerHTML = confHtml;
+        document.querySelectorAll('.distModelList').forEach(el => el.innerHTML = confHtml);
+        
         let elsHtml = data.filter(r=>r.element).map(x=>`<option value="${x.element}">${x.element}</option>`).join(''); document.getElementById('webElement').innerHTML = elsHtml;
+        document.getElementById('invSupEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; document.getElementById('invTrEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
         
-        document.getElementById('invSupEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
-        document.getElementById('invTrEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
-        
-        // Для видачі можна вибрати банку або готову збірку
-        let allModels = [];
-        confs.forEach(c => { data.filter(r=>r.element).forEach(e => { allModels.push(`${c.config} ${e.element}`); }); });
+        let allModels = []; confs.forEach(c => { data.filter(r=>r.element).forEach(e => { allModels.push(`${c.config} ${e.element}`); }); });
         let issHtml = '<option value="">Оберіть банку АБО збірку...</option>';
-        issHtml += `<optgroup label="Елементи (Банки)">` + elsHtml + `</optgroup>`;
-        issHtml += `<optgroup label="Готові збірки">` + allModels.map(m=>`<option value="${m}">${m}</option>`).join('') + `</optgroup>`;
+        issHtml += `<optgroup label="Елементи (Банки)">` + elsHtml + `</optgroup><optgroup label="Готові збірки">` + allModels.map(m=>`<option value="${m}">${m}</option>`).join('') + `</optgroup>`;
         document.getElementById('invIssEl').innerHTML = issHtml;
         document.getElementById('invIssEl').addEventListener('change', function() {
-            let val = this.value;
-            let cells = extractCells(val);
-            if(cells > 1) {
-                document.getElementById('invAutoCalcHint').innerText = `💡 Увага: 1 збірка спише ${cells} банок.`;
-            } else {
-                document.getElementById('invAutoCalcHint').innerText = ``;
-            }
+            let val = this.value; let cells = extractCells(val);
+            document.getElementById('invAutoCalcHint').innerText = cells > 1 ? `💡 Увага: 1 збірка спише ${cells} банок з балансу елемента.` : ``;
         });
       }
     }
 
-    window.openArchiveDetails = function(id, name) {
-        document.getElementById('wModalTitle').innerText = name;
-        document.getElementById('workerTabs').style.display = 'none';
-        switchWorkerTab('archive');
-        document.getElementById('workerModal').classList.add('active');
+    // КОНСТРУКТОР ІНСТРУКЦІЙ В АРХІВІ (Локальне збереження)
+    window.openArchiveDetails = function(id, name, type) {
+        document.getElementById('archModalTitle').innerText = name; document.getElementById('archModalName').value = name; document.getElementById('archModalType').value = type;
+        
+        if (type === 'config') {
+            document.getElementById('archConfigBlock').style.display = 'block'; document.getElementById('archElementBlock').style.display = 'none';
+            let steps = JSON.parse(localStorage.getItem(`L2_arch_${name}`) || '[]');
+            document.getElementById('archStepsContainer').innerHTML = steps.map((s, i) => {
+                if(s.type === 'text') return `<div style="margin-bottom:10px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;"><b>Крок ${i+1}:</b> ${s.val}</div>`;
+                return `<div style="margin-bottom:10px;"><img src="${s.val}" style="max-width:100%; border-radius:8px;"></div>`;
+            }).join('');
+        } else {
+            document.getElementById('archConfigBlock').style.display = 'none'; document.getElementById('archElementBlock').style.display = 'block';
+            let props = JSON.parse(localStorage.getItem(`L2_arch_el_${name}`) || '{"size":"", "mah":"", "photo":""}');
+            document.getElementById('archElSize').value = props.size; document.getElementById('archElMah').value = props.mah; document.getElementById('archElPhoto').value = props.photo;
+        }
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.getElementById('archiveModal').classList.add('active');
     }
-    window.saveArchDetails = function() { alert("Збережено локально (для прикладу)"); document.getElementById('workerModal').classList.remove('active'); }
     
+    window.addArchStep = function(type) {
+        let val = prompt(type === 'text' ? "Введіть текст інструкції:" : "Вставте посилання (URL) на фото:");
+        if(!val) return;
+        let name = document.getElementById('archModalName').value; let steps = JSON.parse(localStorage.getItem(`L2_arch_${name}`) || '[]');
+        steps.push({type, val}); localStorage.setItem(`L2_arch_${name}`, JSON.stringify(steps));
+        openArchiveDetails(null, name, 'config'); // Перемальовуємо
+    }
+    
+    window.saveArchConfig = function() { document.getElementById('archiveModal').classList.remove('active'); }
+    window.saveArchElement = function() {
+        let name = document.getElementById('archModalName').value;
+        let props = { size: document.getElementById('archElSize').value, mah: document.getElementById('archElMah').value, photo: document.getElementById('archElPhoto').value };
+        localStorage.setItem(`L2_arch_el_${name}`, JSON.stringify(props)); document.getElementById('archiveModal').classList.remove('active');
+    }
+
+    // СКЛАД ТА ЗАХИСТ ВІД МІНУСІВ
     window.loadInventory = async function() {
       document.getElementById('inventoryBalances').innerHTML = "⏳..."; document.getElementById('inventoryHistory').innerHTML = "⏳...";
       const { data: logs } = await supabase.from('inventory_logs').select('*').order('created_at', { ascending: false });
       let b = {};
       if(logs) { logs.forEach(l => { let q = parseInt(l.qty); if(!b[l.element]) b[l.element] = { 'Л1-3': 0, 'Л2': 0, 'Головний':0 }; if(l.action==='Поставка') b[l.element][l.loc_to]+=q; else if (l.action==='Видача') b[l.element][l.loc_from]-=q; else { b[l.element][l.loc_from]-=q; b[l.element][l.loc_to]+=q; } }); }
+      window.invBalances = b; // Зберігаємо глобально для перевірки мінусів
       
       let balHtml = "";
       for (let el in b) {
@@ -970,17 +1055,24 @@
             el = document.getElementById('invIssEl').value; qty = parseInt(document.getElementById('invIssQty').value); loc_from = document.getElementById('invIssFrom').value; 
             let cl = document.getElementById('invIssClient').value; if(cl && !savedClients.includes(cl)){ savedClients.push(cl); localStorage.setItem('L2_clients', JSON.stringify(savedClients)); document.getElementById('clientList').innerHTML += `<option value="${cl}">`; }
             
-            // АВТОКОНВЕРТАЦІЯ
+            // АВТОКОНВЕРТАЦІЯ ТА ПОШУК БАНКИ
             let multiplier = extractCells(el);
             if(multiplier > 1) {
                 qty = qty * multiplier;
-                // Знаходимо назву елемента (банки) в рядку (напр. "6s6p Molicel P42A" -> "Molicel P42A")
                 let foundElement = window.globalArchive.find(r => r.element && el.includes(r.element));
                 el = foundElement ? foundElement.element : el; 
-                alert(`Автоконвертація: Списуємо ${qty} шт елемента ${el}`);
+                alert(`Конвертація збірки: Буде списано ${qty} шт елемента "${el}"`);
             }
         } 
+        
         if(!el || !qty) return alert("Заповніть поля!"); 
+
+        // ЗАХИСТ ВІД МІНУСІВ
+        if(action === 'Переміщення' || action === 'Видача') {
+            let currentBal = window.invBalances[el] ? (window.invBalances[el][loc_from] || 0) : 0;
+            if (currentBal < qty) return alert(`❌ Помилка: На складі ${loc_from} є лише ${currentBal} шт елемента "${el}". Ви намагаєтесь списати ${qty} шт.`);
+        }
+
         await supabase.from('inventory_logs').insert([{ action, element: el, qty: qty, loc_from, loc_to }]); 
         document.querySelectorAll('#inventory input[type="number"]').forEach(i=>i.value=''); loadInventory(); 
     }

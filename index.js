@@ -103,31 +103,39 @@ async function handleMessage(msg) {
                 return sendMessage(chatId, "👤 **Оберіть працівника:**", buildKeyboard(activeWorkers.map(w=>w.name), 2));
             } else {
                 states[chatId] = { step: "ADMIN_MSG_TEXT", target: text };
-                return sendMessage(chatId, `📝 Напишіть текст оголошення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
+                return sendMessage(chatId, `📝 Напишіть текст повідомлення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
             }
         }
         if (dpt === "адмін" && state && state.step === "ADMIN_MSG_USER") {
             states[chatId] = { step: "ADMIN_MSG_TEXT", target: text };
-            return sendMessage(chatId, `📝 Напишіть текст оголошення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
+            return sendMessage(chatId, `📝 Напишіть текст повідомлення для: **${text}**`, { keyboard: [[{ text: "❌ Скасувати" }]], resize_keyboard: true });
         }
         if (dpt === "адмін" && state && state.step === "ADMIN_MSG_TEXT") {
+            let target = state.target;
             const { data: all } = await supabase.from('workers').select('*').eq('status', 'Активний');
             let recipients = [];
-            if (state.target === "Всім") recipients = all.filter(w => w.chat_id !== chatId);
-            else if (state.target === "Цех Зварки") recipients = all.filter(w => w.dept === "Зварка" && w.chat_id !== chatId);
-            else if (state.target === "Цех Пайки") recipients = all.filter(w => w.dept === "Пайка" && w.chat_id !== chatId);
-            else if (state.target === "Відділ Запаковки") recipients = all.filter(w => w.dept === "Запаковка" && w.chat_id !== chatId);
-            else recipients = all.filter(w => w.name === state.target);
+            
+            if (target === "Всім") recipients = all.filter(w => w.chat_id !== chatId);
+            else if (target === "Цех Зварки") recipients = all.filter(w => w.dept === "Зварка" && w.chat_id !== chatId);
+            else if (target === "Цех Пайки") recipients = all.filter(w => w.dept === "Пайка" && w.chat_id !== chatId);
+            else if (target === "Відділ Запаковки") recipients = all.filter(w => w.dept === "Запаковка" && w.chat_id !== chatId);
+            else recipients = all.filter(w => w.name === target);
 
             let count = 0;
-            for (let w of recipients) { if(w.chat_id) { await sendMessage(w.chat_id, `📢 **ОГОЛОШЕННЯ:**\n\n${text}`); count++; } }
-            delete states[chatId]; await sendMessage(chatId, `✅ Надіслано (${count} чол.)`);
+            for (let w of recipients) {
+                if(w.chat_id) {
+                    await sendMessage(w.chat_id, `📢 **ПОВІДОМЛЕННЯ ВІД АДМІНІСТРАЦІЇ:**\n\n${text}`);
+                    count++;
+                }
+            }
+            delete states[chatId]; 
+            await sendMessage(chatId, `✅ Оголошення успішно доставлено (${count} чол.)`);
             return sendMenuByDept(chatId, user.dept);
         }
 
         if (dpt === "зварка" && text === "📝 Здати роботу") {
             const { data: models } = await supabase.from('active_models').select('model');
-            if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог зміни порожній. Адмін ще не додав збірки.");
+            if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог зміни порожній. Адмін ще не додав збірки на сьогодні.");
             states[chatId] = { step: "WELDER_MODEL" };
             return sendMessage(chatId, "🔋 **Оберіть збірку з каталогу:**", buildKeyboard(models.map(m=>m.model), 1));
         }
@@ -138,9 +146,18 @@ async function handleMessage(msg) {
         if (dpt === "зварка" && state && state.step === "WELDER_COUNT") {
             let count = parseInt(text); if (isNaN(count) || count <= 0) return sendMessage(chatId, "⚠️ Введіть число.");
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
+            
             const { error } = await supabase.from('reports_zvarka').insert([{ date: today, name: user.name, dept: user.dept, model: state.model, count: count, status: "Працював" }]);
-            if (error) { await sendMessage(chatId, `❌ Помилка бази: ${error.message}`, null, null); return; } 
-            else { delete states[chatId]; await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`); return sendMenuByDept(chatId, user.dept); }
+            
+            if (error) {
+                console.error("DB Zvarka Error:", error);
+                await sendMessage(chatId, `❌ Помилка бази: ${error.message}`, null, null);
+                return;
+            } else {
+                delete states[chatId]; 
+                await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`);
+                return sendMenuByDept(chatId, user.dept);
+            }
         }
 
         if (dpt === "запаковка" && text === "🛒 Забрати акуми") {
@@ -153,9 +170,9 @@ async function handleMessage(msg) {
             let selected = state.solderers.find(s => s.name === text);
             if (!selected) return sendMessage(chatId, "⚠️ Оберіть з клавіатури.");
             const { data: models } = await supabase.from('active_models').select('model');
-            if (!models || models.length===0) return sendMessage(chatId, "❌ Каталог порожній.");
+            if (!models || models.length===0) return sendMessage(chatId, "❌ Каталог зміни порожній.");
             states[chatId] = { step: "PACK_MODEL", sName: selected.name, sChatId: selected.chat_id };
-            return sendMessage(chatId, `🔋 Оберіть збірку:`, buildKeyboard(models.map(m=>m.model), 1));
+            return sendMessage(chatId, `🔋 Оберіть збірку з каталогу:`, buildKeyboard(models.map(m=>m.model), 1));
         }
         if (dpt === "запаковка" && state && state.step === "PACK_MODEL") {
             states[chatId].step = "PACK_COUNT"; states[chatId].model = text;
