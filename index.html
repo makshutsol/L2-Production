@@ -14,9 +14,10 @@
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased;}
     h1, h2, h3, .logo-text, .card-title { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -0.5px; }
 
+    /* МЕНЮ */
     .sidebar { width: 260px; background-color: var(--bg-surface); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 30px 20px; z-index: 1000; transition: transform 0.3s ease; }
     .logo-text { font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 30px; letter-spacing: 2px;}
-    .nav-menu { display: flex; flex-direction: column; gap: 6px; }
+    .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto;}
     .nav-item { padding: 12px 16px; border-radius: 12px; color: var(--text-muted); cursor: pointer; font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 12px; transition: 0.2s; text-transform: uppercase; }
     .nav-item:hover { color: var(--text-main); background: var(--bg-hover); }
     .nav-item.active { background: var(--text-main); color: #000; font-weight: 600; }
@@ -30,11 +31,12 @@
     .section.active { display: block; }
     @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
     
+    /* КАРТКИ */
     .card { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 15px; }
     .card-title { font-size: 16px; font-weight: 700; text-transform: uppercase; }
     
-    select, input { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main); padding: 12px 14px; border-radius: 10px; font-size: 14px; width: 100%; outline: none; }
+    select, input, textarea { background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main); padding: 12px 14px; border-radius: 10px; font-size: 14px; width: 100%; outline: none; font-family: inherit;}
     button { padding: 12px 20px; border: none; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-primary { background: var(--text-main); color: #000; } .btn-primary:hover { background: #e0e0e0; }
     .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.05); }
@@ -45,12 +47,13 @@
     .setup-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;}
     .setup-grid > * { flex: 1; min-width: 150px; }
     
+    /* ОПЕРАЦІЇ */
     .row { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
     .row.has-report { background: rgba(80, 205, 137, 0.08); border: 1px solid rgba(80, 205, 137, 0.3); }
     .worker-info { width: 55%; min-width: 200px; }
-    .worker-name { font-weight: 700; font-size: 16px; color: var(--text-main); cursor: pointer; text-decoration: underline transparent; transition: 0.2s;}
-    .worker-name:hover { text-decoration: underline var(--info); color: var(--info); }
-    .worker-details { font-size: 13px; color: #ccc; margin-top: 6px; line-height: 1.6;}
+    .worker-name { font-weight: 700; font-size: 16px; color: var(--text-main); cursor: pointer; transition: 0.2s; display: inline-block; margin-bottom: 4px;}
+    .worker-name:hover { color: var(--info); text-decoration: underline; }
+    .worker-details { font-size: 13px; color: #ccc; line-height: 1.6;}
     .status-select { background: var(--bg-surface); padding: 8px; font-size: 13px; border-radius: 6px; width: 140px; border: 1px solid rgba(255,255,255,0.1); color: #fff; }
     
     .dept-block { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
@@ -60,6 +63,7 @@
     .stat-card .value { font-size: 24px; font-weight: 700; color: var(--success); }
     .badge { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
 
+    /* ТАБЛИЦІ */
     .table-container { overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; min-width: 800px; text-align: left; }
     th { color: var(--text-muted); font-size: 12px; padding: 12px 6px; border-bottom: 1px dotted rgba(255,255,255,0.1); font-weight: 500; text-align: center;}
@@ -67,28 +71,33 @@
     .tabel-table td { text-align: center; cursor: pointer; transition: 0.2s;}
     .tabel-table td:hover { background: rgba(255,255,255,0.05); transform: scale(1.1); font-weight: bold; }
     .name-cell { position: sticky; left: 0; background: var(--bg-surface); padding-left: 15px; border-right: 1px solid rgba(255,255,255,0.1); z-index: 2; min-width: 150px; font-weight: 600; text-align: left !important; cursor: default !important;}
-    .name-cell:hover { transform: none !important; background: var(--bg-surface) !important; }
     
     .st-num { color: var(--success); font-weight: 700; }
     .st-badge { padding: 5px; border-radius: 4px; font-size: 11px; font-weight: 700; display: inline-block; min-width: 26px; text-align: center;}
     .st-vx { background: rgba(255,255,255,0.1); color: #fff; } .st-v { background: rgba(0,158,247,0.15); color: var(--info); } .st-pv { background: rgba(241,65,108,0.15); color: var(--danger); } .st-l { background: rgba(255,199,0,0.15); color: var(--warning); } .st-p { background: rgba(114,57,234,0.15); color: #7239EA; }
     .sum-cell { background: rgba(80,205,137,0.08); color: var(--success); font-weight: 700; border-radius: 6px; }
 
+    /* МОДАЛКИ */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
-    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; position: absolute; right: 20px; top: 15px;}
     
-    .modal-list { list-style: none; padding: 0; margin: 10px 0 0 0; background: #1c1c21; border-radius: 10px; padding: 15px;}
-    .modal-list li { padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 14px; display: flex; justify-content: space-between; color: #fff;}
-    .modal-list li:last-child { border-bottom: none; }
-    .modal-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--success); padding-top: 12px; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .cal-details-box { background: var(--bg-base); border-radius: 12px; padding: 15px; margin-top: 10px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .cal-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-main); font-weight: 500;}
+    .cal-total-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--success); padding-top: 12px; margin-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1); }
     
     .modal-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; overflow-x: auto;}
     .modal-tab { padding: 10px 15px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 14px; border-bottom: 2px solid transparent; white-space: nowrap;}
     .modal-tab.active { color: var(--info); border-bottom-color: var(--info); }
     .modal-tab-content { display: none; } .modal-tab-content.active { display: block; }
 
+    /* РОЗПОДІЛ РОБОТИ (ЧЕКБОКСИ) */
+    .checkbox-list { background: var(--bg-base); border-radius: 10px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); max-height: 200px; overflow-y: auto;}
+    .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; cursor: pointer;}
+    .check-item input { width: 18px; height: 18px; cursor: pointer; }
+
+    /* МОБІЛЬНА АДАПТАЦІЯ */
     .mobile-header { display: none; }
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; }
     @media (max-width: 768px) {
@@ -120,6 +129,7 @@
     <div class="logo-text">L2<br>PRODUCTION</div>
     <div class="nav-menu">
       <div class="nav-item active" onclick="switchTab('daily')"><i class="fa-solid fa-cube"></i> Операції</div>
+      <div class="nav-item" onclick="switchTab('distrib')"><i class="fa-solid fa-list-check"></i> Розподіл роботи</div>
       <div class="nav-item" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Дашборд</div>
       <div class="nav-item" onclick="switchTab('tabel')"><i class="fa-solid fa-table-list"></i> Табель</div>
       <div class="nav-item" onclick="switchTab('workers')"><i class="fa-solid fa-users"></i> Команда</div>
@@ -137,7 +147,7 @@
         <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі</p></div>
         
         <div id="pendingCard" class="card" style="display:none; border-color: var(--warning);">
-            <div class="card-title" style="color:var(--warning); margin-bottom: 15px;">Нові заявки</div>
+            <div class="card-title" style="color:var(--warning); margin-bottom: 15px;">Нові заявки (Авторизація)</div>
             <div id="pendingList"></div>
         </div>
 
@@ -166,23 +176,70 @@
         </div>
       </div>
 
-      <!-- 2. ДАШБОРД -->
+      <!-- НОВЕ: 1.5 РОЗПОДІЛ РОБОТИ -->
+      <div id="distrib" class="section">
+        <div class="header"><h1>Розподіл роботи</h1><p>Генератор планів для цехів</p></div>
+        <div class="card">
+            <div class="setup-grid">
+                <div>
+                    <label style="font-size:12px; color:var(--text-muted);">Відділ:</label>
+                    <select id="distDept" onchange="loadDistribWorkers()">
+                        <option value="Зварка">Зварка</option>
+                        <option value="Пайка">Пайка</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:12px; color:var(--text-muted);">Збірка (Текст):</label>
+                    <input type="text" id="distModel" placeholder="Напр. 6s4p 50pl (Зв ширину)">
+                </div>
+                <div>
+                    <label style="font-size:12px; color:var(--text-muted);">Загальна кількість (шт):</label>
+                    <input type="number" id="distQty" placeholder="Напр. 300">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="font-size:12px; color:var(--text-muted);">Додаткові вказівки (Необов'язково):</label>
+                <input type="text" id="distNotes" placeholder="Всі елементи проклеєні...">
+            </div>
+
+            <label style="font-size:12px; color:var(--text-muted); margin-bottom:10px; display:block;">Оберіть працівників для розподілу:</label>
+            <div class="checkbox-list" id="distWorkersList">⏳ Оберіть відділ...</div>
+
+            <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="generateDistrib()">Згенерувати текст розподілу</button>
+
+            <div style="margin-top: 20px;">
+                <textarea id="distResult" rows="10" style="height: 200px; resize: none;" readonly placeholder="Тут з'явиться готовий текст для копіювання в Telegram..."></textarea>
+                <button class="btn-success" style="width:100%; margin-top:10px;" onclick="copyDistrib()"><i class="fa-solid fa-copy"></i> Скопіювати текст</button>
+            </div>
+        </div>
+      </div>
+
+      <!-- 2. ДАШБОРД ТА ГРАФІКИ -->
       <div id="dashboard" class="section">
-        <div class="header"><h1>Аналітика та Графіки</h1></div>
+        <div class="header"><h1>Аналітика та Графіки</h1><p>Система показує загальну статистику. "Детальна статистика" нижче рахує всі знайдені звіти за вказаний період і показує, скільки акумуляторів кожної моделі було виготовлено.</p></div>
         <div class="card">
           <div class="setup-grid" style="margin-bottom: 0;">
             <div><label style="font-size:11px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
             <div><label style="font-size:11px; color:var(--text-muted);">До:</label><input type="date" id="dashEnd"></div>
             <div><label style="font-size:11px; color:var(--text-muted);">Відділ:</label><select id="dashDept"><option value="Всі">Всі відділи</option><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option></select></div>
-            <button class="btn-primary" style="height: 40px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Показати</button>
+            <button class="btn-primary" style="height: 40px;" onclick="loadDashboard()"><i class="fa-solid fa-filter"></i> Аналіз</button>
           </div>
         </div>
+        
         <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
            <div class="stat-card" style="border-color:var(--success);"><h4 style="color:var(--success);">Всього</h4><div class="value" id="dashTotalScore">0 шт</div></div>
            <div class="stat-card" style="border-color:gold;"><h4 style="color:gold;">Лідер</h4><div class="value" id="dashTopWorker" style="color:#FFF;">⏳</div></div>
-           <div class="stat-card" style="border-color:var(--info);"><h4 style="color:var(--info)">Топ збірка</h4><div class="value" id="dashTopModel" style="color:#FFF;">⏳</div></div>
+           
+           <div class="stat-card" style="border-color:var(--info);">
+               <h4 style="color:var(--info)">Персональна динаміка</h4>
+               <select id="dashSelectWorker" style="margin-top:5px; padding:6px; font-size:12px;" onchange="loadPersonalChartDashboard()">
+                   <option value="">Оберіть працівника...</option>
+               </select>
+           </div>
         </div>
-        <div class="card"><div class="card-title">Динаміка виробництва</div><div style="position:relative; height:200px; width:100%; margin-top:15px;"><canvas id="trendChart"></canvas></div></div>
+        
+        <div class="card"><div class="card-title" id="chartTitle1">Динаміка виробництва (Всі)</div><div style="position:relative; height:200px; width:100%; margin-top:15px;"><canvas id="trendChart"></canvas></div></div>
         
         <div class="card">
           <div class="card-header">
@@ -190,7 +247,7 @@
             <div style="display:flex; gap:10px; align-items:center; flex-wrap: wrap;">
                <div><input type="date" id="statModStart" style="padding: 10px; font-size: 13px;"></div>
                <div><input type="date" id="statModEnd" style="padding: 10px; font-size: 13px;"></div>
-               <button class="btn-info" style="height: 40px;" onclick="loadDetailedModelStats()">Аналіз</button>
+               <button class="btn-info" style="height: 40px;" onclick="loadDetailedModelStats()">Рахувати</button>
             </div>
           </div>
           <div class="table-container" id="detailedModelStatsContainer"><span style="color:var(--text-muted); font-size:13px;">Оберіть період...</span></div>
@@ -214,15 +271,12 @@
       <!-- 4. КОМАНДА -->
       <div id="workers" class="section">
         <div class="header"><h1>Команда L2</h1><p>Управління допусками</p></div>
-        <div class="dept-block" style="border-color: #A1A5B7;"><div class="dept-block-header" style="color:#A1A5B7;"><i class="fa-solid fa-user-shield"></i> Адміністратори</div><div id="team-admin"></div></div>
-        <div class="dept-block" style="border-color: var(--warning);"><div class="dept-block-header" style="color:var(--warning);"><i class="fa-solid fa-bolt"></i> Зварювальники</div><div id="team-zvarka"></div></div>
-        <div class="dept-block" style="border-color: var(--info);"><div class="dept-block-header" style="color:var(--info);"><i class="fa-solid fa-fire"></i> Пайщики</div><div id="team-payka"></div></div>
-        <div class="dept-block" style="border-color: var(--success);"><div class="dept-block-header" style="color:var(--success);"><i class="fa-solid fa-box-open"></i> Запаковщики</div><div id="team-zapakovka"></div></div>
+        <div id="team-cards-container" style="display:flex; flex-wrap:wrap; gap:15px;">⏳...</div>
       </div>
 
-      <!-- 5. БАЗА ЗБІРОК -->
+      <!-- 5. БАЗА ЗБІРОК (АВТОМНОЖЕННЯ) -->
       <div id="archive" class="section">
-        <div class="header"><h1>База збірок</h1><p>Довідник моделей</p></div>
+        <div class="header"><h1>База збірок</h1><p>Довідник моделей (Автоматично рахує банки з назви, напр. 6s6p = 36)</p></div>
         <div class="setup-grid" style="align-items: flex-start;">
           <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Нова конфігурація</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newConfigInput" placeholder="6s2p (v)"><button class="btn-primary" onclick="addArch('config')">+</button></div></div>
           <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Новий елемент</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newElementInput" placeholder="Molicel P42A"><button class="btn-primary" onclick="addArch('element')">+</button></div></div>
@@ -232,26 +286,50 @@
 
       <!-- 6. СКЛАД -->
       <div id="inventory" class="section">
-        <div class="header"><h1>Склад WMS</h1><p>Рух елементів</p></div>
+        <div class="header"><h1>Склад WMS</h1><p>Рух елементів між Л1-3 та Л2. При видачі ЗБІРКИ система спише ЕЛЕМЕНТИ.</p></div>
         <div class="card">
           <div class="modal-tabs">
             <div class="modal-tab active" onclick="switchInvTab('supply')">📥 Поставка</div>
             <div class="modal-tab" onclick="switchInvTab('transfer')">🔄 Переміщення</div>
-            <div class="modal-tab" onclick="switchInvTab('issue')">📤 Списання</div>
+            <div class="modal-tab" onclick="switchInvTab('issue')">📤 Видача (Списання)</div>
           </div>
+          
           <div id="inv-supply" class="modal-tab-content active">
-            <div class="setup-grid"><div><select id="invSupEl"></select></div><div><input type="number" id="invSupQty" placeholder="Кількість"></div><div><input type="text" id="invSupTo" placeholder="Головний склад"></div></div>
+            <div class="setup-grid">
+                <div><label style="font-size:12px; color:var(--text-muted);">Що прийшло (Елемент):</label><select id="invSupEl"></select></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Кількість:</label><input type="number" id="invSupQty" placeholder="Кількість"></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Постачальник:</label><input type="text" id="invSupVendor" list="supList" placeholder="Ім'я/Компанія"></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Куди:</label><select id="invSupTo"><option>Л1-3</option><option>Л2</option></select></div>
+            </div>
             <button class="btn-info" onclick="saveInv('Поставка')">Зафіксувати прийом</button>
           </div>
+          
           <div id="inv-transfer" class="modal-tab-content">
-            <div class="setup-grid"><div><select id="invTrEl"></select></div><div><input type="number" id="invTrQty" placeholder="Кількість"></div><div><input type="text" id="invTrFrom" placeholder="Звідки"></div><div><input type="text" id="invTrTo" placeholder="Куди"></div></div>
+            <div class="setup-grid">
+                <div><label style="font-size:12px; color:var(--text-muted);">Елемент:</label><select id="invTrEl"></select></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Кількість:</label><input type="number" id="invTrQty" placeholder="Кількість"></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Звідки:</label><select id="invTrFrom"><option>Л1-3</option><option>Л2</option></select></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Куди:</label><select id="invTrTo"><option>Л2</option><option>Л1-3</option></select></div>
+            </div>
             <button class="btn-primary" onclick="saveInv('Переміщення')">Виконати переміщення</button>
           </div>
+          
           <div id="inv-issue" class="modal-tab-content">
-            <div class="setup-grid"><div><select id="invIssEl"></select></div><div><input type="number" id="invIssQty" placeholder="Кількість"></div><div><input type="text" id="invIssFrom" placeholder="Звідки списати"></div></div>
+            <div class="setup-grid">
+                <div><label style="font-size:12px; color:var(--text-muted);">Що видаємо (Збірка або Елемент):</label><select id="invIssEl"></select></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Скільки штук:</label><input type="number" id="invIssQty" placeholder="Кількість"></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Кому (Клієнт):</label><input type="text" id="invIssClient" list="clientList" placeholder="Отримувач"></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Звідки списати (Склад):</label><select id="invIssFrom"><option>Л1-3</option><option>Л2</option></select></div>
+            </div>
+            <p id="invAutoCalcHint" style="font-size:12px; color:var(--warning); margin-bottom:15px;"></p>
             <button class="btn-danger" onclick="saveInv('Видача')">Списати</button>
           </div>
+          
+          <!-- Даталісти для пам'яті браузера -->
+          <datalist id="supList"></datalist>
+          <datalist id="clientList"></datalist>
         </div>
+        
         <div class="card"><div class="card-title" style="margin-bottom:15px;">Залишки на локаціях</div><div id="inventoryBalances" style="display:flex; gap:10px; flex-wrap:wrap;"></div></div>
         <div class="card"><div class="card-header" style="margin-bottom:10px;"><div class="card-title">Історія</div><input type="date" id="invHistoryDate" onchange="loadInventory()" style="max-width:140px; padding:6px;"></div><div id="inventoryHistory"></div></div>
       </div>
@@ -282,7 +360,7 @@
         
         <div id="calModalDetailsBlock" style="display:none;">
             <div style="font-size: 14px; color: var(--success); font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div>
-            <ul class="modal-list" id="calModalDetailsList"></ul>
+            <div class="cal-details-box" id="calModalDetailsList"></div>
         </div>
         
         <div style="margin-top: 15px;">
@@ -300,29 +378,30 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА ПРОФІЛЮ -->
+  <!-- МОДАЛКА ПРОФІЛЮ / АРХІВУ -->
   <div class="modal" id="workerModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('workerModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
         <div class="card-title" id="wModalTitle" style="margin-bottom:20px; font-size: 20px;">Картка</div>
         <input type="hidden" id="wModalId">
-        <div class="modal-tabs">
+        <div class="modal-tabs" id="workerTabs">
             <div class="modal-tab active" id="tabInfoBtn" onclick="switchWorkerTab('info')">Аналітика</div>
             <div class="modal-tab" id="tabEditBtn" onclick="switchWorkerTab('edit')">Налаштування</div>
         </div>
+        
         <div id="wTabInfo" class="modal-tab-content active">
             <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; margin-bottom:20px;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;"><span>Відділ:</span><span id="wInfoDept" style="font-weight:700; color:var(--info);"></span></div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;"><span>Статус:</span><span id="wInfoStatus" style="font-weight:700;"></span></div>
                 <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Динаміка:</span><span id="wInfoTrend" style="font-weight:700;">⏳...</span></div>
             </div>
-            
             <div style="font-size:14px; font-weight:700; margin-bottom:10px;">Статистика за місяць:</div>
-            <ul class="modal-list" id="wInfoModelsList" style="margin-bottom: 20px;"></ul>
-            
-            <div class="card-title" style="font-size:14px; margin-bottom:10px;">Графік продуктивності по днях</div>
-            <div style="position:relative; height:180px; width:100%;"><canvas id="personalChart"></canvas></div>
+            <div class="cal-details-box" style="margin-top:0; border:none; background:rgba(80, 205, 137, 0.08);">
+                <div id="wInfoModelsList" style="margin-bottom: 10px;"></div>
+                <div class="cal-total-row"><span>Всього:</span> <span id="wInfoItems">0 шт</span></div>
+            </div>
         </div>
+        
         <div id="wTabEdit" class="modal-tab-content">
             <label style="font-size:13px; color:var(--text-muted);">ПІБ</label><input type="text" id="wEditName" style="margin-bottom:15px;">
             <label style="font-size:13px; color:var(--text-muted);">Цех</label>
@@ -330,6 +409,15 @@
             <label style="font-size:13px; color:var(--text-muted);">Статус доступу</label>
             <select id="wEditStatus" style="margin-bottom:25px;"><option value="Активний">Активний</option><option value="Очікує">Очікує</option><option value="Звільнений">Звільнений</option></select>
             <button class="btn-success" style="width: 100%; padding:14px;" onclick="saveWorkerProfile()">Зберегти налаштування</button>
+        </div>
+        
+        <!-- Вкладка для АРХІВУ (Інструкції) -->
+        <div id="wTabArchive" class="modal-tab-content">
+            <label style="font-size:13px; color:var(--text-muted);">Посилання на фото/інструкцію:</label>
+            <input type="text" id="archPhotoLink" placeholder="https://..." style="margin-bottom:15px;">
+            <label style="font-size:13px; color:var(--text-muted);">Текст інструкції:</label>
+            <textarea id="archDetails" rows="4" style="margin-bottom:15px;"></textarea>
+            <button class="btn-success" style="width: 100%; padding:14px;" onclick="saveArchDetails()">Зберегти інструкцію</button>
         </div>
     </div>
   </div>
@@ -345,6 +433,8 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let d = new Date(); let m = d.getMonth() + 1; let mStr = d.getFullYear() + "-" + (m < 10 ? "0" + m : m);
+    let todayStr = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-${(d.getDate() < 10 ? "0" + d.getDate() : d.getDate())}`;
+    
     document.getElementById('repDate').valueAsDate = d;
     document.getElementById('tabelMonth').value = mStr;
     document.getElementById('dashStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`;
@@ -352,12 +442,17 @@
     document.getElementById('massStartDate').valueAsDate = d; document.getElementById('massEndDate').valueAsDate = d;
     document.getElementById('statModStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`; document.getElementById('statModEnd').valueAsDate = d;
 
-    window.globalWorkers = []; window.globalTabelData = {}; 
-    let chartWorkers = null; let chartModels = null; let chartTrend = null; let chartPersonal = null;
+    window.globalWorkers = []; window.globalTabelData = {}; window.globalArchive = [];
+    let chartTrend = null;
+
+    // ВІДНОВЛЕННЯ ПАМ'ЯТІ (Склад)
+    let savedSups = JSON.parse(localStorage.getItem('L2_sups') || '[]');
+    let savedClients = JSON.parse(localStorage.getItem('L2_clients') || '[]');
+    document.getElementById('supList').innerHTML = savedSups.map(x=>`<option value="${x}">`).join('');
+    document.getElementById('clientList').innerHTML = savedClients.map(x=>`<option value="${x}">`).join('');
 
     window.toggleMenu = function() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('mobileOverlay').classList.toggle('active');
+        document.getElementById('sidebar').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('active');
     }
 
     window.switchTab = function(tab) {
@@ -365,8 +460,10 @@
       document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
       event.currentTarget.classList.add('active'); document.getElementById(tab).classList.add('active');
       document.getElementById('sidebar').classList.remove('open'); document.getElementById('mobileOverlay').classList.remove('active');
-      if(tab==='daily') loadDaily(); if(tab==='tabel') loadTabel(); if(tab==='dashboard') { loadDashboard(); loadDetailedModelStats(); }
-      if(tab==='archive') loadArchive(); if(tab==='inventory') loadInventory(); if(tab==='workers') loadWorkers();
+      if(tab==='daily') loadDaily(); if(tab==='tabel') loadTabel(); 
+      if(tab==='dashboard') { loadDashboard(); loadDetailedModelStats(); populateDashWorkers(); }
+      if(tab==='archive') loadArchive(); if(tab==='inventory') loadInventory(); if(tab==='workers') loadWorkersCards();
+      if(tab==='distrib') loadDistribWorkers();
     }
 
     function getTableName(d) { if(d==='Зварка')return'reports_zvarka'; if(d==='Пайка')return'reports_payka'; if(d==='Запаковка')return'reports_zapakovka'; return null; }
@@ -376,7 +473,7 @@
       if(s==='Простой') return '<span class="st-badge st-p">П</span>'; return '';
     }
 
-    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ (ПОСИЛАННЯ НА MODEL, НЕ CONFIG) ===
+    // === 1. ОПЕРАЦІЇ ПО ВІДДІЛАХ ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
       document.getElementById('list-admin').innerHTML="⏳..."; document.getElementById('list-zvarka').innerHTML="⏳..."; document.getElementById('list-payka').innerHTML="⏳..."; document.getElementById('list-zapakovka').innerHTML="⏳...";
@@ -400,9 +497,7 @@
       window.globalWorkers.forEach(w => {
          let workerNameField = w.dept === 'Пайка' ? 'solderer_name' : (w.dept === 'Запаковка' ? 'packager_name' : 'name');
          let rep = all.filter(r => r[workerNameField] === w.name); 
-         let detailsHtml = ""; 
-         let currentStatus = "Працював";
-         let isAbsence = false;
+         let detailsHtml = ""; let currentStatus = "Працював"; let isAbsence = false;
 
          if(rep.length > 0) {
             let firstRep = rep[0];
@@ -411,7 +506,6 @@
                 detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
             } else {
                 let mDict = {}; let tot = 0;
-                // ВИПРАВЛЕННЯ: ЧИТАЄМО З КОЛОНКИ model, А НЕ config
                 rep.forEach(r => { let c = parseInt(r.count)||0; if(c>0){ let mName = r.model || r.config || 'Інше'; mDict[mName] = (mDict[mName]||0)+c; tot+=c; }});
                 let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:13px; margin-bottom:5px; font-weight:500;"><b>${k}</b> - ${mDict[k]} шт</div>`).join('');
                 detailsHtml = `<div style="color:var(--success); font-size:14px; font-weight:700; margin-bottom:8px;">✅ Зроблено:</div>${mList}`;
@@ -435,106 +529,72 @@
 
          let row = `
          <div class="${boxClass}">
-            <div class="worker-info">
-                <div class="worker-name" onclick="openWorkerProfile('${w.name}')">${nameDisplay}</div>
-                <div class="worker-details">${detailsHtml}</div>
-            </div>
+            <div class="worker-info"><div class="worker-name" onclick="openWorkerProfile('${w.name}')">${nameDisplay}</div><div class="worker-details">${detailsHtml}</div></div>
             <div>${selectHtml}</div>
          </div>`;
-         
          let dp = w.dept.toLowerCase(); if(dp==='адмін') adm+=row; else if(dp==='зварка') zv+=row; else if(dp==='пайка') pa+=row; else if(dp==='запаковка') zap+=row;
       });
       
-      document.getElementById('list-admin').innerHTML = adm || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
-      document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
-      document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
-      document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+      document.getElementById('list-admin').innerHTML = adm || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+      document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
     }
 
     window.updateDailyStatus = async function(name, dept, status) {
-        const dStr = document.getElementById('repDate').value;
-        const table = getTableName(dept);
-        if(!table) return;
+        const dStr = document.getElementById('repDate').value; const table = getTableName(dept); if(!table) return;
         let workerNameField = dept === 'Пайка' ? 'solderer_name' : (dept === 'Запаковка' ? 'packager_name' : 'name');
-
         if (status !== 'Працював') {
             await supabase.from(table).delete().eq(workerNameField, name).eq('date', dStr);
             await supabase.from(table).insert([{ date: dStr, [workerNameField]: name, dept: dept, status: status, count: 0 }]);
-        } else {
-            await supabase.from(table).delete().eq(workerNameField, name).eq('date', dStr).in('status', ['Вихідний', 'Примусовий вихідний', 'Відпустка', 'Лікарняний', 'Простой']);
-        }
+        } else { await supabase.from(table).delete().eq(workerNameField, name).eq('date', dStr).in('status', ['Вихідний', 'Примусовий вихідний', 'Відпустка', 'Лікарняний', 'Простой']); }
         loadDaily(); loadTabel();
     }
 
     // === ГЕНЕРАЦІЯ .TXT ФАЙЛУ ===
     window.sendDailyReportTxt = async function() {
-        const dStr = document.getElementById('repDate').value;
-        const [year, month, day] = dStr.split('-');
-        const dateFormatted = `${day}.${month}.${year}`;
-
+        const dStr = document.getElementById('repDate').value; const [year, month, day] = dStr.split('-'); const dateFormatted = `${day}.${month}.${year}`;
         const { data: workers } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name');
         const { data: rZv } = await supabase.from('reports_zvarka').select('*').eq('date', dStr);
         const { data: rPa } = await supabase.from('reports_payka').select('*').eq('date', dStr);
         const { data: rZa } = await supabase.from('reports_zapakovka').select('*').eq('date', dStr);
 
-        let depts = [
-            { id: 'Зварка', title: 'сварка', data: rZv, nameField: 'name' },
-            { id: 'Пайка', title: 'пайка', data: rPa, nameField: 'solderer_name' },
-            { id: 'Запаковка', title: 'запаковка', data: rZa, nameField: 'packager_name' }
-        ];
-
+        let depts = [ { id: 'Зварка', title: 'сварка', data: rZv, nameField: 'name' }, { id: 'Пайка', title: 'пайка', data: rPa, nameField: 'solderer_name' }, { id: 'Запаковка', title: 'запаковка', data: rZa, nameField: 'packager_name' } ];
         document.getElementById('btnSendTg').innerHTML = "⏳ Формування файлу...";
-        
         let fullText = "";
 
         for (let dpt of depts) {
-            let deptWorkers = workers.filter(w => w.dept === dpt.id);
-            if (deptWorkers.length === 0) continue;
-
+            let deptWorkers = workers.filter(w => w.dept === dpt.id); if (deptWorkers.length === 0) continue;
             fullText += `Л2 ${dpt.title} ${dateFormatted}\n\n`;
-
             deptWorkers.forEach(w => {
                 let wReps = (dpt.data || []).filter(r => r[dpt.nameField] === w.name);
-                
-                if (wReps.length === 0) {
-                    fullText += `${w.name} ( вихідний )\n0 - шт\n\n`;
-                } else {
+                if (wReps.length === 0) { fullText += `${w.name} ( вихідний )\n0 - шт\n\n`; } 
+                else {
                     let firstRep = wReps[0];
-                    if (firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
-                        fullText += `${w.name} ( ${firstRep.status.toLowerCase()} )\n0 - шт\n\n`;
-                    } else {
-                        fullText += `${w.name}\n`;
-                        let models = {}; let total = 0;
-                        wReps.forEach(r => {
-                            let m = r.model || r.config || 'Інше'; let c = parseInt(r.count) || 0;
-                            if (c > 0) { models[m] = (models[m] || 0) + c; total += c; }
-                        });
+                    if (firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) { fullText += `${w.name} ( ${firstRep.status.toLowerCase()} )\n0 - шт\n\n`; } 
+                    else {
+                        fullText += `${w.name}\n`; let models = {}; let total = 0;
+                        wReps.forEach(r => { let m = r.model || r.config || 'Інше'; let c = parseInt(r.count) || 0; if (c > 0) { models[m] = (models[m] || 0) + c; total += c; } });
                         for (let m in models) fullText += `${m} - ${models[m]} шт\n`;
-                        fullText += `\n`;
+                        if (total === 0) fullText += `0 - шт\n`; fullText += `\n`;
                     }
                 }
             });
             fullText += `----------------------\n\n`;
         }
-
         try {
-            const blob = new Blob([fullText.trim()], { type: 'text/plain' });
-            const formData = new FormData();
-            formData.append('chat_id', ADMIN_CHAT_ID);
-            formData.append('document', blob, `Звіт_Л2_${dateFormatted}.txt`);
-            formData.append('caption', `📋 Фінальний звіт за ${dateFormatted}`);
-
-            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument`, {
-                method: 'POST',
-                body: formData
-            });
-            
-            document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-file-lines"></i> Затвердити та надіслати файл .txt у Telegram`;
-            alert(`✅ Файл зі звітом успішно надіслано в Telegram!`);
+            const blob = new Blob([fullText.trim()], { type: 'text/plain' }); const formData = new FormData();
+            formData.append('chat_id', ADMIN_CHAT_ID); formData.append('document', blob, `Звіт_Л2_${dateFormatted}.txt`); formData.append('caption', `📋 Фінальний звіт за ${dateFormatted}`);
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument`, { method: 'POST', body: formData });
+            document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-file-lines"></i> Затвердити та надіслати файл .txt у Telegram`; alert(`✅ Файл успішно надіслано!`);
         } catch(e) { document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; }
     }
 
-    // === ДАШБОРД ТА ДЕТАЛЬНА СТАТИСТИКА ===
+    // === ДАШБОРД ===
+    window.populateDashWorkers = function() {
+        let html = '<option value="">Вся команда</option>';
+        window.globalWorkers.forEach(w => { html += `<option value="${w.name}">${w.name}</option>`; });
+        let sel = document.getElementById('dashSelectWorker'); if(sel) sel.innerHTML = html;
+    }
+
     window.loadDashboard = async function() {
        const start = document.getElementById('dashStart').value; const end = document.getElementById('dashEnd').value;
        const filterDept = document.getElementById('dashDept').value; if(!start || !end) return;
@@ -547,31 +607,48 @@
        if(filterDept === 'Всі' || filterDept === 'Пайка') all = all.concat(rPa||[]);
        if(filterDept === 'Всі' || filterDept === 'Запаковка') all = all.concat(rZa||[]);
 
-       let wS = {}; let mS = {}; let dS = {}; let total = 0;
+       let wS = {}; let mS = {}; window.dashDailyStats = {}; let total = 0;
        all.forEach(r => {
           let c = parseInt(r.count || 0); if(c<=0) return;
           let n = r.name || r.solderer_name || r.packager_name; let m = r.model || r.config || 'Інше'; let dt = r.date;
-          wS[n] = (wS[n]||0)+c; mS[m] = (mS[m]||0)+c; dS[dt] = (dS[dt]||0)+c; total+=c;
+          wS[n] = (wS[n]||0)+c; mS[m] = (mS[m]||0)+c; total+=c;
+          if(!window.dashDailyStats[dt]) window.dashDailyStats[dt] = { total: 0, workers: {} };
+          window.dashDailyStats[dt].total += c;
+          window.dashDailyStats[dt].workers[n] = (window.dashDailyStats[dt].workers[n] || 0) + c;
        });
 
        document.getElementById('dashTotalScore').innerText = total + ' шт';
        let tW = {name:'Немає', val:0}; for(let w in wS) if(wS[w]>tW.val) tW={name:w, val:wS[w]};
-       document.getElementById('dashTopWorker').innerText = tW.name; document.getElementById('dashTopWorkerScore').innerText = tW.val + ' шт';
+       document.getElementById('dashTopWorker').innerText = tW.name; 
        let tM = {name:'Немає', val:0}; for(let m in mS) if(mS[m]>tM.val) tM={name:m, val:mS[m]};
-       document.getElementById('dashTopModel').innerText = tM.name; document.getElementById('dashTopModelScore').innerText = tM.val + ' шт';
+       document.getElementById('dashTopModel').innerText = tM.name; 
 
        if(chartWorkers) chartWorkers.destroy();
        chartWorkers = new Chart(document.getElementById('workersChart'), { type:'bar', data:{ labels:Object.keys(wS), datasets:[{label: 'Виготовлено', data:Object.values(wS), backgroundColor:'#009EF7', borderRadius:4}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
        
-       let sDates = Object.keys(dS).sort();
-       if(chartTrend) chartTrend.destroy();
-       chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:sDates.map(x=>dS[x]), borderColor:'#50CD89', backgroundColor:'rgba(80,205,137,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
+       loadPersonalChartDashboard();
+    }
+
+    window.loadPersonalChartDashboard = function() {
+        let selectedWorker = document.getElementById('dashSelectWorker') ? document.getElementById('dashSelectWorker').value : "";
+        let sDates = Object.keys(window.dashDailyStats || {}).sort();
+        let dataPoints = [];
+        
+        if (selectedWorker) {
+            document.getElementById('chartTitle1').innerText = `Динаміка: ${selectedWorker}`;
+            dataPoints = sDates.map(d => window.dashDailyStats[d].workers[selectedWorker] || 0);
+        } else {
+            document.getElementById('chartTitle1').innerText = `Динаміка виробництва (Всі)`;
+            dataPoints = sDates.map(d => window.dashDailyStats[d].total || 0);
+        }
+
+        if(chartTrend) chartTrend.destroy();
+        chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:dataPoints, borderColor:'#50CD89', backgroundColor:'rgba(80,205,137,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
     }
 
     window.loadDetailedModelStats = async function() {
         const start = document.getElementById('statModStart').value; const end = document.getElementById('statModEnd').value;
-        if(!start || !end) return;
-        document.getElementById('detailedModelStatsContainer').innerHTML = "⏳ Збір даних...";
+        if(!start || !end) return; document.getElementById('detailedModelStatsContainer').innerHTML = "⏳ Збір даних...";
         const { data: rZv } = await supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end);
         const { data: rPa } = await supabase.from('reports_payka').select('*').gte('date', start).lte('date', end);
         const { data: rZa } = await supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end);
@@ -579,12 +656,7 @@
         let stats = {};
         function processArray(arr, type) {
             if(!arr) return;
-            arr.forEach(r => {
-                let c = parseInt(r.count) || 0; if(c <= 0) return;
-                let m = r.model || r.config || 'Інше';
-                if(!stats[m]) stats[m] = { zv: 0, pa: 0, za: 0 };
-                stats[m][type] += c;
-            });
+            arr.forEach(r => { let c = parseInt(r.count) || 0; if(c <= 0) return; let m = r.model || r.config || 'Інше'; if(!stats[m]) stats[m] = { zv: 0, pa: 0, za: 0 }; stats[m][type] += c; });
         }
         processArray(rZv, 'zv'); processArray(rPa, 'pa'); processArray(rZa, 'za');
 
@@ -598,6 +670,52 @@
         });
         html += `<tr><td class="name-cell" style="color:var(--success);">ЗАГАЛОМ:</td><td style="font-weight:700;">${totalZv}</td><td style="font-weight:700;">${totalPa}</td><td style="font-weight:700; color:var(--success);">${totalZa}</td></tr></tbody></table>`;
         document.getElementById('detailedModelStatsContainer').innerHTML = html;
+    }
+
+    // === НОВЕ: РОЗПОДІЛ РОБОТИ ===
+    window.loadDistribWorkers = function() {
+        let dept = document.getElementById('distDept').value;
+        let workers = window.globalWorkers.filter(w => w.dept === dept);
+        let html = "";
+        workers.forEach(w => {
+            html += `<label class="check-item"><input type="checkbox" class="dist-check" value="${w.name}" checked> ${w.name}</label>`;
+        });
+        document.getElementById('distWorkersList').innerHTML = html || "Немає активних працівників.";
+    }
+
+    window.generateDistrib = function() {
+        let dept = document.getElementById('distDept').value;
+        let model = document.getElementById('distModel').value.trim();
+        let qty = parseInt(document.getElementById('distQty').value);
+        let notes = document.getElementById('distNotes').value.trim();
+        
+        if (!model || isNaN(qty) || qty <= 0) return alert("Заповніть модель та правильну кількість!");
+        
+        let checks = document.querySelectorAll('.dist-check:checked');
+        if (checks.length === 0) return alert("Оберіть хоча б одного працівника!");
+        
+        let workerNames = Array.from(checks).map(c => c.value);
+        let baseQty = Math.floor(qty / workerNames.length);
+        let remainder = qty % workerNames.length;
+        
+        let d = new Date(); let day = d.getDate(); let month = d.toLocaleString('uk', { month: 'long' });
+        
+        let text = `${model} - ${qty}шт.\n`;
+        if (notes) text += `${notes}\n`;
+        text += `\nРозподіл (${workerNames.length} ${dept === 'Зварка' ? 'сварщики' : 'пайщики'}):\n`;
+        
+        workerNames.forEach((name, index) => {
+            let pQty = baseQty + (index < remainder ? 1 : 0);
+            text += `• ${name} — ${pQty} шт.\n`;
+        });
+        
+        document.getElementById('distResult').value = text;
+    }
+
+    window.copyDistrib = function() {
+        let res = document.getElementById('distResult');
+        res.select(); document.execCommand("copy");
+        alert("Текст скопійовано!");
     }
 
     // === 3. ТАБЕЛЬ ===
@@ -614,7 +732,7 @@
       const { data: rZa } = await supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end);
       let all = [...(rZv||[]), ...(rPa||[]), ...(rZa||[])];
 
-      let tData = {}; if (window.globalWorkers) window.globalWorkers.forEach(w => { tData[w.name] = { dept: w.dept, days: {}, sum: 0, details: {}, modelsMonthly: {} }; });
+      let tData = {}; if (window.globalWorkers) window.globalWorkers.forEach(w => { tData[w.name] = { dept: w.dept, days: {}, sum: 0 }; });
       all.forEach(r => {
          let name = r.name || r.solderer_name || r.packager_name;
          if(tData[name]) {
@@ -625,8 +743,6 @@
                 tData[name].days[d].count += c; tData[name].sum += c; 
                 let model = r.model || r.config || 'Інше';
                 tData[name].days[d].models[model] = (tData[name].days[d].models[model] || 0) + c;
-                tData[name].details[r.date] = (tData[name].details[r.date]||0)+c; 
-                tData[name].modelsMonthly[model] = (tData[name].modelsMonthly[model] || 0) + c;
             }
          }
       });
@@ -634,7 +750,6 @@
 
       let depts = { "Адмін": [], "Зварка": [], "Пайка": [], "Запаковка": [] };
       Object.keys(tData).forEach(n => { if(depts[tData[n].dept]) depts[tData[n].dept].push(n); });
-
       let mapIds = {"Адмін": "admin", "Зварка": "zvarka", "Пайка": "payka", "Запаковка": "zapakovka"};
 
       for (let dpt in depts) {
@@ -663,7 +778,7 @@
       }
     }
 
-    // === ВІДДІЛЕНЕ МОДАЛЬНЕ ВІКНО КАЛЕНДАРЯ ===
+    // ВІДДІЛЕНЕ МОДАЛЬНЕ ВІКНО КАЛЕНДАРЯ
     window.openCalModal = function(n, dt, dpt) { 
         document.getElementById('calModalName').value=n; document.getElementById('calModalDate').value=dt; document.getElementById('calModalDept').value=dpt; 
         document.getElementById('calModalTitle').innerText=`${n} (${dt.split('-').reverse().slice(0,2).join('.')})`; 
@@ -676,11 +791,12 @@
         if (dayData.count > 0 || Object.keys(dayData.models).length > 0) { 
             document.getElementById('calModalDetailsBlock').style.display='block'; 
             let h='', t=0; 
-            for(let k in dayData.models) { h += `<li><span>${k}</span><span><b>${dayData.models[k]} шт</b></span></li>`; t += dayData.models[k]; } 
-            h += `<div class="modal-total"><span>Всього:</span><span>${t} шт</span></div>`; 
+            for(let k in dayData.models) { h += `<div class="cal-row"><span>${k}</span><span>${dayData.models[k]} шт</span></div>`; t += dayData.models[k]; } 
+            h += `<div class="cal-total-row"><span>Всього:</span><span>${t} шт</span></div>`; 
             dbList.innerHTML=h; 
         } else { document.getElementById('calModalDetailsBlock').style.display='none'; }
         
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); // закриваємо інші
         document.getElementById('calModal').classList.add('active'); 
     }
     
@@ -693,45 +809,50 @@
         document.getElementById('calModal').classList.remove('active'); loadTabel(); loadDaily();
     }
 
+    // === КОМАНДА (КАРТКИ) ===
+    window.loadWorkersCards = async function() {
+       const { data } = await supabase.from('workers').select('*').order('name');
+       let html = "";
+       if(data) {
+          data.forEach(w => {
+             let stColor = w.status === 'Активний' ? 'var(--success)' : (w.status === 'Очікує' ? 'var(--warning)' : 'var(--danger)');
+             html += `
+             <div class="card" style="padding:15px; margin-bottom:0; width: calc(33% - 10px); min-width: 250px;">
+                <div style="font-size:16px; font-weight:700; margin-bottom:10px;">${w.name}</div>
+                <div style="font-size:13px; color:var(--text-muted); margin-bottom:5px;">Відділ: <span style="color:#fff;">${w.dept}</span></div>
+                <div style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Статус: <span style="color:${stColor}; font-weight:600;">${w.status}</span></div>
+                <button class="btn-secondary" style="width:100%; padding:8px; font-size:12px;" onclick="openWorkerProfile('${w.name}')">Редагувати профіль</button>
+             </div>`;
+          });
+       }
+       document.getElementById('team-cards-container').innerHTML = html || "Немає працівників";
+    }
+
     // === ПРОФІЛЬ ===
     window.openWorkerProfile = async function(name) {
       let worker = window.globalWorkers.find(w => w.name === name); if(!worker) return;
       document.getElementById('wModalTitle').innerText = worker.name; document.getElementById('wModalId').value = worker.id;
-      document.getElementById('wInfoDept').innerText = worker.dept; document.getElementById('wInfoStatus').innerText = worker.status;
       
-      let uData = window.globalTabelData[name] || { days: {}, sum: 0, details: {}, modelsMonthly: {} };
-      document.getElementById('wInfoItems').innerText = uData.sum + ' шт';
-
-      let modelsHtml = "";
-      if (Object.keys(uData.modelsMonthly).length > 0) {
-          modelsHtml = Object.keys(uData.modelsMonthly).map(m => `<li><span>${m}</span><span><b>${uData.modelsMonthly[m]} шт</b></span></li>`).join('');
-      } else modelsHtml = `<span style="color:var(--text-muted); font-size:12px;">Немає звітів за місяць</span>`;
-      document.getElementById('wInfoModelsList').innerHTML = modelsHtml;
-
       document.getElementById('wEditName').value = worker.name; document.getElementById('wEditDept').value = worker.dept; document.getElementById('wEditStatus').value = worker.status;
-      document.getElementById('wInfoTrend').innerHTML = '⏳...'; switchWorkerTab('info'); document.getElementById('workerModal').classList.add('active');
+      
+      // Сховати вкладки якщо це виклик не з табеля
+      document.getElementById('workerTabs').style.display = 'flex';
+      switchWorkerTab('edit'); 
+      document.getElementById('workerModal').classList.add('active');
+    }
 
-      if(chartPersonal) chartPersonal.destroy();
-      let labels = Object.keys(uData.details).sort(); let dataPoints = labels.map(l => uData.details[l]);
-      chartPersonal = new Chart(document.getElementById('personalChart'), { type:'line', data:{ labels:labels.map(x=>x.split('-')[2]), datasets:[{label: 'Виготовлено', data:dataPoints, borderColor:'#009EF7', tension:0.2, fill:false}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
-
-      let tbl = getTableName(worker.dept);
-      if(tbl) {
-         let [y, mo] = document.getElementById('tabelMonth').value.split('-'); let prevD = new Date(y, mo-1, 0);
-         let pS = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-01`; let pE = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-${prevD.getDate()}`;
-         let workerNameField = worker.dept === 'Пайка' ? 'solderer_name' : (worker.dept === 'Запаковка' ? 'packager_name' : 'name');
-         const { data: pData } = await supabase.from(tbl).select('count').eq(workerNameField, name).gte('date', pS).lte('date', pE);
-         let pTotal = 0; if(pData) pData.forEach(r => pTotal += (parseInt(r.count)||0));
-         let diff = uData.sum - pTotal;
-         document.getElementById('wInfoTrend').innerHTML = diff > 0 ? `<span style="color:var(--success)">📈 Рост (+${diff} шт)</span>` : (diff < 0 ? `<span style="color:var(--danger)">📉 Спад (${diff} шт)</span>` : `<span style="color:var(--text-muted)">Без змін</span>`);
-      } else document.getElementById('wInfoTrend').innerText = "—";
+    window.saveWorkerProfile = async function() { 
+        let id=document.getElementById('wModalId').value, newName=document.getElementById('wEditName').value.trim(), newDept=document.getElementById('wEditDept').value, newStatus=document.getElementById('wEditStatus').value; 
+        if(!newName) return alert("Ім'я не може бути пустим!"); 
+        await supabase.from('workers').update({ name: newName, dept: newDept, status: newStatus }).eq('id', id); 
+        document.getElementById('workerModal').classList.remove('active'); loadDaily(); loadTabel(); loadWorkersCards(); 
     }
 
     // === МАСОВИЙ СТАТУС (ПЕРІОДОМ) ===
     window.openMassUpdate = async function() { 
         document.getElementById('massUpdateCard').classList.add('active'); document.getElementById('massWorkersList').innerHTML = "⏳ Завантаження..."; 
         const { data: w } = await supabase.from('workers').select('*').eq('status', 'Активний').order('name'); let html = ''; 
-        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 140px; padding:8px; font-size:13px; border-radius:6px; background:var(--bg-surface); color:#fff; border:1px solid rgba(255,255,255,0.1);"><option value="">- Без змін -</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Прим. вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
+        if(w) w.forEach(x => { if(x.dept !== 'Зварка' && x.dept !== 'Пайка' && x.dept !== 'Запаковка') return; html += `<div class="row mass-worker-row" data-name="${x.name}" data-dept="${x.dept}"><div>${x.name}</div><select class="mass-status-select" style="max-width: 140px; padding:8px; font-size:12px; border-radius:6px; background:var(--bg-surface); color:#fff; border:1px solid rgba(255,255,255,0.1);"><option value="">- Без змін -</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Прим. вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select></div>`; }); 
         document.getElementById('massWorkersList').innerHTML = html; 
     }
     window.saveMassStatuses = async function() { 
@@ -760,45 +881,119 @@
         loadTabel(); loadDaily();
     }
 
-    // === КОМАНДА, АРХІВ ТА ІНШЕ ===
-    window.loadWorkers = async function() {
-       const { data } = await supabase.from('workers').select('*').order('name'); let adm="", zv="", pa="", zap="";
-       if(data) { data.forEach(w => { let el = `<div class="row"><div><span class="clickable-name" onclick="openWorkerProfile('${w.name}')">${w.name}</span></div><div style="color:var(--text-muted); font-size:13px;">${w.status}</div></div>`; let d = w.dept.toLowerCase(); if(d==='адмін') adm+=el; else if(d==='зварка') zv+=el; else if(d==='пайка') pa+=el; else if(d==='запаковка') zap+=el; }); }
-       document.getElementById('team-admin').innerHTML = adm || "Порожньо"; document.getElementById('team-zvarka').innerHTML = zv || "Порожньо"; document.getElementById('team-payka').innerHTML = pa || "Порожньо"; document.getElementById('team-zapakovka').innerHTML = zap || "Порожньо";
+    // === БАЗА ЗБІРОК ТА СКЛАД (З АВТОКОНВЕРТАЦІЄЮ) ===
+    function extractCells(configStr) {
+        let match = configStr.match(/(\d+)[sS](\d+)[pP]/);
+        if(match) return parseInt(match[1]) * parseInt(match[2]);
+        return 1;
     }
+
     window.loadArchive = async function() {
-      document.getElementById('archiveListContainer').innerHTML = "⏳..."; const { data } = await supabase.from('archive_models').select('*'); let html = '';
+      document.getElementById('archiveListContainer').innerHTML = "⏳...";
+      const { data } = await supabase.from('archive_models').select('*'); window.globalArchive = data || [];
+      let html = '';
       if (data) {
         let confs = data.filter(r => r.config).sort((a,b) => a.config.localeCompare(b.config, undefined, {numeric:true}));
         let cV = [], cH = [], cOther = [];
-        confs.forEach(r => { let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); margin:4px;">${r.config} <i class="fa-solid fa-xmark" style="color:var(--danger); cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`; if(lw.includes('v') || lw.includes('в')) cV.push(tag); else if(lw.includes('h') || lw.includes('г')) cH.push(tag); else cOther.push(tag); });
+        confs.forEach(r => {
+           let cells = extractCells(r.config);
+           let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.config}')">${r.config} <span style="color:var(--text-muted); font-size:10px; margin-left:5px;">(${cells} елем.)</span> <i class="fa-solid fa-xmark" style="color:var(--danger); margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`;
+           if(lw.includes('v') || lw.includes('в')) cV.push(tag); else if(lw.includes('h') || lw.includes('г')) cH.push(tag); else cOther.push(tag);
+        });
         html += `<div style="margin-bottom:20px;"><strong>Вертикальні (V):</strong><br>${cV.join('') || '—'}</div><div style="margin-bottom:20px;"><strong>Горизонтальні (H):</strong><br>${cH.join('') || '—'}</div><div style="margin-bottom:20px;"><strong>Інші збірки:</strong><br>${cOther.join('') || '—'}</div>`;
+
         let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px;">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="deleteArchive(${r.id})"></i></div>`).join('');
         html += `<div><strong>Банки (Елементи):</strong><br>${elements || '—'}</div>`; document.getElementById('archiveListContainer').innerHTML = html;
-        document.getElementById('webConfig').innerHTML = confs.map(x=>`<option>${x.config}</option>`).join(''); document.getElementById('webElement').innerHTML = data.filter(r=>r.element).map(x=>`<option>${x.element}</option>`).join('');
-        let elsHtml = '<option value="">Оберіть...</option>' + data.filter(r=>r.element).map(x=>`<option>${x.element}</option>`).join(''); document.getElementById('invSupEl').innerHTML = elsHtml; document.getElementById('invTrEl').innerHTML = elsHtml; document.getElementById('invIssEl').innerHTML = elsHtml;
+        
+        let confHtml = confs.map(x=>`<option>${x.config}</option>`).join(''); document.getElementById('webConfig').innerHTML = confHtml;
+        let elsHtml = data.filter(r=>r.element).map(x=>`<option value="${x.element}">${x.element}</option>`).join(''); document.getElementById('webElement').innerHTML = elsHtml;
+        
+        document.getElementById('invSupEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
+        document.getElementById('invTrEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
+        
+        // Для видачі можна вибрати банку або готову збірку
+        let allModels = [];
+        confs.forEach(c => { data.filter(r=>r.element).forEach(e => { allModels.push(`${c.config} ${e.element}`); }); });
+        let issHtml = '<option value="">Оберіть банку АБО збірку...</option>';
+        issHtml += `<optgroup label="Елементи (Банки)">` + elsHtml + `</optgroup>`;
+        issHtml += `<optgroup label="Готові збірки">` + allModels.map(m=>`<option value="${m}">${m}</option>`).join('') + `</optgroup>`;
+        document.getElementById('invIssEl').innerHTML = issHtml;
+        document.getElementById('invIssEl').addEventListener('change', function() {
+            let val = this.value;
+            let cells = extractCells(val);
+            if(cells > 1) {
+                document.getElementById('invAutoCalcHint').innerText = `💡 Увага: 1 збірка спише ${cells} банок.`;
+            } else {
+                document.getElementById('invAutoCalcHint').innerText = ``;
+            }
+        });
       }
     }
+
+    window.openArchiveDetails = function(id, name) {
+        document.getElementById('wModalTitle').innerText = name;
+        document.getElementById('workerTabs').style.display = 'none';
+        switchWorkerTab('archive');
+        document.getElementById('workerModal').classList.add('active');
+    }
+    window.saveArchDetails = function() { alert("Збережено локально (для прикладу)"); document.getElementById('workerModal').classList.remove('active'); }
+    
     window.loadInventory = async function() {
       document.getElementById('inventoryBalances').innerHTML = "⏳..."; document.getElementById('inventoryHistory').innerHTML = "⏳...";
-      const { data: logs } = await supabase.from('inventory_logs').select('*').order('created_at', { ascending: false }); let b = {};
-      if(logs) { logs.forEach(l => { let q = parseInt(l.qty); if(!b[l.element]) b[l.element] = 0; if(l.action==='Поставка') b[l.element]+=q; else b[l.element]-=q; }); }
-      document.getElementById('inventoryBalances').innerHTML = Object.keys(b).map(k=>`<div class="stat-card"><h4>${k}</h4><div class="value">${b[k]} шт</div></div>`).join('') || "Склад порожній";
+      const { data: logs } = await supabase.from('inventory_logs').select('*').order('created_at', { ascending: false });
+      let b = {};
+      if(logs) { logs.forEach(l => { let q = parseInt(l.qty); if(!b[l.element]) b[l.element] = { 'Л1-3': 0, 'Л2': 0, 'Головний':0 }; if(l.action==='Поставка') b[l.element][l.loc_to]+=q; else if (l.action==='Видача') b[l.element][l.loc_from]-=q; else { b[l.element][l.loc_from]-=q; b[l.element][l.loc_to]+=q; } }); }
+      
+      let balHtml = "";
+      for (let el in b) {
+          let total = (b[el]['Л1-3']||0) + (b[el]['Л2']||0) + (b[el]['Головний']||0);
+          balHtml += `<div class="stat-card"><h4>${el}</h4><div class="value">${total}</div><div style="font-size:11px; color:#aaa; margin-top:5px;">Л1-3: ${b[el]['Л1-3']||0} | Л2: ${b[el]['Л2']||0}</div></div>`;
+      }
+      document.getElementById('inventoryBalances').innerHTML = balHtml || "Склад порожній";
+      
       let fDate = document.getElementById('invHistoryDate').value; let filtered = fDate ? logs.filter(x=>x.created_at.startsWith(fDate)) : logs;
-      document.getElementById('inventoryHistory').innerHTML = filtered ? filtered.slice(0,20).map(l => `<div class="row"><div><strong>${l.action}:</strong> ${l.element} x ${l.qty} шт</div><div style="color:var(--text-muted); font-size:12px;">${new Date(l.created_at).toLocaleDateString()}</div></div>`).join('') : 'Немає записів';
+      document.getElementById('inventoryHistory').innerHTML = filtered ? filtered.slice(0,20).map(l => {
+          let details = l.action === 'Переміщення' ? `${l.loc_from} ➔ ${l.loc_to}` : (l.action === 'Поставка' ? `В: ${l.loc_to}` : `З: ${l.loc_from}`);
+          return `<div class="row"><div><strong>${l.action}:</strong> ${l.element} x <span style="color:var(--info)">${l.qty} шт</span><br><span style="font-size:11px; color:#aaa;">${details}</span></div><div style="color:var(--text-muted); font-size:12px;">${new Date(l.created_at).toLocaleDateString()}</div></div>`;
+      }).join('') : 'Немає записів';
     }
 
-    window.switchWorkerTab = function(t) { document.querySelectorAll('.modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.modal-tab-content').forEach(e=>e.classList.remove('active')); document.getElementById(t==='info'?'tabInfoBtn':'tabEditBtn').classList.add('active'); document.getElementById(t==='info'?'wTabInfo':'wTabEdit').classList.add('active'); }
+    window.saveInv = async function(action) { 
+        let el, qty, loc_from, loc_to; 
+        
+        if(action === 'Поставка') { 
+            el = document.getElementById('invSupEl').value; qty = parseInt(document.getElementById('invSupQty').value); loc_to = document.getElementById('invSupTo').value; 
+            let ven = document.getElementById('invSupVendor').value; if(ven && !savedSups.includes(ven)){ savedSups.push(ven); localStorage.setItem('L2_sups', JSON.stringify(savedSups)); document.getElementById('supList').innerHTML += `<option value="${ven}">`; }
+        } else if(action === 'Переміщення') { 
+            el = document.getElementById('invTrEl').value; qty = parseInt(document.getElementById('invTrQty').value); loc_from = document.getElementById('invTrFrom').value; loc_to = document.getElementById('invTrTo').value; 
+        } else { 
+            el = document.getElementById('invIssEl').value; qty = parseInt(document.getElementById('invIssQty').value); loc_from = document.getElementById('invIssFrom').value; 
+            let cl = document.getElementById('invIssClient').value; if(cl && !savedClients.includes(cl)){ savedClients.push(cl); localStorage.setItem('L2_clients', JSON.stringify(savedClients)); document.getElementById('clientList').innerHTML += `<option value="${cl}">`; }
+            
+            // АВТОКОНВЕРТАЦІЯ
+            let multiplier = extractCells(el);
+            if(multiplier > 1) {
+                qty = qty * multiplier;
+                // Знаходимо назву елемента (банки) в рядку (напр. "6s6p Molicel P42A" -> "Molicel P42A")
+                let foundElement = window.globalArchive.find(r => r.element && el.includes(r.element));
+                el = foundElement ? foundElement.element : el; 
+                alert(`Автоконвертація: Списуємо ${qty} шт елемента ${el}`);
+            }
+        } 
+        if(!el || !qty) return alert("Заповніть поля!"); 
+        await supabase.from('inventory_logs').insert([{ action, element: el, qty: qty, loc_from, loc_to }]); 
+        document.querySelectorAll('#inventory input[type="number"]').forEach(i=>i.value=''); loadInventory(); 
+    }
+
+    window.switchWorkerTab = function(t) { document.querySelectorAll('.modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.modal-tab-content').forEach(e=>e.classList.remove('active')); document.getElementById(t==='info'?'tabInfoBtn':'tabEditBtn').classList.add('active'); document.getElementById(t==='info'?'wTabInfo':(t==='edit'?'wTabEdit':'wTabArchive')).classList.add('active'); }
     window.switchInvTab = function(t) { document.querySelectorAll('#inventory .modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('#inventory .modal-tab-content').forEach(e=>e.classList.remove('active')); event.currentTarget.classList.add('active'); document.getElementById(`inv-${t}`).classList.add('active'); }
     window.approveWorker = async function(id) { const dept = document.getElementById(`newdept-${id}`).value; await supabase.from('workers').update({ status: 'Активний', dept: dept }).eq('id', id); loadDaily(); }
     window.addActiveModel = async function() { let m = document.getElementById('webConfig').value + " " + document.getElementById('webElement').value; if(m.includes("Завантаження")) return; await supabase.from('active_models').insert([{model: m}]); loadDaily(); }
     window.clearModels = async function() { await supabase.from('active_models').delete().neq('model','dummy'); loadDaily(); }
     window.addArch = async function(type) { let v = document.getElementById(type==='config'?'newConfigInput':'newElementInput').value; if(v) await supabase.from('archive_models').insert([{ [type]: v }]); document.getElementById(type==='config'?'newConfigInput':'newElementInput').value=''; loadArchive(); }
     window.deleteArchive = async function(id) { if(confirm("Видалити з прайсу?")) { await supabase.from('archive_models').delete().eq('id', id); loadArchive(); } }
-    window.saveInv = async function(action) { let el, qty, loc_from="Головний", loc_to="Головний"; if(action === 'Поставка') { el=document.getElementById('invSupEl').value; qty=document.getElementById('invSupQty').value; loc_to=document.getElementById('invSupTo').value||"Головний"; } else if(action === 'Переміщення') { el=document.getElementById('invTrEl').value; qty=document.getElementById('invTrQty').value; loc_from=document.getElementById('invTrFrom').value; loc_to=document.getElementById('invTrTo').value; } else { el=document.getElementById('invIssEl').value; qty=document.getElementById('invIssQty').value; loc_from=document.getElementById('invIssFrom').value; } if(!el || !qty) return alert("Заповніть поля!"); await supabase.from('inventory_logs').insert([{ action, element: el, qty: parseInt(qty), loc_from, loc_to }]); document.querySelectorAll('#inventory input').forEach(i=>i.value=''); loadInventory(); }
-    window.saveWorkerProfile = async function() { let id=document.getElementById('wModalId').value, newName=document.getElementById('wEditName').value.trim(), newDept=document.getElementById('wEditDept').value, newStatus=document.getElementById('wEditStatus').value; if(!newName) return alert("Ім'я не може бути пустим!"); await supabase.from('workers').update({ name: newName, dept: newDept, status: newStatus }).eq('id', id); document.getElementById('workerModal').classList.remove('active'); loadDaily(); loadTabel(); loadWorkers(); }
 
-    loadArchive(); loadDaily();
+    loadArchive(); loadDaily(); loadDistribWorkers();
   </script>
 </body>
 </html>
