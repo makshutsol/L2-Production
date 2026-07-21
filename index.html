@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -9,7 +9,18 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
-    :root { --bg-base:#0f0f13; --bg-surface:#18181d; --bg-hover:#22222a; --text-main:#FFFFFF; --text-muted:#8a8d93; --danger:#f1416c; --success:#50CD89; --warning:#f6c000; --info:#009EF7; }
+    :root { 
+      --bg-base:#0f0f13; 
+      --bg-surface:#18181d; 
+      --bg-hover:#22222a; 
+      --text-main:#FFFFFF; 
+      --text-muted:#8a8d93; 
+      --danger:#f1416c; 
+      --success:#50CD89; 
+      --warning:#f6c000; 
+      --info:#009EF7; 
+    }
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased;}
     h1, h2, h3, .logo-text, .card-title { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -0.5px; }
@@ -45,7 +56,7 @@
     .btn-info { background: rgba(0,158,247,0.1); color: var(--info); border: 1px solid rgba(0,158,247,0.3); }
     
     .setup-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;}
-    .setup-grid > * { flex: 1; min-width: 150px; }
+    .setup-grid > * { flex: 1; min-width: 140px; }
     
     .row { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: var(--bg-base); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
     .row.has-report { background: rgba(80, 205, 137, 0.08); border: 1px solid rgba(80, 205, 137, 0.3); }
@@ -85,7 +96,7 @@
     /* МОДАЛКИ */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
-    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 420px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: var(--bg-surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; border: 1px solid rgba(255,255,255,0.1); position: relative; max-height: 90vh; overflow-y: auto; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; position: absolute; right: 20px; top: 15px;}
     
     .cal-details-box { background: var(--bg-base); border-radius: 12px; padding: 15px; margin-top: 10px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
@@ -97,14 +108,15 @@
     .modal-tab.active { color: var(--info); border-bottom-color: var(--info); }
     .modal-tab-content { display: none; } .modal-tab-content.active { display: block; }
 
-    /* РОЗПОДІЛ РОБОТИ (ЧЕКБОКСИ) */
+    /* РОЗПОДІЛ РОБОТИ */
     .checkbox-list { background: var(--bg-base); border-radius: 10px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); max-height: 200px; overflow-y: auto;}
     .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; cursor: pointer;}
     .check-item input { width: 18px; height: 18px; cursor: pointer; }
 
     /* МОБІЛЬНА АДАПТАЦІЯ */
     .mobile-header { display: none; }
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 900; }
+    
     @media (max-width: 768px) {
       body { flex-direction: column; } 
       .mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-surface); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 800;}
@@ -112,13 +124,14 @@
       .sidebar.open { transform: translateX(0); }
       .overlay.active { display: block; }
       .main-content { padding: 15px; } 
-      .header h1 { font-size: 24px; }
+      .header h1 { font-size: 22px; }
       .card { padding: 15px; border-radius: 12px; margin-bottom: 15px; }
       .setup-grid { flex-direction: column; gap: 10px; align-items: stretch; }
-      .setup-grid > * { width: 100%; }
+      .setup-grid > * { width: 100%; min-width: 100%; }
       .row { flex-direction: column; align-items: flex-start; }
       .worker-info { width: 100%; margin-bottom: 10px; }
       .status-select { max-width: 100%; width: 100%; }
+      #team-cards-container > .card { width: 100% !important; }
     }
   </style>
 </head>
@@ -171,9 +184,9 @@
         </div>
       </div>
 
-      <!-- НОВЕ: 1.5 РОЗПОДІЛ РОБОТИ -->
+      <!-- 1.5 РОЗПОДІЛ РОБОТИ -->
       <div id="distrib" class="section">
-        <div class="header"><h1>Розподіл роботи</h1><p>Генератор планів (перемішує працівників)</p></div>
+        <div class="header"><h1>Розподіл роботи</h1><p>Генератор планів із можливістю вказувати к-сть робітників</p></div>
         <div class="card">
             <div style="margin-bottom: 15px;">
                 <label style="font-size:12px; color:var(--text-muted);">Відділ:</label>
@@ -193,6 +206,10 @@
                         <label style="font-size:12px; color:var(--text-muted);">Кількість (шт):</label>
                         <input type="number" class="dist-qty-input" placeholder="Напр. 100" style="margin-top:5px;">
                     </div>
+                    <div style="flex:1;">
+                        <label style="font-size:12px; color:var(--text-muted);">К-сть робітників:</label>
+                        <input type="number" class="dist-workers-input" placeholder="Напр. 2" style="margin-top:5px;">
+                    </div>
                 </div>
             </div>
             
@@ -203,7 +220,7 @@
                 <input type="text" id="distNotes" placeholder="Наприклад: Всі елементи проклеєні..." style="margin-top:5px;">
             </div>
 
-            <label style="font-size:12px; color:var(--text-muted); margin-bottom:10px; display:block;">Оберіть працівників для розподілу (вони будуть перемішані):</label>
+            <label style="font-size:12px; color:var(--text-muted); margin-bottom:10px; display:block;">Оберіть працівників для розподілу (будуть перемішані):</label>
             <div class="checkbox-list" id="distWorkersList">⏳ Оберіть відділ...</div>
 
             <button class="btn-primary" style="width:100%; margin-top:20px; padding:15px; font-size:15px;" onclick="generateDistrib()">🎲 Згенерувати розподіл</button>
@@ -215,9 +232,9 @@
         </div>
       </div>
 
-      <!-- 2. ДАШБОРД (Додано Таблицю Лідерів) -->
+      <!-- 2. ДАШБОРД -->
       <div id="dashboard" class="section">
-        <div class="header"><h1>Аналітика та Рейтинги</h1><p>Система показує загальну статистику та рейтинг найкращих працівників.</p></div>
+        <div class="header"><h1>Аналітика та Рейтинги</h1><p>Загальна статистика та рейтинг найкращих працівників.</p></div>
         <div class="card">
           <div class="setup-grid" style="margin-bottom: 0;">
             <div><label style="font-size:12px; color:var(--text-muted);">Від:</label><input type="date" id="dashStart"></div>
@@ -233,14 +250,12 @@
         </div>
 
         <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom: 20px;">
-            <!-- Графік -->
             <div class="card" style="flex:2; min-width:300px; margin-bottom:0;">
                 <div class="card-title" id="chartTitle1" style="margin-bottom:15px;">Динаміка виробництва</div>
                 <select id="dashSelectWorker" style="padding:8px; font-size:13px; width:100%; margin-bottom:15px;" onchange="loadPersonalChartDashboard()"><option value="">-- Всі працівники --</option></select>
                 <div style="position:relative; height:200px; width:100%;"><canvas id="trendChart"></canvas></div>
             </div>
             
-            <!-- Таблиця Лідерів -->
             <div class="card" style="flex:1; min-width:280px; margin-bottom:0; background: linear-gradient(145deg, rgba(255,215,0,0.05) 0%, var(--bg-surface) 100%);">
                 <div class="card-title" style="margin-bottom:15px; color:gold;"><i class="fa-solid fa-trophy"></i> Таблиця Лідерів</div>
                 <div id="leaderboardContainer">⏳ Завантаження...</div>
@@ -280,19 +295,19 @@
         <div id="team-cards-container" style="display:flex; flex-wrap:wrap; gap:15px;">⏳...</div>
       </div>
 
-      <!-- 5. БАЗА ЗБІРОК (Конструктор та Автомноження) -->
+      <!-- 5. БАЗА ЗБІРОК -->
       <div id="archive" class="section">
-        <div class="header"><h1>База збірок</h1><p>Довідник моделей (Автоматично рахує банки з назви, напр. 6s6p = 36)</p></div>
+        <div class="header"><h1>База збірок</h1><p>Довідник моделей та елементів живлення</p></div>
         <div class="setup-grid" style="align-items: flex-start;">
           <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Нова конфігурація</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newConfigInput" placeholder="6s2p (v)"><button class="btn-primary" onclick="addArch('config')">+</button></div></div>
           <div class="card" style="flex: 1;"><div class="card-title" style="margin-bottom: 15px;">Новий елемент</div><div class="setup-grid" style="margin-bottom:0;"><input type="text" id="newElementInput" placeholder="Molicel P42A"><button class="btn-primary" onclick="addArch('element')">+</button></div></div>
         </div>
-        <div class="card"><div class="card-title" style="margin-bottom: 15px;">Повний довідник (Клікніть для налаштування)</div><div id="archiveListContainer">⏳ Завантаження...</div></div>
+        <div class="card"><div class="card-title" style="margin-bottom: 15px;">Повний довідник (Клікніть для деталізації)</div><div id="archiveListContainer">⏳ Завантаження...</div></div>
       </div>
 
       <!-- 6. СКЛАД -->
       <div id="inventory" class="section">
-        <div class="header"><h1>Склад WMS</h1><p>Рух елементів між Л1-3 та Л2. При видачі ЗБІРКИ система спише ЕЛЕМЕНТИ.</p></div>
+        <div class="header"><h1>Склад WMS</h1><p>Рух елементів між Л1-3 та Л2.</p></div>
         <div class="card">
           <div class="modal-tabs">
             <div class="modal-tab active" onclick="switchInvTab('supply')">📥 Поставка</div>
@@ -322,10 +337,10 @@
           
           <div id="inv-issue" class="modal-tab-content">
             <div class="setup-grid">
-                <div><label style="font-size:12px; color:var(--text-muted);">Що видаємо (Збірка або Елемент):</label><select id="invIssEl"></select></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Що видаємо:</label><select id="invIssEl"></select></div>
                 <div><label style="font-size:12px; color:var(--text-muted);">Скільки штук:</label><input type="number" id="invIssQty" placeholder="Кількість"></div>
                 <div><label style="font-size:12px; color:var(--text-muted);">Кому (Клієнт):</label><input type="text" id="invIssClient" list="clientList" placeholder="Отримувач"></div>
-                <div><label style="font-size:12px; color:var(--text-muted);">Звідки списати (Склад):</label><select id="invIssFrom"><option>Л1-3</option><option>Л2</option></select></div>
+                <div><label style="font-size:12px; color:var(--text-muted);">Звідки списати:</label><select id="invIssFrom"><option>Л1-3</option><option>Л2</option></select></div>
             </div>
             <p id="invAutoCalcHint" style="font-size:12px; color:var(--warning); margin-bottom:15px;"></p>
             <button class="btn-danger" onclick="saveInv('Видача')">Списати</button>
@@ -339,20 +354,6 @@
       </div>
 
     </main>
-  </div>
-
-  <!-- МОДАЛКА МАСОВОГО СТАТУСУ -->
-  <div class="modal" id="massUpdateCard">
-    <div class="modal-content">
-        <button class="close-btn" onclick="document.getElementById('massUpdateCard').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-        <div class="card-title" style="margin-bottom:20px;">Масовий статус (Період)</div>
-        <div style="display:flex; gap:10px; margin-bottom: 20px;">
-            <div style="flex:1;"><label style="font-size:11px; color:var(--text-muted);">Від:</label><input type="date" id="massStartDate"></div>
-            <div style="flex:1;"><label style="font-size:11px; color:var(--text-muted);">До:</label><input type="date" id="massEndDate"></div>
-        </div>
-        <div id="massWorkersList" style="margin-bottom: 20px; max-height:300px; overflow-y:auto;"></div>
-        <button class="btn-success" style="width:100%; padding:14px;" onclick="saveMassStatuses()">Затвердити</button>
-    </div>
   </div>
 
   <!-- МОДАЛКА КАЛЕНДАРЯ -->
@@ -418,33 +419,42 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА АРХІВУ (КОНСТРУКТОР ТА ЕЛЕМЕНТИ) -->
+  <!-- МОДАЛКА АРХІВУ (ПОСИЛАННЯ ТА ФОТО ЕЛЕМЕНТІВ) -->
   <div class="modal" id="archiveModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('archiveModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-        <div class="card-title" id="archModalTitle" style="margin-bottom:20px; font-size: 18px; color:var(--info);">Налаштування</div>
+        <div class="card-title" id="archModalTitle" style="margin-bottom:20px; font-size: 18px; color:var(--info);">Деталі</div>
         <input type="hidden" id="archModalName">
         <input type="hidden" id="archModalType">
         
-        <!-- ДЛЯ ЗБІРКИ (КОНСТРУКТОР КРОКІВ) -->
+        <!-- КОНФІГУРАЦІЯ (ПОСИЛАННЯ + ТЕКСТ) -->
         <div id="archConfigBlock" style="display:none;">
-            <div style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Додавайте кроки інструкції. Можна вставити текст або посилання на фотографію.</div>
-            <div id="archStepsContainer" style="max-height:300px; overflow-y:auto; margin-bottom:15px;"></div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-secondary" style="flex:1;" onclick="addArchStep('text')">+ Текст</button>
-                <button class="btn-secondary" style="flex:1;" onclick="addArchStep('image')">+ Фото (URL)</button>
+            <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:5px;">Посилання на інструкцію у Telegram:</label>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="text" id="archTgLink" placeholder="https://t.me/...">
+                <button class="btn-info" style="padding:0 15px;" onclick="openTgTutorial()"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
             </div>
-            <button class="btn-success" style="width: 100%; padding:14px; margin-top:20px;" onclick="saveArchConfig()">Зберегти схему</button>
+            
+            <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:5px;">Додатковий текст / нотатки:</label>
+            <textarea id="archConfigNotes" rows="5" placeholder="Опис туторіалу або додаткові правила складань..."></textarea>
+            
+            <button class="btn-success" style="width: 100%; padding:14px; margin-top:20px;" onclick="saveArchConfig()">Зберегти конфігурацію</button>
         </div>
 
-        <!-- ДЛЯ ЕЛЕМЕНТА (БАНКИ) -->
+        <!-- ЕЛЕМЕНТ (ФОТО + ДЕТАЛІ) -->
         <div id="archElementBlock" style="display:none;">
+            <div id="archPhotoContainer" style="margin-bottom:15px; text-align:center;">
+                <!-- Тут виводиться фото за посиланням -->
+            </div>
+            <label style="font-size:13px; color:var(--text-muted);">Посилання на фотографію (URL):</label>
+            <input type="text" id="archElPhoto" style="margin-bottom:15px;" placeholder="https://..." onchange="previewArchPhoto(this.value)">
+            
             <label style="font-size:13px; color:var(--text-muted);">Розмір (напр. 21700):</label>
             <input type="text" id="archElSize" style="margin-bottom:15px;">
+            
             <label style="font-size:13px; color:var(--text-muted);">Ємність (mAh):</label>
-            <input type="number" id="archElMah" style="margin-bottom:15px;">
-            <label style="font-size:13px; color:var(--text-muted);">Посилання на фото (URL):</label>
-            <input type="text" id="archElPhoto" style="margin-bottom:25px;" placeholder="https://...">
+            <input type="number" id="archElMah" style="margin-bottom:25px;">
+            
             <button class="btn-success" style="width: 100%; padding:14px;" onclick="saveArchElement()">Зберегти елемент</button>
         </div>
     </div>
@@ -453,7 +463,6 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-    // === КЛЮЧІ ===
     const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
     const TELEGRAM_TOKEN = '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y'; 
@@ -461,22 +470,22 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let d = new Date(); let m = d.getMonth() + 1; let mStr = d.getFullYear() + "-" + (m < 10 ? "0" + m : m);
-    let todayStr = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-${(d.getDate() < 10 ? "0" + d.getDate() : d.getDate())}`;
     
     document.getElementById('repDate').valueAsDate = d; document.getElementById('tabelMonth').value = mStr;
     document.getElementById('dashStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`; document.getElementById('dashEnd').valueAsDate = d;
-    document.getElementById('massStartDate').valueAsDate = d; document.getElementById('massEndDate').valueAsDate = d;
     document.getElementById('statModStart').value = `${d.getFullYear()}-${(m < 10 ? "0" + m : m)}-01`; document.getElementById('statModEnd').valueAsDate = d;
 
     window.globalWorkers = []; window.globalTabelData = {}; window.globalArchive = []; window.invBalances = {};
     let chartTrend = null; let chartPersonal = null;
 
-    // ВІДНОВЛЕННЯ ПАМ'ЯТІ (Склад)
     let savedSups = JSON.parse(localStorage.getItem('L2_sups') || '[]'); let savedClients = JSON.parse(localStorage.getItem('L2_clients') || '[]');
     document.getElementById('supList').innerHTML = savedSups.map(x=>`<option value="${x}">`).join('');
     document.getElementById('clientList').innerHTML = savedClients.map(x=>`<option value="${x}">`).join('');
 
-    window.toggleMenu = function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('active'); }
+    window.toggleMenu = function() { 
+      document.getElementById('sidebar').classList.toggle('open'); 
+      document.getElementById('mobileOverlay').classList.toggle('active'); 
+    }
 
     window.switchTab = function(tab) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -603,7 +612,7 @@
         } catch(e) { document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; }
     }
 
-    // === НОВЕ: 1.5 РОЗПОДІЛ РОБОТИ (РАНДОМ + МУЛЬТИ-ЗАМОВЛЕННЯ) ===
+    // === 1.5 РОЗПОДІЛ РОБОТИ (ТОЧНИЙ РОЗПОДІЛ) ===
     window.loadDistribWorkers = function() {
         let dept = document.getElementById('distDept').value;
         let workers = window.globalWorkers.filter(w => w.dept === dept);
@@ -618,44 +627,67 @@
     window.addDistOrderRow = function() {
         let confHtml = window.globalArchive.filter(r=>r.config).map(x=>`<option value="${x.config}">${x.config}</option>`).join('');
         let newRow = document.createElement('div'); newRow.className = "dist-order-row setup-grid"; newRow.style.alignItems = "flex-end";
-        newRow.innerHTML = `<div style="flex:2;"><select class="dist-model-select distModelList" style="margin-top:5px;">${confHtml}</select></div><div style="flex:1;"><input type="number" class="dist-qty-input" placeholder="Кількість (шт)" style="margin-top:5px;"></div><button class="btn-danger" style="padding:12px; flex:none;" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>`;
+        newRow.innerHTML = `
+            <div style="flex:2;"><select class="dist-model-select distModelList" style="margin-top:5px;">${confHtml}</select></div>
+            <div style="flex:1;"><input type="number" class="dist-qty-input" placeholder="Кількість (шт)" style="margin-top:5px;"></div>
+            <div style="flex:1;"><input type="number" class="dist-workers-input" placeholder="К-сть людей" style="margin-top:5px;"></div>
+            <button class="btn-danger" style="padding:12px; flex:none;" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>`;
         document.getElementById('distOrdersContainer').appendChild(newRow);
     }
 
     window.generateDistrib = function() {
-        let dept = document.getElementById('distDept').value; let notes = document.getElementById('distNotes').value.trim();
-        let orders = []; let totalQty = 0;
+        let dept = document.getElementById('distDept').value; 
+        let notes = document.getElementById('distNotes').value.trim();
+        let orders = [];
+        
         document.querySelectorAll('.dist-order-row').forEach(row => {
-            let m = row.querySelector('.dist-model-select').value; let q = parseInt(row.querySelector('.dist-qty-input').value);
-            if(m && q > 0) { orders.push({model: m, qty: q}); totalQty += q; }
+            let m = row.querySelector('.dist-model-select').value; 
+            let q = parseInt(row.querySelector('.dist-qty-input').value);
+            let wCount = parseInt(row.querySelector('.dist-workers-input').value) || 0;
+            if(m && q > 0) { orders.push({ model: m, qty: q, workersCount: wCount }); }
         });
+        
         if(orders.length === 0) return alert("Заповніть хоча б одне замовлення з правильною кількістю!");
 
         let checks = document.querySelectorAll('.dist-check:checked');
         if (checks.length === 0) return alert("Оберіть працівників!");
         
-        // Рандомізація масиву працівників
-        let workerNames = Array.from(checks).map(c => c.value);
-        workerNames.sort(() => Math.random() - 0.5);
+        // Перемішуємо працівників
+        let availableWorkers = Array.from(checks).map(c => c.value).sort(() => Math.random() - 0.5);
+        let workerAssignments = {}; availableWorkers.forEach(w => workerAssignments[w] = []);
 
-        let finalDistrib = {}; workerNames.forEach(n => finalDistrib[n] = 0);
-        
         let text = ``;
+        let workerIndex = 0;
+
         orders.forEach(ord => {
             text += `${ord.model} - ${ord.qty}шт.\n`;
-            let baseQty = Math.floor(ord.qty / workerNames.length);
-            let remainder = ord.qty % workerNames.length;
-            workerNames.forEach((name, index) => {
-                let pQty = baseQty + (index < remainder ? 1 : 0);
-                finalDistrib[name] += pQty;
+            
+            // Якщо не вказано к-сть робітників або вона більша за залишок, роблять усі, хто лишився
+            let numWorkersForThis = ord.workersCount > 0 ? Math.min(ord.workersCount, availableWorkers.length - workerIndex) : (availableWorkers.length - workerIndex);
+            if(numWorkersForThis <= 0) numWorkersForThis = availableWorkers.length; // фолбек
+
+            let currentGroup = availableWorkers.slice(workerIndex, workerIndex + numWorkersForThis);
+            if(currentGroup.length === 0) currentGroup = availableWorkers; // Якщо людей менше ніж замовлень
+
+            let baseQty = Math.floor(ord.qty / currentGroup.length);
+            let remainder = ord.qty % currentGroup.length;
+
+            currentGroup.forEach((wName, idx) => {
+                let pQty = baseQty + (idx < remainder ? 1 : 0);
+                workerAssignments[wName].push(`${ord.model}: ${pQty} шт`);
             });
+
+            if (ord.workersCount > 0) workerIndex += numWorkersForThis;
         });
-        
+
         if (notes) text += `\nВказівки: ${notes}\n`;
-        text += `\nРозподіл (${workerNames.length} ${dept === 'Зварка' ? 'сварщики' : 'пайщики'}):\n`;
-        for (let name in finalDistrib) {
-            text += `• ${name} — ${finalDistrib[name]} шт.\n`;
+        text += `\nРозподіл (${availableWorkers.length} ${dept === 'Зварка' ? 'сварщики' : 'пайщики'}):\n`;
+        
+        for (let wName in workerAssignments) {
+            let tasks = workerAssignments[wName].length > 0 ? workerAssignments[wName].join(', ') : 'Без замовлення';
+            text += `• ${wName} — ${tasks}\n`;
         }
+
         document.getElementById('distResult').value = text;
     }
 
@@ -663,7 +695,7 @@
         let res = document.getElementById('distResult'); res.select(); document.execCommand("copy"); alert("Текст скопійовано!");
     }
 
-    // === 2. ДАШБОРД (ГЕЙМІФІКАЦІЯ / ЛІДЕРБОРД) ===
+    // === 2. ДАШБОРД ===
     window.populateDashWorkers = function() {
         let html = '<option value="">-- Всі працівники --</option>';
         window.globalWorkers.forEach(w => { html += `<option value="${w.name}">${w.name}</option>`; });
@@ -696,7 +728,6 @@
        let tM = {name:'Немає', val:0}; for(let m in mS) if(mS[m]>tM.val) tM={name:m, val:mS[m]};
        document.getElementById('dashTopModel').innerText = tM.name; 
 
-       // РЕЙТИНГОВА ТАБЛИЦЯ (ЛІДЕРБОРД)
        let sortedWorkers = Object.keys(wS).map(k => ({name: k, score: wS[k]})).sort((a,b) => b.score - a.score);
        let lbHtml = "";
        let medals = ["🥇", "🥈", "🥉", "4.", "5."];
@@ -709,7 +740,6 @@
            </div>`;
        }
        document.getElementById('leaderboardContainer').innerHTML = lbHtml || "<div style='color:var(--text-muted); font-size:13px;'>Немає даних</div>";
-       if(sortedWorkers.length > 0) { document.getElementById('dashTopWorker').innerText = sortedWorkers[0].name; }
 
        loadPersonalChartDashboard();
     }
@@ -847,7 +877,7 @@
         document.getElementById('calModal').classList.remove('active'); loadTabel(); loadDaily();
     }
 
-    // === КОМАНДА (КАРТКИ ІЗ ВЕЛИКИМИ ЦИФРАМИ) ===
+    // === 4. КОМАНДА ===
     window.loadWorkersCards = async function() {
        document.getElementById('team-cards-container').innerHTML = "⏳ Завантаження...";
        let mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
@@ -856,7 +886,6 @@
 
        const { data } = await supabase.from('workers').select('*').order('name');
        
-       // Дістаємо швидко суму для кожного за місяць
        const { data: rZv } = await supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end);
        const { data: rPa } = await supabase.from('reports_payka').select('*').gte('date', start).lte('date', end);
        const { data: rZa } = await supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end);
@@ -886,7 +915,7 @@
        document.getElementById('team-cards-container').innerHTML = html || "Немає працівників";
     }
 
-    // === ПРОФІЛЬ (ТЯГНЕ ДАНІ НАПРЯМУ) ===
+    // === ПРОФІЛЬ ===
     window.openWorkerProfile = async function(name) {
       let worker = window.globalWorkers.find(w => w.name === name); if(!worker) return;
       document.getElementById('wModalTitle').innerText = worker.name; document.getElementById('wModalId').value = worker.id;
@@ -898,7 +927,6 @@
       document.getElementById('workerTabs').style.display = 'flex';
       switchWorkerTab('info'); document.getElementById('workerModal').classList.add('active');
 
-      // Тягнемо з бази
       let mVal = document.getElementById('tabelMonth').value; 
       let [y, mo] = mVal.split('-'); let days = new Date(y, mo, 0).getDate();
       let start = `${y}-${mo}-01`; let end = `${y}-${mo}-${days}`;
@@ -929,7 +957,6 @@
           let labels = Object.keys(dDict).sort(); let dataPoints = labels.map(l => dDict[l]);
           chartPersonal = new Chart(document.getElementById('personalChart'), { type:'line', data:{ labels:labels.map(x=>x.split('-')[2]), datasets:[{label: 'Виготовлено', data:dataPoints, borderColor:'#009EF7', tension:0.2, fill:false}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
 
-          // Порівняння з минулим місяцем
           let prevD = new Date(y, mo-1, 0);
           let pS = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-01`; let pE = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-${prevD.getDate()}`;
           const { data: pDataOld } = await supabase.from(tbl).select('count').eq(workerNameField, name).gte('date', pS).lte('date', pE);
@@ -946,7 +973,7 @@
         document.getElementById('workerModal').classList.remove('active'); loadDaily(); loadTabel(); loadWorkersCards(); 
     }
 
-    // === БАЗА ЗБІРОК ТА СКЛАД (З АВТОКОНВЕРТАЦІЄЮ ТА КОНСТРУКТОРОМ) ===
+    // === 5. БАЗА ЗБІРОК (ПОСИЛАННЯ ТА ФОТО) ===
     function extractCells(configStr) {
         let match = configStr.match(/(\d+)[sS](\d+)[pP]/);
         if(match) return parseInt(match[1]) * parseInt(match[2]);
@@ -962,7 +989,8 @@
         let cV = [], cH = [], cOther = [];
         confs.forEach(r => {
            let cells = extractCells(r.config);
-           let lw = r.config.toLowerCase(); let tag = `<div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.config}', 'config')">${r.config} <span style="color:var(--text-muted); font-size:10px; margin-left:5px;">(${cells} елем.)</span> <i class="fa-solid fa-xmark" style="color:var(--danger); margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`;
+           let lw = r.config.toLowerCase(); 
+           let tag = `<div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.config}', 'config')">${r.config} <span style="color:var(--text-muted); font-size:10px; margin-left:5px;">(${cells} елем.)</span> <i class="fa-solid fa-xmark" style="color:var(--danger); margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`;
            if(lw.includes('v') || lw.includes('в')) cV.push(tag); else if(lw.includes('h') || lw.includes('г')) cH.push(tag); else cOther.push(tag);
         });
         html += `<div style="margin-bottom:20px;"><strong>Вертикальні (V):</strong><br>${cV.join('') || '—'}</div><div style="margin-bottom:20px;"><strong>Горизонтальні (H):</strong><br>${cH.join('') || '—'}</div><div style="margin-bottom:20px;"><strong>Інші збірки:</strong><br>${cOther.join('') || '—'}</div>`;
@@ -970,64 +998,87 @@
         let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.element}', 'element')">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`).join('');
         html += `<div><strong>Банки (Елементи):</strong><br>${elements || '—'}</div>`; document.getElementById('archiveListContainer').innerHTML = html;
         
-        let confHtml = confs.map(x=>`<option value="${x.config}">${x.config}</option>`).join(''); document.getElementById('webConfig').innerHTML = confHtml;
+        let confHtml = confs.map(x=>`<option value="${x.config}">${x.config}</option>`).join(''); 
         document.querySelectorAll('.distModelList').forEach(el => el.innerHTML = confHtml);
         
-        let elsHtml = data.filter(r=>r.element).map(x=>`<option value="${x.element}">${x.element}</option>`).join(''); document.getElementById('webElement').innerHTML = elsHtml;
+        let elsHtml = data.filter(r=>r.element).map(x=>`<option value="${x.element}">${x.element}</option>`).join(''); 
         document.getElementById('invSupEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; document.getElementById('invTrEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
         
         let allModels = []; confs.forEach(c => { data.filter(r=>r.element).forEach(e => { allModels.push(`${c.config} ${e.element}`); }); });
         let issHtml = '<option value="">Оберіть банку АБО збірку...</option>';
         issHtml += `<optgroup label="Елементи (Банки)">` + elsHtml + `</optgroup><optgroup label="Готові збірки">` + allModels.map(m=>`<option value="${m}">${m}</option>`).join('') + `</optgroup>`;
         document.getElementById('invIssEl').innerHTML = issHtml;
-        document.getElementById('invIssEl').addEventListener('change', function() {
-            let val = this.value; let cells = extractCells(val);
-            document.getElementById('invAutoCalcHint').innerText = cells > 1 ? `💡 Увага: 1 збірка спише ${cells} банок з балансу елемента.` : ``;
-        });
       }
     }
 
-    // КОНСТРУКТОР ІНСТРУКЦІЙ В АРХІВІ (Локальне збереження)
+    // ВІДКРИТТЯ ДЕТАЛЕЙ В АРХІВІ
     window.openArchiveDetails = function(id, name, type) {
-        document.getElementById('archModalTitle').innerText = name; document.getElementById('archModalName').value = name; document.getElementById('archModalType').value = type;
+        document.getElementById('archModalTitle').innerText = name; 
+        document.getElementById('archModalName').value = name; 
+        document.getElementById('archModalType').value = type;
         
         if (type === 'config') {
-            document.getElementById('archConfigBlock').style.display = 'block'; document.getElementById('archElementBlock').style.display = 'none';
-            let steps = JSON.parse(localStorage.getItem(`L2_arch_${name}`) || '[]');
-            document.getElementById('archStepsContainer').innerHTML = steps.map((s, i) => {
-                if(s.type === 'text') return `<div style="margin-bottom:10px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;"><b>Крок ${i+1}:</b> ${s.val}</div>`;
-                return `<div style="margin-bottom:10px;"><img src="${s.val}" style="max-width:100%; border-radius:8px;"></div>`;
-            }).join('');
+            document.getElementById('archConfigBlock').style.display = 'block'; 
+            document.getElementById('archElementBlock').style.display = 'none';
+            let data = JSON.parse(localStorage.getItem(`L2_arch_cfg_${name}`) || '{"tgLink":"", "notes":""}');
+            document.getElementById('archTgLink').value = data.tgLink || '';
+            document.getElementById('archConfigNotes').value = data.notes || '';
         } else {
-            document.getElementById('archConfigBlock').style.display = 'none'; document.getElementById('archElementBlock').style.display = 'block';
+            document.getElementById('archConfigBlock').style.display = 'none'; 
+            document.getElementById('archElementBlock').style.display = 'block';
             let props = JSON.parse(localStorage.getItem(`L2_arch_el_${name}`) || '{"size":"", "mah":"", "photo":""}');
-            document.getElementById('archElSize').value = props.size; document.getElementById('archElMah').value = props.mah; document.getElementById('archElPhoto').value = props.photo;
+            document.getElementById('archElSize').value = props.size || ''; 
+            document.getElementById('archElMah').value = props.mah || ''; 
+            document.getElementById('archElPhoto').value = props.photo || '';
+            previewArchPhoto(props.photo);
         }
-        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.getElementById('archiveModal').classList.add('active');
-    }
-    
-    window.addArchStep = function(type) {
-        let val = prompt(type === 'text' ? "Введіть текст інструкції:" : "Вставте посилання (URL) на фото:");
-        if(!val) return;
-        let name = document.getElementById('archModalName').value; let steps = JSON.parse(localStorage.getItem(`L2_arch_${name}`) || '[]');
-        steps.push({type, val}); localStorage.setItem(`L2_arch_${name}`, JSON.stringify(steps));
-        openArchiveDetails(null, name, 'config'); // Перемальовуємо
-    }
-    
-    window.saveArchConfig = function() { document.getElementById('archiveModal').classList.remove('active'); }
-    window.saveArchElement = function() {
-        let name = document.getElementById('archModalName').value;
-        let props = { size: document.getElementById('archElSize').value, mah: document.getElementById('archElMah').value, photo: document.getElementById('archElPhoto').value };
-        localStorage.setItem(`L2_arch_el_${name}`, JSON.stringify(props)); document.getElementById('archiveModal').classList.remove('active');
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+        document.getElementById('archiveModal').classList.add('active');
     }
 
-    // СКЛАД ТА ЗАХИСТ ВІД МІНУСІВ
+    window.openTgTutorial = function() {
+        let link = document.getElementById('archTgLink').value.trim();
+        if(link) window.open(link, '_blank');
+        else alert("Посилання не вказано!");
+    }
+
+    window.saveArchConfig = function() { 
+        let name = document.getElementById('archModalName').value;
+        let data = {
+            tgLink: document.getElementById('archTgLink').value.trim(),
+            notes: document.getElementById('archConfigNotes').value.trim()
+        };
+        localStorage.setItem(`L2_arch_cfg_${name}`, JSON.stringify(data));
+        document.getElementById('archiveModal').classList.remove('active'); 
+    }
+
+    window.previewArchPhoto = function(url) {
+        let box = document.getElementById('archPhotoContainer');
+        if(url && url.trim().length > 5) {
+            box.innerHTML = `<img src="${url}" style="max-width:100%; max-height:200px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">`;
+        } else {
+            box.innerHTML = `<div style="padding:20px; background:rgba(255,255,255,0.02); border-radius:10px; color:var(--text-muted); font-size:12px;">Фото відсутнє</div>`;
+        }
+    }
+
+    window.saveArchElement = function() {
+        let name = document.getElementById('archModalName').value;
+        let props = { 
+            size: document.getElementById('archElSize').value, 
+            mah: document.getElementById('archElMah').value, 
+            photo: document.getElementById('archElPhoto').value.trim() 
+        };
+        localStorage.setItem(`L2_arch_el_${name}`, JSON.stringify(props)); 
+        document.getElementById('archiveModal').classList.remove('active');
+    }
+
+    // === 6. СКЛАД ===
     window.loadInventory = async function() {
       document.getElementById('inventoryBalances').innerHTML = "⏳..."; document.getElementById('inventoryHistory').innerHTML = "⏳...";
       const { data: logs } = await supabase.from('inventory_logs').select('*').order('created_at', { ascending: false });
       let b = {};
       if(logs) { logs.forEach(l => { let q = parseInt(l.qty); if(!b[l.element]) b[l.element] = { 'Л1-3': 0, 'Л2': 0, 'Головний':0 }; if(l.action==='Поставка') b[l.element][l.loc_to]+=q; else if (l.action==='Видача') b[l.element][l.loc_from]-=q; else { b[l.element][l.loc_from]-=q; b[l.element][l.loc_to]+=q; } }); }
-      window.invBalances = b; // Зберігаємо глобально для перевірки мінусів
+      window.invBalances = b;
       
       let balHtml = "";
       for (let el in b) {
@@ -1055,7 +1106,6 @@
             el = document.getElementById('invIssEl').value; qty = parseInt(document.getElementById('invIssQty').value); loc_from = document.getElementById('invIssFrom').value; 
             let cl = document.getElementById('invIssClient').value; if(cl && !savedClients.includes(cl)){ savedClients.push(cl); localStorage.setItem('L2_clients', JSON.stringify(savedClients)); document.getElementById('clientList').innerHTML += `<option value="${cl}">`; }
             
-            // АВТОКОНВЕРТАЦІЯ ТА ПОШУК БАНКИ
             let multiplier = extractCells(el);
             if(multiplier > 1) {
                 qty = qty * multiplier;
@@ -1067,7 +1117,6 @@
         
         if(!el || !qty) return alert("Заповніть поля!"); 
 
-        // ЗАХИСТ ВІД МІНУСІВ
         if(action === 'Переміщення' || action === 'Видача') {
             let currentBal = window.invBalances[el] ? (window.invBalances[el][loc_from] || 0) : 0;
             if (currentBal < qty) return alert(`❌ Помилка: На складі ${loc_from} є лише ${currentBal} шт елемента "${el}". Ви намагаєтесь списати ${qty} шт.`);
@@ -1077,11 +1126,9 @@
         document.querySelectorAll('#inventory input[type="number"]').forEach(i=>i.value=''); loadInventory(); 
     }
 
-    window.switchWorkerTab = function(t) { document.querySelectorAll('.modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.modal-tab-content').forEach(e=>e.classList.remove('active')); document.getElementById(t==='info'?'tabInfoBtn':'tabEditBtn').classList.add('active'); document.getElementById(t==='info'?'wTabInfo':(t==='edit'?'wTabEdit':'wTabArchive')).classList.add('active'); }
+    window.switchWorkerTab = function(t) { document.querySelectorAll('.modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.modal-tab-content').forEach(e=>e.classList.remove('active')); document.getElementById(t==='info'?'tabInfoBtn':'tabEditBtn').classList.add('active'); document.getElementById(t==='info'?'wTabInfo':'wTabEdit').classList.add('active'); }
     window.switchInvTab = function(t) { document.querySelectorAll('#inventory .modal-tab').forEach(e=>e.classList.remove('active')); document.querySelectorAll('#inventory .modal-tab-content').forEach(e=>e.classList.remove('active')); event.currentTarget.classList.add('active'); document.getElementById(`inv-${t}`).classList.add('active'); }
     window.approveWorker = async function(id) { const dept = document.getElementById(`newdept-${id}`).value; await supabase.from('workers').update({ status: 'Активний', dept: dept }).eq('id', id); loadDaily(); }
-    window.addActiveModel = async function() { let m = document.getElementById('webConfig').value + " " + document.getElementById('webElement').value; if(m.includes("Завантаження")) return; await supabase.from('active_models').insert([{model: m}]); loadDaily(); }
-    window.clearModels = async function() { await supabase.from('active_models').delete().neq('model','dummy'); loadDaily(); }
     window.addArch = async function(type) { let v = document.getElementById(type==='config'?'newConfigInput':'newElementInput').value; if(v) await supabase.from('archive_models').insert([{ [type]: v }]); document.getElementById(type==='config'?'newConfigInput':'newElementInput').value=''; loadArchive(); }
     window.deleteArchive = async function(id) { if(confirm("Видалити з прайсу?")) { await supabase.from('archive_models').delete().eq('id', id); loadArchive(); } }
 
