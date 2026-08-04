@@ -2,9 +2,9 @@ const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
 
-const TELEGRAM_TOKEN = '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y';
-const SUPABASE_URL = 'https://miotyurbyfhrkepqdmvv.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
+const TELEGRAM_TOKEN = process.env.BOT_TOKEN || '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://miotyurbyfhrkepqdmvv.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
 const ADMIN_CHAT_ID = '738066424';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -48,10 +48,10 @@ async function sendMenuByDept(chatId, dept) {
         txt = "📦 **МЕНЮ ЗАПАКОВЩИКА**\n\n🔹 `🛒 Забрати акуми` — внести отримані деталі.\n🔹 `🏁 Закрити зміну` — надіслати чеки Пайщикам.";
         markup = { keyboard: [[{ text: "🛒 Забрати акуми" }, { text: "🏁 Закрити зміну" }]], resize_keyboard: true };
     } else if (dpt === "пайка") {
-        txt = "🔥 **МЕНЮ ПАЙЩИКА**\n\nЗапаковщик сам фіксує деталі. Чекайте на вечірній звіт для підтвердження.";
+        txt = "🔥 **МЕНЮ ПАЙЩИКА**\n\nЗапаковщик сам фіксує деталі. Чекайте на чек від запаковщика для підтвердження роботи.";
         markup = { keyboard: [[{ text: "ℹ️ Довідка" }]], resize_keyboard: true };
     } else if (dpt === "зварка") {
-        txt = "⚡ **МЕНЮ ЗВАРЮВАЛЬНИКА**\n\nТисніть 'Здати роботу', щоб обрати виготовлені збірки з каталогу.";
+        txt = "⚡ **МЕНЮ ЗВАРЮВАЛЬНИКА**\n\nТисніть 'Здати роботу', щоб обрати виготовлені збірки з плану.";
         markup = { keyboard: [[{ text: "📝 Здати роботу" }]], resize_keyboard: true };
     } else if (dpt === "адмін") {
         txt = "👑 **МЕНЮ АДМІНІСТРАТОРА**\n\nДля управління використовуйте сайт панелі.";
@@ -81,10 +81,6 @@ async function handleMessage(msg) {
         if (user.status === 'Очікує') return sendMessage(chatId, "⏳ Ваш акаунт ще перевіряється адміністратором.");
 
         let state = states[chatId];
-        
-        if (!state && /\d+\s*шт/i.test(text)) {
-            return sendMessage(chatId, "⚠️ **Система оновилася!**\nТепер звіти не пишуться вручну.\n👇 Натисніть кнопку **'📝 Здати роботу'** або **'🛒 Забрати акуми'**.");
-        }
 
         if (text === "/start" || text === "❌ Скасувати" || text === "ℹ️ Довідка") {
             delete states[chatId]; return sendMenuByDept(chatId, user.dept);
@@ -92,6 +88,7 @@ async function handleMessage(msg) {
 
         const dpt = user.dept.toLowerCase();
 
+        // АДМІН: ОГОЛОШЕННЯ
         if (dpt === "адмін" && text === "📢 Надіслати Оголошення") {
             states[chatId] = { step: "ADMIN_MSG_TARGET" };
             return sendMessage(chatId, "🎯 **Оберіть, кому надіслати повідомлення:**", buildKeyboard(["Всім", "Цех Зварки", "Цех Пайки", "Відділ Запаковки", "Окремому працівнику"], 2));
@@ -133,6 +130,7 @@ async function handleMessage(msg) {
             return sendMenuByDept(chatId, user.dept);
         }
 
+        // ЗВАРКА
         if (dpt === "зварка" && text === "📝 Здати роботу") {
             const { data: models } = await supabase.from('active_models').select('model');
             if (!models || models.length===0) return sendMessage(chatId, "🤷‍♂️ Каталог зміни порожній. Адмін ще не додав збірки на сьогодні.");
@@ -160,9 +158,10 @@ async function handleMessage(msg) {
             }
         }
 
+        // ЗАПАКОВКА
         if (dpt === "запаковка" && text === "🛒 Забрати акуми") {
             const { data: solderers } = await supabase.from('workers').select('*').eq('dept', 'Пайка').eq('status', 'Активний');
-            if (!solderers || solderers.length === 0) return sendMessage(chatId, "❌ Немає пайщиків у базі.");
+            if (!solderers || solderers.length === 0) return sendMessage(chatId, "❌ Немає активних пайщиків у базі.");
             states[chatId] = { step: "PACK_SOLDERER", solderers: solderers };
             return sendMessage(chatId, "👥 Оберіть **Пайщика**:", buildKeyboard(solderers.map(s=>s.name), 2));
         }
@@ -183,31 +182,34 @@ async function handleMessage(msg) {
             let timeNow = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit' });
             if(!shiftCarts[chatId]) shiftCarts[chatId] = [];
             shiftCarts[chatId].push({ time: timeNow, sName: state.sName, sChatId: state.sChatId, model: state.model, count: count });
-            delete states[chatId]; await sendMessage(chatId, `📥 **Додано в кошик!**\n🕒 ${timeNow} | Від: ${state.sName} | ${state.model} (${count} шт)`);
+            delete states[chatId]; 
+            await sendMessage(chatId, `📥 **Додано в кошик!**\n🕒 ${timeNow} | Від: ${state.sName} | ${state.model} (${count} шт)`);
             return sendMenuByDept(chatId, user.dept);
         }
         if (dpt === "запаковка" && text === "🏁 Закрити зміну") {
-            let cart = shiftCarts[chatId]; if (!cart || cart.length === 0) return sendMessage(chatId, "🤷‍♂️ Кошик порожній.");
+            let cart = shiftCarts[chatId]; if (!cart || cart.length === 0) return sendMessage(chatId, "🤷‍♂️ Ваш кошик порожній.");
             let bySolderer = {};
             cart.forEach(item => { if (!bySolderer[item.sChatId]) bySolderer[item.sChatId] = { name: item.sName, items: [] }; bySolderer[item.sChatId].items.push(item); });
             
             for (let sChatId in bySolderer) {
                 let bId = "B" + Date.now().toString().slice(-6); 
                 disputeBatches[bId] = { pName: user.name, pChatId: chatId, sName: bySolderer[sChatId].name, items: bySolderer[sChatId].items };
-                let msgText = `🕒 **ЗВЕДЕНИЙ ЗВІТ ЗА ЗМІНУ**\nЗапаковщик: **${user.name}**\n--------------------------\n`;
+                let msgText = `🕒 **ЧЕК ВІД ЗАПАКОВКИ**\nЗапаковщик: **${user.name}**\n--------------------------\n`;
                 bySolderer[sChatId].items.forEach(it => { msgText += `🔹 [${it.time}] — ${it.model} — **${it.count} шт**\n`; });
+                msgText += `\nПідтвердіть, що ви дійсно віддали цю кількість.`;
                 await tg('sendMessage', { chat_id: sChatId, text: msgText, parse_mode: 'Markdown', reply_markup: { inline_keyboard: [[{ text: "✅ ПІДТВЕРДИТИ", callback_data: `CONFIRM|${bId}` }], [{ text: "❌ ОСКАРЖИТИ", callback_data: `DISPUTE|${bId}` }]] } });
             }
-            delete shiftCarts[chatId]; await sendMessage(chatId, "🏁 Зміну закрито. Чеки розіслано пайщикам.");
+            delete shiftCarts[chatId]; await sendMessage(chatId, "🏁 Зміну закрито. Чеки розіслано пайщикам на перевірку.");
             return sendMenuByDept(chatId, user.dept);
         }
 
+        // КОНФЛІКТ
         if (state && state.step === "WAITING_REASON") {
             let batch = disputeBatches[state.batchId]; if(!batch) { delete states[chatId]; return sendMessage(chatId, "⚠️ Дані застаріли."); }
             let item = batch.items[state.itemIndex]; delete states[chatId];
-            let alertMsg = `⚠️ **КОНФЛІКТ!**\n\n👨‍🏭 Пайщик: ${user.name}\n📦 Запаковщик: ${batch.pName}\n🔋 Збірка: ${item.model} (${item.count} шт)\n\n🛑 Причина: _${text}_`;
+            let alertMsg = `⚠️ **КОНФЛІКТ НА ВИРОБНИЦТВІ!**\n\n👨‍🏭 Пайщик: ${user.name}\n📦 Запаковщик: ${batch.pName}\n🔋 Збірка: ${item.model} (${item.count} шт)\n\n🛑 Причина скарги: _${text}_`;
             await sendMessage(ADMIN_CHAT_ID, alertMsg);
-            await sendMessage(batch.pChatId, `🛑 Пайщик ${user.name} оскаржив запис (${item.model})!\nПричина: _${text}_`);
+            await sendMessage(batch.pChatId, `🛑 Пайщик ${user.name} оскаржив ваш запис (${item.model} - ${item.count}шт)!\nПричина: _${text}_`);
             await sendMessage(chatId, "✅ Скаргу передано адміністратору.");
             return sendMenuByDept(chatId, user.dept);
         }
@@ -220,20 +222,53 @@ async function handleCallbackQuery(query) {
         tg('answerCallbackQuery', { callback_query_id: query.id }).catch(()=>{});
         let parts = data.split("|"); let action = parts[0]; let bId = parts[1]; let idx = parts[2];
         let batch = disputeBatches[bId];
-        if (!batch) return tg('editMessageText', {chat_id: chatId, message_id: msgId, text: "⚠️ Звіт вже оброблений."});
+        
+        if (!batch) return tg('editMessageText', {chat_id: chatId, message_id: msgId, text: "⚠️ Звіт вже оброблений або застарів."});
 
+        // 🟢 ТУТ БУЛА ПРОБЛЕМА: Додано обробку помилок та поле time
         if (action === "CONFIRM") {
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
             let hasError = false;
+            
             for (let it of batch.items) {
-                let res1 = await supabase.from('reports_payka').insert([{ date: today, solderer_name: batch.sName, dept: 'Пайка', model: it.model, count: it.count, status: "Працював" }]);
-                let res2 = await supabase.from('reports_zapakovka').insert([{ date: today, packager_name: batch.pName, dept: 'Запаковка', model: it.model, count: it.count, status: "Працював" }]);
-                if (res1.error || res2.error) hasError = true;
+                // Записуємо в Пайку
+                let res1 = await supabase.from('reports_payka').insert([{ 
+                    date: today, 
+                    solderer_name: batch.sName, 
+                    dept: 'Пайка', 
+                    model: it.model, 
+                    count: it.count, 
+                    status: "Працював",
+                    time: it.time // Передаємо час, оскільки ви додали колонку
+                }]);
+                
+                // Записуємо в Запаковку (якщо там є колонка time, вона теж запишеться, якщо немає - ігнорується)
+                let res2 = await supabase.from('reports_zapakovka').insert([{ 
+                    date: today, 
+                    packager_name: batch.pName, 
+                    dept: 'Запаковка', 
+                    model: it.model, 
+                    count: it.count, 
+                    status: "Працював",
+                    time: it.time
+                }]);
+                
+                if (res1.error) {
+                    console.error("Помилка запису в reports_payka:", res1.error);
+                    hasError = true;
+                }
+                if (res2.error) {
+                    console.error("Помилка запису в reports_zapakovka:", res2.error);
+                    hasError = true;
+                }
             }
-            if (hasError) { await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `❌ **Помилка бази.** Повідомте адміна.`}); } 
+            
+            if (hasError) { 
+                await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `❌ **Помилка бази.** Дані не збережено. Адміністратор має перевірити логи сервера.`}); 
+            } 
             else {
-                await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `✅ **ЗВІТ ПІДТВЕРДЖЕНО**`, parse_mode: 'Markdown'});
-                await sendMessage(batch.pChatId, `✅ Пайщик **${batch.sName}** підтвердив звіт!`);
+                await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `✅ **ЗВІТ ПІДТВЕРДЖЕНО ТА ЗБЕРЕЖЕНО**`, parse_mode: 'Markdown'});
+                await sendMessage(batch.pChatId, `✅ Пайщик **${batch.sName}** підтвердив ваш чек!`);
                 delete disputeBatches[bId];
             }
         } 
@@ -245,9 +280,11 @@ async function handleCallbackQuery(query) {
             let item = batch.items[idx];
             await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `🛑 Оскарження запису: **${item.model}** (${item.count} шт)`, parse_mode: 'Markdown'});
             states[chatId] = { step: "WAITING_REASON", batchId: bId, itemIndex: idx };
-            await sendMessage(chatId, `✍️ Напишіть причину незгоди:`, { keyboard: [[{text: "❌ Скасувати"}]], resize_keyboard: true });
+            await sendMessage(chatId, `✍️ Напишіть причину незгоди (чому це не так):`, { keyboard: [[{text: "❌ Скасувати"}]], resize_keyboard: true });
         }
-    } catch (error) {}
+    } catch (error) {
+        console.error("Помилка в handleCallbackQuery:", error);
+    }
 }
 
 let lastUpdateId = 0;
