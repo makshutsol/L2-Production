@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Скрипт інтеграції з Telegram Web App -->
+  <!-- Інтеграція з Telegram Web App для входу без пароля -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
@@ -133,17 +133,20 @@
 </head>
 <body>
 
-  <!-- ВІКНО АВТОРИЗАЦІЇ (Резервне для ПК / Браузерів) -->
+  <!-- БЕЗПЕЧНЕ ВІКНО АВТОРИЗАЦІЇ -->
   <div class="modal" id="authModal" style="background: var(--bg-base); z-index: 9999;">
     <div class="modal-content" style="max-width: 380px; text-align:center; box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
         <div class="logo-text" style="font-size: 26px; margin-bottom: 5px; color:var(--info);">L2 PRO</div>
         <p style="color:var(--text-muted); font-size:13px; margin-bottom:25px;" id="authStatusText">Авторизація в системі</p>
         
         <select id="authSelect" style="margin-bottom: 15px; padding:14px; font-size:15px; font-weight:600;" onchange="checkAdminPin()">
-            <option value="">⏳ Завантаження...</option>
+            <option value="">⏳ Завантаження працівників...</option>
         </select>
         
-        <input type="password" id="authPin" placeholder="PIN-код адміністратора" style="display:none; margin-bottom:20px; text-align:center; letter-spacing: 4px; font-size:18px;">
+        <input type="password" id="authPin" placeholder="Введіть ваш PIN-код" style="margin-bottom:20px; text-align:center; letter-spacing: 4px; font-size:18px;">
+        <p style="font-size: 11px; color: var(--text-muted); margin-top:-10px; margin-bottom:20px;">
+           * За замовчуванням PIN для працівників: <b>0000</b>. Для Адміна: <b>1111</b>.
+        </p>
 
         <button class="btn-success" style="width:100%; padding:15px; font-size:16px;" onclick="login()">Увійти</button>
     </div>
@@ -181,15 +184,15 @@
         
         <div class="card" style="border-color: var(--info);">
             <div class="card-header" style="margin-bottom: 15px; padding-bottom: 10px;">
-                <div class="card-title" style="color:var(--info);"><i class="fa-solid fa-list-check"></i> План на зміну (Каталог для Telegram)</div>
-                <button class="btn-danger" style="padding: 8px 15px; font-size:12px;" onclick="clearModels()"><i class="fa-solid fa-trash"></i> Очистити каталог</button>
+                <div class="card-title" style="color:var(--info);"><i class="fa-solid fa-list-check"></i> План на зміну (Каталог)</div>
+                <button class="btn-danger" style="padding: 8px 15px; font-size:12px;" onclick="clearModels()"><i class="fa-solid fa-trash"></i> Очистити</button>
             </div>
             <div class="setup-grid" style="align-items: flex-end; margin-bottom: 15px;">
                 <div style="flex:2;"><label style="font-size:12px; color:var(--text-muted);">Збірка (Конфігурація):</label><select id="activeModelConfig" style="margin-top:5px;"></select></div>
                 <div style="flex:2;"><label style="font-size:12px; color:var(--text-muted);">Елемент (Банка):</label><select id="activeModelElement" style="margin-top:5px;"></select></div>
-                <button class="btn-primary" style="padding:12px 20px; flex:none;" onclick="addActiveModel()">+ Додати в роботу</button>
+                <button class="btn-primary" style="padding:12px 20px; flex:none;" onclick="addActiveModel()">+ Додати</button>
             </div>
-            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Активні збірки, доступні працівникам у боті сьогодні:</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Активні збірки, доступні в боті сьогодні:</div>
             <div id="activeModelsList" style="display:flex; gap:10px; flex-wrap:wrap;">⏳ Завантаження...</div>
         </div>
 
@@ -346,7 +349,7 @@
     </main>
   </div>
 
-  <!-- МОДАЛКИ (Залишені без змін) -->
+  <!-- МОДАЛКИ (Календар, Профіль, Архів) -->
   <div class="modal" id="calModal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('calModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button><div id="calModalTitle" style="font-size: 20px; font-weight:700; margin-bottom: 10px;"></div><input type="hidden" id="calModalName"><input type="hidden" id="calModalDate"><input type="hidden" id="calModalDept"><div id="calModalDetailsBlock" style="display:none;"><div style="font-size: 14px; color: var(--success); font-weight:600;"><i class="fa-solid fa-check"></i> Виробничий лог дня:</div><div class="cal-details-box" id="calModalDetailsList"></div></div><div style="margin-top: 15px;"><div style="margin-bottom: 8px; font-size: 13px; color: var(--text-muted);">Зміна статусу дня:</div><select id="calModalStatus" style="margin-bottom: 20px; font-size:15px; padding:12px;"><option value="-- Немає (Пусто) --">-- Очистити записи --</option><option value="Вихідний">Вихідний</option><option value="Примусовий вихідний">Примусовий вихідний</option><option value="Відпустка">Відпустка</option><option value="Лікарняний">Лікарняний</option><option value="Простой">Простой</option></select><button class="btn-primary" style="width: 100%; padding:14px;" onclick="saveCalModal()">Зберегти статус дня</button></div></div></div>
   <div class="modal" id="workerModal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('workerModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button><div class="card-title" id="wModalTitle" style="margin-bottom:20px; font-size: 20px;">Картка</div><input type="hidden" id="wModalId"><div class="modal-tabs" id="workerTabs"><div class="modal-tab active" id="tabInfoBtn" onclick="switchWorkerTab('info')">Аналітика</div><div class="modal-tab" id="tabEditBtn" onclick="switchWorkerTab('edit')">Налаштування</div></div><div id="wTabInfo" class="modal-tab-content active"><div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; margin-bottom:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;"><span>Відділ:</span><span id="wInfoDept" style="font-weight:700; color:var(--info);"></span></div><div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;"><span>Статус:</span><span id="wInfoStatus" style="font-weight:700;"></span></div></div><div style="font-size:14px; font-weight:700; margin-bottom:10px;">Статистика за місяць:</div><div class="cal-details-box" style="margin-top:0; border:none; background:rgba(80, 205, 137, 0.08);"><div id="wInfoModelsList" style="margin-bottom: 10px;"></div><div class="cal-total-row"><span>Всього:</span> <span id="wInfoItems">0 шт</span></div></div><div style="position:relative; height:180px; width:100%;"><canvas id="personalChart"></canvas></div></div><div id="wTabEdit" class="modal-tab-content"><label style="font-size:13px; color:var(--text-muted);">ПІБ</label><input type="text" id="wEditName" style="margin-bottom:15px;"><label style="font-size:13px; color:var(--text-muted);">Цех</label><select id="wEditDept" style="margin-bottom:15px;"><option value="Зварка">Зварка</option><option value="Пайка">Пайка</option><option value="Запаковка">Запаковка</option><option value="Адмін">Адмін</option></select><label style="font-size:13px; color:var(--text-muted);">Статус доступу</label><select id="wEditStatus" style="margin-bottom:25px;"><option value="Активний">Активний</option><option value="Очікує">Очікує</option><option value="Звільнений">Звільнений</option></select><button class="btn-success" style="width: 100%; padding:14px;" onclick="saveWorkerProfile()">Зберегти налаштування</button></div></div></div>
   <div class="modal" id="archiveModal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('archiveModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button><div class="card-title" id="archModalTitle" style="margin-bottom:20px; font-size: 18px; color:var(--info);">Деталі</div><input type="hidden" id="archModalName"><input type="hidden" id="archModalType"><div id="archConfigBlock" style="display:none;"><label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:5px;">Посилання на інструкцію у Telegram:</label><div style="display:flex; gap:10px; margin-bottom:15px;"><input type="text" id="archTgLink" placeholder="https://t.me/..."><button class="btn-info" style="padding:0 15px;" onclick="openTgTutorial()"><i class="fa-solid fa-arrow-up-right-from-square"></i></button></div><label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:5px;">Додатковий текст / нотатки:</label><textarea id="archConfigNotes" rows="5" placeholder="Опис туторіалу або додаткові правила складань..."></textarea><button class="btn-success" style="width: 100%; padding:14px; margin-top:20px;" onclick="saveArchConfig()">Зберегти конфігурацію</button></div><div id="archElementBlock" style="display:none;"><div id="archPhotoContainer" style="margin-bottom:15px; text-align:center;"></div><label style="font-size:13px; color:var(--text-muted);">Посилання на фотографію (URL):</label><input type="text" id="archElPhoto" style="margin-bottom:15px;" placeholder="https://..." onchange="previewArchPhoto(this.value)"><label style="font-size:13px; color:var(--text-muted);">Розмір (напр. 21700):</label><input type="text" id="archElSize" style="margin-bottom:15px;"><label style="font-size:13px; color:var(--text-muted);">Ємність (mAh):</label><input type="number" id="archElMah" style="margin-bottom:25px;"><button class="btn-success" style="width: 100%; padding:14px;" onclick="saveArchElement()">Зберегти елемент</button></div></div></div>
@@ -365,7 +368,6 @@
     window.globalWorkers = []; window.currentUser = null;
     let chartTrend = null; let chartPersonal = null;
 
-    // СИСТЕМА КЕШУВАННЯ (Зменшує навантаження)
     let dbCache = {
         dateData: { date: null, all: [] },
         monthData: { start: null, end: null, dept: null, all: [] }
@@ -389,43 +391,47 @@
       if(tab==='distrib') loadDistribWorkers();
     }
 
-    // === АВТОРИЗАЦІЯ (Telegram ID / Без Пароля) ===
+    // === АВТОРИЗАЦІЯ (Безпарольний вхід через Telegram) ===
     async function initAuth() {
-        // Якщо відкрито через Telegram
-        let tg = window.Telegram?.WebApp;
-        if (tg) tg.expand(); 
-        let tgId = tg?.initDataUnsafe?.user?.id?.toString();
+        try {
+            let tg = window.Telegram?.WebApp;
+            if (tg && typeof tg.expand === 'function') { try { tg.expand(); } catch(e){} }
+            let tgId = tg?.initDataUnsafe?.user?.id?.toString();
 
-        document.getElementById('authStatusText').innerText = "З'єднання з базою...";
+            document.getElementById('authStatusText').innerText = "З'єднання з базою...";
 
-        const { data } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name');
-        window.globalWorkers = data || [];
+            const { data, error } = await supabase.from('workers').select('*').in('status', ['Активний', 'Active']).order('name');
+            if (error) throw error;
+            window.globalWorkers = data || [];
 
-        // 1. Спроба авто-логіну через Telegram ID
-        if (tgId) {
-            let user = window.globalWorkers.find(w => w.chat_id === tgId);
-            if (user) { performLogin(user); return; }
+            // 1. Авто-логін через Telegram ID (Якщо відкрито з бота)
+            if (tgId) {
+                let user = window.globalWorkers.find(w => w.chat_id === tgId);
+                if (user) { performLogin(user); return; }
+            }
+
+            // 2. Авто-логін через кеш браузера (Якщо відкрито з ПК)
+            let savedId = localStorage.getItem('L2_logged_in');
+            if(savedId) {
+                let user = window.globalWorkers.find(x => x.id == savedId);
+                if(user) { performLogin(user); return; }
+            }
+
+            // 3. Ручний вхід (Покажеться тільки якщо перші 2 пункти не спрацювали)
+            document.getElementById('authStatusText').innerText = "Авторизація в системі";
+            let html = '<option value="" disabled selected>-- Оберіть своє ПІБ --</option>';
+            window.globalWorkers.forEach(w => { html += `<option value="${w.id}">${w.name} (${w.dept || 'Не вказано'})</option>`; });
+            document.getElementById('authSelect').innerHTML = html;
+            document.getElementById('authModal').classList.add('active');
+            
+        } catch (err) {
+            document.getElementById('authStatusText').innerHTML = `<span style="color:var(--danger)">Помилка підключення: ${err.message}</span>`;
         }
-
-        // 2. Спроба авто-логіну через LocalStorage (якщо з браузера)
-        let savedId = localStorage.getItem('L2_logged_in');
-        if(savedId) {
-            let user = window.globalWorkers.find(x => x.id == savedId);
-            if(user) { performLogin(user); return; }
-        }
-
-        // 3. Ручний вхід (Відображається тільки якщо не спрацювало перше і друге)
-        document.getElementById('authStatusText').innerText = "Авторизація в системі";
-        let html = '<option value="" disabled selected>-- Оберіть своє ПІБ --</option>';
-        window.globalWorkers.forEach(w => { html += `<option value="${w.id}">${w.name} (${w.dept})</option>`; });
-        document.getElementById('authSelect').innerHTML = html;
-        document.getElementById('authModal').classList.add('active');
     }
 
     window.checkAdminPin = function() {
         let id = document.getElementById('authSelect').value;
         let w = window.globalWorkers.find(x => x.id == id);
-        // PIN-код потрібен ТІЛЬКИ Адміну
         if(w && w.dept === 'Адмін') document.getElementById('authPin').style.display = 'block';
         else document.getElementById('authPin').style.display = 'none';
     }
@@ -435,10 +441,12 @@
         if(!id) return alert("Оберіть свій профіль зі списку!");
         let user = window.globalWorkers.find(x => x.id == id);
         
-        // Перевіряємо PIN тільки у Адміна
         if(user.dept === 'Адмін') {
             let pin = document.getElementById('authPin').value;
             if(pin !== '1111') return alert("❌ Невірний PIN-код адміністратора!");
+        } else {
+            let pin = document.getElementById('authPin').value;
+            if(pin !== '0000') return alert("❌ Невірний PIN-код. Використовуйте 0000.");
         }
         
         localStorage.setItem('L2_logged_in', user.id);
@@ -470,7 +478,7 @@
         else { switchTab('dashboard'); }
     }
 
-    // === ОПТИМІЗОВАНІ ЗАПИТИ В БАЗУ ===
+    // === БЕЗПЕЧНЕ ВИВАНТАЖЕННЯ (З обробкою помилок) ===
     async function fetchDateDataOptimized(dateStr) {
         if (dbCache.dateData.date === dateStr) return dbCache.dateData.all;
         const [rZv, rPa, rZa] = await Promise.all([
@@ -478,96 +486,266 @@
             supabase.from('reports_payka').select('*').eq('date', dateStr),
             supabase.from('reports_zapakovka').select('*').eq('date', dateStr)
         ]);
+        if(rZv.error) throw rZv.error; if(rPa.error) throw rPa.error; if(rZa.error) throw rZa.error;
         let all = [...(rZv.data||[]), ...(rPa.data||[]), ...(rZa.data||[])];
         dbCache.dateData = { date: dateStr, all: all }; return all;
     }
 
-    // Ця функція тепер викачує дані ТІЛЬКИ для потрібного відділу, якщо заходить працівник (економія ресурсів)
     async function fetchMonthDataOptimized(start, end, specificDept = null) {
         if (dbCache.monthData.start === start && dbCache.monthData.end === end && dbCache.monthData.dept === specificDept) return dbCache.monthData.all;
-
         let promises = [];
         if (!specificDept || specificDept === 'Зварка') promises.push(supabase.from('reports_zvarka').select('*').gte('date', start).lte('date', end));
         if (!specificDept || specificDept === 'Пайка') promises.push(supabase.from('reports_payka').select('*').gte('date', start).lte('date', end));
         if (!specificDept || specificDept === 'Запаковка') promises.push(supabase.from('reports_zapakovka').select('*').gte('date', start).lte('date', end));
 
         let results = await Promise.all(promises);
-        let all = []; results.forEach(res => { if(res.data) all = all.concat(res.data); });
-
+        let all = []; 
+        results.forEach(res => { if(res.error) throw res.error; if(res.data) all = all.concat(res.data); });
         dbCache.monthData = { start, end, dept: specificDept, all: all }; return all;
     }
 
     window.clearCacheAndReload = function(context) {
         if(context === 'daily') dbCache.dateData.date = null;
-        if(context === 'tabel' || context === 'dashboard') dbCache.monthData.start = null;
+        if(context === 'tabel' || context === 'dashboard' || context === 'workers') dbCache.monthData.start = null;
         switchTab(context);
     }
 
     // === 1. ОПЕРАЦІЇ ===
     window.loadDaily = async function() {
-      const dStr = document.getElementById('repDate').value;
-      loadActiveModels();
-      let all = await fetchDateDataOptimized(dStr);
-      let adm = "", zv = "", pa = "", zap = "";
+      try {
+          const dStr = document.getElementById('repDate').value;
+          loadActiveModels();
+          let all = await fetchDateDataOptimized(dStr);
+          let adm = "", zv = "", pa = "", zap = "";
 
-      window.globalWorkers.forEach(w => {
-         let workerNameField = w.dept === 'Пайка' ? 'solderer_name' : (w.dept === 'Запаковка' ? 'packager_name' : 'name');
-         let rep = all.filter(r => r[workerNameField] === w.name); 
-         let detailsHtml = ""; let currentStatus = "Працював"; let isAbsence = false;
+          window.globalWorkers.forEach(w => {
+             let workerNameField = w.dept === 'Пайка' ? 'solderer_name' : (w.dept === 'Запаковка' ? 'packager_name' : 'name');
+             let rep = all.filter(r => r[workerNameField] === w.name); 
+             let detailsHtml = ""; let currentStatus = "Працював"; let isAbsence = false;
 
-         if(rep.length > 0) {
-            let firstRep = rep[0];
-            if(firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
-                isAbsence = true; currentStatus = firstRep.status;
-                detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
-            } else {
-                let mDict = {}; let tot = 0;
-                rep.forEach(r => { let c = parseInt(r.count)||0; if(c>0){ let mName = r.model || r.config || 'Інше'; mDict[mName] = (mDict[mName]||0)+c; tot+=c; }});
-                let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:13px; margin-bottom:5px; font-weight:500;"><b>${k}</b> - ${mDict[k]} шт</div>`).join('');
-                detailsHtml = `<div style="color:var(--success); font-size:14px; font-weight:700; margin-bottom:8px;">✅ Зроблено:</div>${mList}`;
-            }
-         } else {
-            isAbsence = true; detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
-         }
-         
-         let boxClass = isAbsence ? "row" : "row has-report";
-         let nameDisplay = isAbsence && currentStatus !== "Працював" ? `${w.name} <span style="color:var(--danger); font-size:12px; font-weight:normal;">(${currentStatus.toLowerCase()})</span>` : w.name;
-         
-         let selectHtml = `<select class="status-select" onchange="updateDailyStatus('${w.name}', '${w.dept}', this.value)">
-            <option value="Працював" ${!isAbsence || currentStatus==='Працював' ? 'selected' : ''}>Працював</option>
-            <option value="Вихідний" ${currentStatus==='Вихідний' ? 'selected' : ''}>Вихідний</option>
-            <option value="Примусовий вихідний" ${currentStatus==='Примусовий вихідний' ? 'selected' : ''}>Примусовий вихідний</option>
-            <option value="Відпустка" ${currentStatus==='Відпустка' ? 'selected' : ''}>Відпустка</option>
-            <option value="Лікарняний" ${currentStatus==='Лікарняний' ? 'selected' : ''}>Лікарняний</option>
-            <option value="Простой" ${currentStatus==='Простой' ? 'selected' : ''}>Простой</option>
-         </select>`;
+             if(rep.length > 0) {
+                let firstRep = rep[0];
+                if(firstRep.status && firstRep.status !== 'Працював' && (!firstRep.count || firstRep.count == 0)) {
+                    isAbsence = true; currentStatus = firstRep.status;
+                    detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
+                } else {
+                    let mDict = {}; let tot = 0;
+                    rep.forEach(r => { let c = parseInt(r.count)||0; if(c>0){ let mName = r.model || r.config || 'Інше'; mDict[mName] = (mDict[mName]||0)+c; tot+=c; }});
+                    let mList = Object.keys(mDict).map(k => `<div style="color:var(--text-main); font-size:13px; margin-bottom:5px; font-weight:500;"><b>${k}</b> - ${mDict[k]} шт</div>`).join('');
+                    detailsHtml = `<div style="color:var(--success); font-size:14px; font-weight:700; margin-bottom:8px;">✅ Зроблено:</div>${mList}`;
+                }
+             } else {
+                isAbsence = true; detailsHtml = `<div style="color:var(--danger); font-size:13px; font-weight:600;">🔴 Звіту немає (0 шт)</div>`;
+             }
+             
+             let boxClass = isAbsence ? "row" : "row has-report";
+             let nameDisplay = isAbsence && currentStatus !== "Працював" ? `${w.name} <span style="color:var(--danger); font-size:12px; font-weight:normal;">(${currentStatus.toLowerCase()})</span>` : w.name;
+             
+             let selectHtml = `<select class="status-select" onchange="updateDailyStatus('${w.name}', '${w.dept}', this.value)">
+                <option value="Працював" ${!isAbsence || currentStatus==='Працював' ? 'selected' : ''}>Працював</option>
+                <option value="Вихідний" ${currentStatus==='Вихідний' ? 'selected' : ''}>Вихідний</option>
+                <option value="Примусовий вихідний" ${currentStatus==='Примусовий вихідний' ? 'selected' : ''}>Примусовий вихідний</option>
+                <option value="Відпустка" ${currentStatus==='Відпустка' ? 'selected' : ''}>Відпустка</option>
+                <option value="Лікарняний" ${currentStatus==='Лікарняний' ? 'selected' : ''}>Лікарняний</option>
+                <option value="Простой" ${currentStatus==='Простой' ? 'selected' : ''}>Простой</option>
+             </select>`;
 
-         let row = `<div class="${boxClass}"><div class="worker-info"><div class="worker-name">${nameDisplay}</div><div class="worker-details">${detailsHtml}</div></div><div>${selectHtml}</div></div>`;
-         let dp = w.dept.toLowerCase(); if(dp==='адмін') adm+=row; else if(dp==='зварка') zv+=row; else if(dp==='пайка') pa+=row; else if(dp==='запаковка') zap+=row;
-      });
-      
-      document.getElementById('list-admin').innerHTML = adm || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
-      document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
-      document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
-      document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+             let row = `<div class="${boxClass}"><div class="worker-info"><div class="worker-name">${nameDisplay}</div><div class="worker-details">${detailsHtml}</div></div><div>${selectHtml}</div></div>`;
+             let dp = w.dept ? w.dept.toLowerCase() : 'інше'; 
+             if(dp==='адмін') adm+=row; else if(dp==='зварка') zv+=row; else if(dp==='пайка') pa+=row; else if(dp==='запаковка') zap+=row;
+          });
+          
+          document.getElementById('list-admin').innerHTML = adm || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
+          document.getElementById('list-zvarka').innerHTML = zv || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+          document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; 
+          document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
+      } catch(e) {
+          console.error(e);
+          document.getElementById('deptWorkersContainer').innerHTML = `<div style="color:var(--danger); padding:20px;">Помилка завантаження: ${e.message}</div>`;
+      }
     }
 
-    window.updateDailyStatus = async function(name, dept, status) {
-        const dStr = document.getElementById('repDate').value; 
-        let t = dept==='Зварка'?'reports_zvarka':(dept==='Пайка'?'reports_payka':'reports_zapakovka');
-        let nF = dept === 'Пайка' ? 'solderer_name' : (dept === 'Запаковка' ? 'packager_name' : 'name');
+    // === 3. ТАБЕЛЬ (БЕЗ ЗАВИСАНЬ) ===
+    window.loadTabel = async function() {
+      const containerIds = ['tabel-admin-container', 'tabel-zvarka-container', 'tabel-payka-container', 'tabel-zapakovka-container'];
+      containerIds.forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = "⏳ Завантаження..."; });
+
+      try {
+          const mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
+          const [y, mo] = mVal.split('-'); const days = new Date(y, mo, 0).getDate();
+          const start = `${y}-${mo}-01`; const end = `${y}-${mo}-${days}`;
+
+          let all = await fetchMonthDataOptimized(start, end, null);
+
+          let tData = {}; 
+          if (window.globalWorkers) {
+              window.globalWorkers.forEach(w => { tData[w.name] = { dept: w.dept || 'Інше', days: {}, sum: 0 }; });
+          }
+          all.forEach(r => {
+             let name = r.name || r.solderer_name || r.packager_name;
+             if(tData[name] && r.date) {
+                let dParts = r.date.split('-');
+                if (dParts.length < 3) return;
+                let d = parseInt(dParts[2]); let c = parseInt(r.count || 0);
+                if(!tData[name].days[d]) tData[name].days[d] = { count: 0, status: null, models: {} };
+                if(r.status && r.status!=='Працював' && c===0) tData[name].days[d].status = r.status;
+                else { 
+                    tData[name].days[d].count += c; tData[name].sum += c; 
+                    let model = r.model || r.config || 'Інше';
+                    tData[name].days[d].models[model] = (tData[name].days[d].models[model] || 0) + c;
+                }
+             }
+          });
+          window.globalTabelData = tData;
+
+          let depts = { "Адмін": [], "Зварка": [], "Пайка": [], "Запаковка": [] };
+          Object.keys(tData).forEach(n => { let dpt = tData[n].dept; if(depts[dpt]) depts[dpt].push(n); });
+          let mapIds = {"Адмін": "admin", "Зварка": "zvarka", "Пайка": "payka", "Запаковка": "zapakovka"};
+
+          for (let dpt in depts) {
+             let targetDiv = document.getElementById(`tabel-${mapIds[dpt]}-container`);
+             if(!targetDiv) continue; 
+             if(depts[dpt].length === 0) { targetDiv.innerHTML = "<div style='color:var(--text-muted); font-size:13px;'>Немає працівників</div>"; continue; }
+             
+             let html = `<table class="tabel-table"><thead><tr><th class="name-cell">Працівник</th>`;
+             for(let i=1; i<=days; i++) html += `<th>${i}</th>`;
+             html += `<th>Сума</th></tr></thead><tbody>`;
+             
+             depts[dpt].forEach(name => {
+                html += `<tr><td class="name-cell" onclick="openWorkerProfile('${name}')">${name}</td>`;
+                let uD = tData[name];
+                for(let i=1; i<=days; i++) {
+                   let fullDate = `${y}-${mo}-${i<10?'0'+i:i}`; let txt = `<span style="color:rgba(255,255,255,0.05)">—</span>`; let cls = "";
+                   if(uD.days[i]) {
+                      if(uD.days[i].status) { txt = getStatusBadge(uD.days[i].status); cls = ""; }
+                      else if(uD.days[i].count > 0) { txt = `<span class="st-num">${uD.days[i].count}</span>`; cls = ""; }
+                   }
+                   html += `<td class="${cls}" onclick="openCalModal('${name}','${fullDate}','${dpt}')">${txt}</td>`;
+                }
+                html += `<td class="sum-cell">${uD.sum > 0 ? uD.sum : ''}</td></tr>`;
+             });
+             targetDiv.innerHTML = html + `</tbody></table>`;
+          }
+      } catch(err) {
+          containerIds.forEach(id => {
+              let el = document.getElementById(id);
+              if (el) el.innerHTML = `<div style="color:var(--danger); padding:10px;">Помилка: ${err.message}</div>`;
+          });
+      }
+    }
+
+    // === 4. КОМАНДА (БЕЗ ЗАВИСАНЬ) ===
+    window.loadWorkersCards = async function() {
+       const container = document.getElementById('team-cards-container');
+       container.innerHTML = "⏳ Завантаження...";
+       try {
+           let mVal = document.getElementById('tabelMonth').value; if (!mVal) return;
+           const [y, mo] = mVal.split('-'); const days = new Date(y, mo, 0).getDate();
+           const start = `${y}-${mo}-01`; const end = `${y}-${mo}-${days}`;
+
+           const { data: workers, error: errW } = await supabase.from('workers').select('*').order('name');
+           if (errW) throw errW;
+
+           let all = await fetchMonthDataOptimized(start, end, null);
+
+           let html = "";
+           if(workers) {
+              workers.forEach(w => {
+                 let stColor = w.status === 'Активний' ? 'var(--success)' : (w.status === 'Очікує' ? 'var(--warning)' : 'var(--danger)');
+                 let workerNameField = w.dept === 'Пайка' ? 'solderer_name' : (w.dept === 'Запаковка' ? 'packager_name' : 'name');
+                 let wReps = all.filter(r => r[workerNameField] === w.name);
+                 let sum = 0; wReps.forEach(r => sum += (parseInt(r.count)||0));
+                 html += `<div class="card" style="padding:20px; margin-bottom:0; width: calc(33.3% - 10px); min-width: 280px; position:relative;"><div style="position:absolute; top:20px; right:20px; text-align:right;"><div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">За місяць</div><div style="font-size:20px; font-weight:700; color:var(--success);">${sum}</div></div><div style="font-size:16px; font-weight:700; margin-bottom:15px; width:70%;">${w.name || 'Без імені'}</div><div style="font-size:13px; color:var(--text-muted); margin-bottom:5px;">Відділ: <span style="color:#fff;">${w.dept || 'Не вказано'}</span></div><div style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Статус: <span style="color:${stColor}; font-weight:600;">${w.status || ''}</span></div><button class="btn-secondary" style="width:100%; padding:10px; font-size:13px;" onclick="openWorkerProfile('${w.name}')">Відкрити профіль</button></div>`;
+              });
+           }
+           container.innerHTML = html || "Немає працівників";
+       } catch(err) {
+           container.innerHTML = `<div style="color:var(--danger); padding:20px; font-weight:bold;">❌ Помилка бази: ${err.message}</div>`;
+       }
+    }
+
+    // === ДАШБОРД ===
+    window.loadDashboard = async function() {
+       try {
+           const start = document.getElementById('dashStart').value; const end = document.getElementById('dashEnd').value;
+           const filterDept = (window.currentUser && window.currentUser.dept !== 'Адмін') ? window.currentUser.dept : document.getElementById('dashDept').value;
+           
+           let fetchDept = (window.currentUser && window.currentUser.dept !== 'Адмін') ? window.currentUser.dept : (filterDept === 'Всі' ? null : filterDept);
+           let all = await fetchMonthDataOptimized(start, end, fetchDept);
+
+           let wS = {}; let mS = {}; window.dashDailyStats = {}; let total = 0;
+           all.forEach(r => {
+              let c = parseInt(r.count || 0); if(c<=0) return;
+              let n = r.name || r.solderer_name || r.packager_name; let m = r.model || r.config || 'Інше'; let dt = r.date;
+              
+              let wObj = window.globalWorkers.find(worker => worker.name === n);
+              if (filterDept !== 'Всі' && wObj && wObj.dept !== filterDept) return;
+
+              wS[n] = (wS[n]||0)+c; mS[m] = (mS[m]||0)+c; total+=c;
+              if(!window.dashDailyStats[dt]) window.dashDailyStats[dt] = { total: 0, workers: {} };
+              window.dashDailyStats[dt].total += c; window.dashDailyStats[dt].workers[n] = (window.dashDailyStats[dt].workers[n] || 0) + c;
+           });
+
+           document.getElementById('dashTotalScore').innerText = total + ' шт';
+           let tM = {name:'Немає', val:0}; for(let m in mS) if(mS[m]>tM.val) tM={name:m, val:mS[m]};
+           document.getElementById('dashTopModel').innerText = tM.name; 
+
+           let lbTitle = filterDept === 'Всі' ? `<i class="fa-solid fa-trophy"></i> Таблиця Лідерів (Всі)` : `<i class="fa-solid fa-trophy"></i> Лідерборд: ${filterDept}`;
+           document.getElementById('leaderboardTitle').innerHTML = lbTitle;
+
+           let sortedWorkers = Object.keys(wS).map(k => ({name: k, score: wS[k]})).sort((a,b) => b.score - a.score);
+           let lbHtml = ""; let medals = ["🥇", "🥈", "🥉", "4.", "5."];
+           for(let i=0; i<Math.min(sortedWorkers.length, 5); i++) {
+               let rankClass = i < 3 ? `leader-rank-${i+1}` : "";
+               let color = i===0 ? 'gold' : (i===1 ? 'silver' : (i===2 ? '#cd7f32' : 'var(--text-main)'));
+               let isMe = (window.currentUser && window.currentUser.name === sortedWorkers[i].name) ? 'background:rgba(80, 205, 137, 0.15); border-color:var(--success);' : '';
+               
+               lbHtml += `<div class="leaderboard-item ${rankClass}" style="${isMe}">
+                   <div style="font-weight:700; color:${color}; font-size:15px;">${medals[i]} ${sortedWorkers[i].name}</div>
+                   <div style="font-weight:700; color:var(--success);">${sortedWorkers[i].score} шт</div>
+               </div>`;
+           }
+           document.getElementById('leaderboardContainer').innerHTML = lbHtml || "<div style='color:var(--text-muted); font-size:13px;'>Немає даних</div>";
+
+           loadPersonalChartDashboard();
+       } catch(err) {
+           document.getElementById('leaderboardContainer').innerHTML = `<div style="color:var(--danger);">Помилка: ${err.message}</div>`;
+       }
+    }
+
+    window.loadPersonalChartDashboard = function() {
+        let selectedWorker = document.getElementById('dashSelectWorker') ? document.getElementById('dashSelectWorker').value : "";
+        if (window.currentUser && window.currentUser.dept !== 'Адмін') { selectedWorker = window.currentUser.name; }
+
+        let sDates = Object.keys(window.dashDailyStats || {}).sort();
+        let dataPoints = [];
         
-        await supabase.from(t).delete().eq(nF, name).eq('date', dStr);
-        if (status !== 'Працював') { await supabase.from(t).insert([{ date: dStr, [nF]: name, dept: dept, status: status, count: 0 }]); }
-        clearCacheAndReload('daily'); 
+        if (selectedWorker) {
+            document.getElementById('chartTitle1').innerText = `Моя динаміка: ${selectedWorker}`;
+            dataPoints = sDates.map(d => window.dashDailyStats[d].workers[selectedWorker] || 0);
+        } else {
+            document.getElementById('chartTitle1').innerText = `Динаміка виробництва (Всі)`;
+            dataPoints = sDates.map(d => window.dashDailyStats[d].total || 0);
+        }
+
+        if(chartTrend) chartTrend.destroy();
+        chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:dataPoints, borderColor:'#009EF7', backgroundColor:'rgba(0,158,247,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
     }
 
+    // Інші функції
+    window.populateDashWorkers = function() { let html = '<option value="">-- Всі працівники --</option>'; window.globalWorkers.forEach(w => { html += `<option value="${w.name}">${w.name}</option>`; }); let sel = document.getElementById('dashSelectWorker'); if(sel) sel.innerHTML = html; }
+    window.loadActiveModels = async function() { try { const { data, error } = await supabase.from('active_models').select('*'); if(error) throw error; if (data && data.length > 0) { document.getElementById('activeModelsList').innerHTML = data.map(m => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); border:1px solid rgba(0,158,247,0.3); font-size:13px; padding:8px 12px;">${m.model} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:8px; color:var(--danger);" onclick="deleteActiveModel(${m.id})"></i></div>`).join(''); } else document.getElementById('activeModelsList').innerHTML = `<div style="color:var(--danger); font-size:13px;">Каталог порожній.</div>`; } catch(e){} }
+    window.addActiveModel = async function() { let c = document.getElementById('activeModelConfig').value; let e = document.getElementById('activeModelElement').value; if(c&&e){ await supabase.from('active_models').insert([{model: c+" "+e}]); loadActiveModels(); } }
+    window.deleteActiveModel = async function(id) { await supabase.from('active_models').delete().eq('id', id); loadActiveModels(); }
+    window.clearModels = async function() { if(confirm("Очистити каталог?")) { await supabase.from('active_models').delete().neq('model', 'dummy'); loadActiveModels(); } }
+    window.updateDailyStatus = async function(name, dept, status) { const dStr = document.getElementById('repDate').value; let t = dept==='Зварка'?'reports_zvarka':(dept==='Пайка'?'reports_payka':'reports_zapakovka'); let nF = dept === 'Пайка' ? 'solderer_name' : (dept === 'Запаковка' ? 'packager_name' : 'name'); await supabase.from(t).delete().eq(nF, name).eq('date', dStr); if (status !== 'Працював') { await supabase.from(t).insert([{ date: dStr, [nF]: name, dept: dept, status: status, count: 0 }]); } clearCacheAndReload('daily'); }
+
+    // Відправка звітів
     window.sendDailyReportTxt = async function() {
         const dStr = document.getElementById('repDate').value; const [year, month, day] = dStr.split('-'); const dateFormatted = `${day}.${month}.${year}`;
         let all = await fetchDateDataOptimized(dStr);
         let depts = [ { id: 'Зварка', title: 'сварка', nameField: 'name' }, { id: 'Пайка', title: 'пайка', nameField: 'solderer_name' }, { id: 'Запаковка', title: 'запаковка', nameField: 'packager_name' } ];
-        document.getElementById('btnSendTg').innerHTML = "⏳ Відправка 3 файлів...";
-        let successCount = 0;
+        document.getElementById('btnSendTg').innerHTML = "⏳ Відправка 3 файлів..."; let successCount = 0;
 
         for (let dpt of depts) {
             let deptWorkers = window.globalWorkers.filter(w => w.dept === dpt.id); 
@@ -591,93 +769,12 @@
             try {
                 const blob = new Blob([deptText.trim()], { type: 'text/plain' }); const formData = new FormData();
                 formData.append('chat_id', '738066424'); formData.append('document', blob, `Звіт_${dpt.id}_${dateFormatted}.txt`); formData.append('caption', `📋 Звіт: ${dpt.id} за ${dateFormatted}`);
-                await fetch(`https://api.telegram.org/bot8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y/sendDocument`, { method: 'POST', body: formData });
+                await fetch(`https://api.telegram.org/bot8632082763:AAHs-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8/sendDocument`, { method: 'POST', body: formData });
                 successCount++;
             } catch(e) {}
         }
-        document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-file-lines"></i> Затвердити та надіслати звіти в Telegram`; 
-        alert(`✅ Відправлено ${successCount} файлів!`);
+        document.getElementById('btnSendTg').innerHTML = `<i class="fa-solid fa-file-lines"></i> Затвердити та надіслати звіти в Telegram`; alert(`✅ Відправлено ${successCount} файлів!`);
     }
-
-    // === ДАШБОРД ===
-    window.populateDashWorkers = function() {
-        let html = '<option value="">-- Всі працівники --</option>';
-        window.globalWorkers.forEach(w => { html += `<option value="${w.name}">${w.name}</option>`; });
-        let sel = document.getElementById('dashSelectWorker'); if(sel) sel.innerHTML = html;
-    }
-
-    window.loadDashboard = async function() {
-       const start = document.getElementById('dashStart').value; const end = document.getElementById('dashEnd').value;
-       const filterDept = (window.currentUser && window.currentUser.dept !== 'Адмін') ? window.currentUser.dept : document.getElementById('dashDept').value;
-       
-       let fetchDept = (window.currentUser && window.currentUser.dept !== 'Адмін') ? window.currentUser.dept : (filterDept === 'Всі' ? null : filterDept);
-       let all = await fetchMonthDataOptimized(start, end, fetchDept);
-
-       let wS = {}; let mS = {}; window.dashDailyStats = {}; let total = 0;
-       all.forEach(r => {
-          let c = parseInt(r.count || 0); if(c<=0) return;
-          let n = r.name || r.solderer_name || r.packager_name; let m = r.model || r.config || 'Інше'; let dt = r.date;
-          
-          let wObj = window.globalWorkers.find(worker => worker.name === n);
-          if (filterDept !== 'Всі' && wObj && wObj.dept !== filterDept) return;
-
-          wS[n] = (wS[n]||0)+c; mS[m] = (mS[m]||0)+c; total+=c;
-          if(!window.dashDailyStats[dt]) window.dashDailyStats[dt] = { total: 0, workers: {} };
-          window.dashDailyStats[dt].total += c; window.dashDailyStats[dt].workers[n] = (window.dashDailyStats[dt].workers[n] || 0) + c;
-       });
-
-       document.getElementById('dashTotalScore').innerText = total + ' шт';
-       let tM = {name:'Немає', val:0}; for(let m in mS) if(mS[m]>tM.val) tM={name:m, val:mS[m]};
-       document.getElementById('dashTopModel').innerText = tM.name; 
-
-       let lbTitle = filterDept === 'Всі' ? `<i class="fa-solid fa-trophy"></i> Таблиця Лідерів (Всі)` : `<i class="fa-solid fa-trophy"></i> Лідерборд: ${filterDept}`;
-       document.getElementById('leaderboardTitle').innerHTML = lbTitle;
-
-       let sortedWorkers = Object.keys(wS).map(k => ({name: k, score: wS[k]})).sort((a,b) => b.score - a.score);
-       let lbHtml = ""; let medals = ["🥇", "🥈", "🥉", "4.", "5."];
-       for(let i=0; i<Math.min(sortedWorkers.length, 5); i++) {
-           let rankClass = i < 3 ? `leader-rank-${i+1}` : "";
-           let color = i===0 ? 'gold' : (i===1 ? 'silver' : (i===2 ? '#cd7f32' : 'var(--text-main)'));
-           let isMe = (window.currentUser && window.currentUser.name === sortedWorkers[i].name) ? 'background:rgba(80, 205, 137, 0.15); border-color:var(--success);' : '';
-           
-           lbHtml += `<div class="leaderboard-item ${rankClass}" style="${isMe}">
-               <div style="font-weight:700; color:${color}; font-size:15px;">${medals[i]} ${sortedWorkers[i].name}</div>
-               <div style="font-weight:700; color:var(--success);">${sortedWorkers[i].score} шт</div>
-           </div>`;
-       }
-       document.getElementById('leaderboardContainer').innerHTML = lbHtml || "<div style='color:var(--text-muted); font-size:13px;'>Немає даних</div>";
-
-       loadPersonalChartDashboard();
-    }
-
-    window.loadPersonalChartDashboard = function() {
-        let selectedWorker = document.getElementById('dashSelectWorker') ? document.getElementById('dashSelectWorker').value : "";
-        if (window.currentUser && window.currentUser.dept !== 'Адмін') { selectedWorker = window.currentUser.name; }
-
-        let sDates = Object.keys(window.dashDailyStats || {}).sort();
-        let dataPoints = [];
-        
-        if (selectedWorker) {
-            document.getElementById('chartTitle1').innerText = `Моя динаміка: ${selectedWorker}`;
-            dataPoints = sDates.map(d => window.dashDailyStats[d].workers[selectedWorker] || 0);
-        } else {
-            document.getElementById('chartTitle1').innerText = `Динаміка виробництва (Всі)`;
-            dataPoints = sDates.map(d => window.dashDailyStats[d].total || 0);
-        }
-
-        if(chartTrend) chartTrend.destroy();
-        chartTrend = new Chart(document.getElementById('trendChart'), { type:'line', data:{ labels:sDates.map(x=>x.split('-').slice(1).reverse().join('.')), datasets:[{label:'Всього', data:dataPoints, borderColor:'#009EF7', backgroundColor:'rgba(0,158,247,0.1)', fill:true, tension:0.3}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
-    }
-
-    // ІНШІ ФУНКЦІЇ БЕЗ ЗМІН ЛОГІКИ
-    window.loadActiveModels = async function() {
-        const { data } = await supabase.from('active_models').select('*');
-        if (data && data.length > 0) { document.getElementById('activeModelsList').innerHTML = data.map(m => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); border:1px solid rgba(0,158,247,0.3); font-size:13px; padding:8px 12px;">${m.model} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:8px; color:var(--danger);" onclick="deleteActiveModel(${m.id})"></i></div>`).join(''); } 
-        else document.getElementById('activeModelsList').innerHTML = `<div style="color:var(--danger); font-size:13px;">Каталог порожній.</div>`;
-    }
-    window.addActiveModel = async function() { let c = document.getElementById('activeModelConfig').value; let e = document.getElementById('activeModelElement').value; if(c&&e){ await supabase.from('active_models').insert([{model: c+" "+e}]); loadActiveModels(); } }
-    window.deleteActiveModel = async function(id) { await supabase.from('active_models').delete().eq('id', id); loadActiveModels(); }
-    window.clearModels = async function() { if(confirm("Очистити каталог?")) { await supabase.from('active_models').delete().neq('model', 'dummy'); loadActiveModels(); } }
 
     initAuth();
   </script>
