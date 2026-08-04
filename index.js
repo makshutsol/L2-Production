@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 
 // Беремо актуальний токен з .env або використовуємо як запасний
-const TELEGRAM_TOKEN = process.env.BOT_TOKEN || '8632082763:AAHs-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8';
+const TELEGRAM_TOKEN = process.env.BOT_TOKEN || '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y';
 
 // Виправляємо URL Supabase (він має бути строго без /rest/v1/ в кінці)
 let rawSupaUrl = process.env.SUPABASE_URL || 'https://miotyurbyfhrkepqdmvv.supabase.co';
