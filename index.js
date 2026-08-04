@@ -1,9 +1,14 @@
+require('dotenv').config(); // ОДРАЗУ НА ПОЧАТКУ: Підключаємо .env файл
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
 
-const TELEGRAM_TOKEN = process.env.BOT_TOKEN || '8559181108:AAFMwB-N4JrzqZ-6IwBO2RLgnYhech9W__Y';
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://miotyurbyfhrkepqdmvv.supabase.co';
+// Беремо актуальний токен з .env або використовуємо як запасний
+const TELEGRAM_TOKEN = process.env.BOT_TOKEN || '8632082763:AAHs-bT7Vj_B1yKZsGge6JHBiTpVXjrnOs8';
+
+// Виправляємо URL Supabase (він має бути строго без /rest/v1/ в кінці)
+let rawSupaUrl = process.env.SUPABASE_URL || 'https://miotyurbyfhrkepqdmvv.supabase.co';
+const SUPABASE_URL = rawSupaUrl.replace('/rest/v1/', '').replace('/rest/v1', '');
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pb3R5dXJieWZocmtlcHFkbXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MjA2MTYsImV4cCI6MjA5OTQ5NjYxNn0.rEP9D65nAvA5_iQW47XKr2veQBesYjIZdbczJUuvHQY';
 const ADMIN_CHAT_ID = '738066424';
 
@@ -11,13 +16,15 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const app = express();
 app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'index.html')); });
-app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-сервер та Адмінка запущені'));
+app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-сервер та Адмінка запущені на порту ' + (process.env.PORT || 10000)));
 
 async function tg(method, payload = {}) {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(10000) // Захист від зависання запиту
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(10000) // Захист від зависання
         });
         return await res.json();
     } catch(e) { 
@@ -74,7 +81,8 @@ async function handleMessage(msg) {
 
     try {
         const { data: workers, error: dbErr } = await supabase.from('workers').select('*').eq('chat_id', chatId);
-        if (dbErr) throw new Error("DB Error connecting workers");
+        if (dbErr) { console.error("DB Error on /start:", dbErr); return; }
+        
         let user = workers && workers.length > 0 ? workers[0] : null;
 
         if (!user) {
@@ -275,7 +283,7 @@ async function poll() {
             }
         }
     } catch (e) {
-        console.error("Polling Network Error. Retrying...");
+        // Тихо обробляємо помилки з'єднання
     } finally {
         isPolling = false;
         setTimeout(poll, 1500); // Безпечна затримка між циклами
@@ -283,7 +291,17 @@ async function poll() {
 }
 
 async function startSystem() {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook?drop_pending_updates=true`);
-    poll();
+    console.log("🔄 Перевірка підключення до Telegram...");
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMe`);
+    const botInfo = await res.json();
+    
+    if (botInfo.ok) {
+        console.log(`✅ Бот успішно підключений: @${botInfo.result.username}`);
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook?drop_pending_updates=true`);
+        poll();
+    } else {
+        console.error("❌ ПОМИЛКА: Невірний токен Telegram або бот заблокований!", botInfo);
+    }
 }
+
 startSystem();
