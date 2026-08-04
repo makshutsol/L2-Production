@@ -24,7 +24,7 @@ async function tg(method, payload = {}) {
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(10000) // Захист від зависання
+            signal: AbortSignal.timeout(40000) // Захист від зависання
         });
         return await res.json();
     } catch(e) { 
