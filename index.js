@@ -16,10 +16,14 @@ app.listen(process.env.PORT || 10000, '0.0.0.0', () => console.log('✅ Web-се
 async function tg(method, payload = {}) {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(10000) // Захист від зависання запиту
         });
         return await res.json();
-    } catch(e) { return { ok: false }; }
+    } catch(e) { 
+        console.error(`TG API Error (${method}):`, e.message);
+        return { ok: false }; 
+    }
 }
 
 async function sendMessage(chat_id, text, reply_markup = null, parse_mode = 'Markdown') {
@@ -43,7 +47,7 @@ function buildKeyboard(list, cols) {
 }
 
 async function sendMenuByDept(chatId, dept) {
-    let dpt = dept.toLowerCase(); let txt = ""; let markup = null;
+    let dpt = dept ? dept.toLowerCase() : ""; let txt = ""; let markup = null;
     if (dpt === "запаковка") {
         txt = "📦 **МЕНЮ ЗАПАКОВЩИКА**\n\n🔹 `🛒 Забрати акуми` — внести отримані деталі.\n🔹 `🏁 Закрити зміну` — надіслати чеки Пайщикам.";
         markup = { keyboard: [[{ text: "🛒 Забрати акуми" }, { text: "🏁 Закрити зміну" }]], resize_keyboard: true };
@@ -69,7 +73,8 @@ async function handleMessage(msg) {
     if (!text) return;
 
     try {
-        const { data: workers } = await supabase.from('workers').select('*').eq('chat_id', chatId);
+        const { data: workers, error: dbErr } = await supabase.from('workers').select('*').eq('chat_id', chatId);
+        if (dbErr) throw new Error("DB Error connecting workers");
         let user = workers && workers.length > 0 ? workers[0] : null;
 
         if (!user) {
@@ -120,13 +125,9 @@ async function handleMessage(msg) {
 
             let count = 0;
             for (let w of recipients) {
-                if(w.chat_id) {
-                    await sendMessage(w.chat_id, `📢 **ПОВІДОМЛЕННЯ ВІД АДМІНІСТРАЦІЇ:**\n\n${text}`);
-                    count++;
-                }
+                if(w.chat_id) { await sendMessage(w.chat_id, `📢 **ПОВІДОМЛЕННЯ ВІД АДМІНІСТРАЦІЇ:**\n\n${text}`); count++; }
             }
-            delete states[chatId]; 
-            await sendMessage(chatId, `✅ Оголошення успішно доставлено (${count} чол.)`);
+            delete states[chatId]; await sendMessage(chatId, `✅ Оголошення успішно доставлено (${count} чол.)`);
             return sendMenuByDept(chatId, user.dept);
         }
 
@@ -146,14 +147,10 @@ async function handleMessage(msg) {
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
             
             const { error } = await supabase.from('reports_zvarka').insert([{ date: today, name: user.name, dept: user.dept, model: state.model, count: count, status: "Працював" }]);
-            
             if (error) {
-                console.error("DB Zvarka Error:", error);
-                await sendMessage(chatId, `❌ Помилка бази: ${error.message}`, null, null);
-                return;
+                console.error("DB Zvarka Error:", error); return sendMessage(chatId, `❌ Помилка бази. Спробуйте пізніше.`, null, null);
             } else {
-                delete states[chatId]; 
-                await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`);
+                delete states[chatId]; await sendMessage(chatId, `🎉 **Збережено:** ${state.model} — ${count} шт.`);
                 return sendMenuByDept(chatId, user.dept);
             }
         }
@@ -225,48 +222,25 @@ async function handleCallbackQuery(query) {
         
         if (!batch) return tg('editMessageText', {chat_id: chatId, message_id: msgId, text: "⚠️ Звіт вже оброблений або застарів."});
 
-        // 🟢 ТУТ БУЛА ПРОБЛЕМА: Додано обробку помилок та поле time
         if (action === "CONFIRM") {
             let today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Kyiv' });
             let hasError = false;
             
+            // Записуємо звіти послідовно та безпечно
             for (let it of batch.items) {
-                // Записуємо в Пайку
-                let res1 = await supabase.from('reports_payka').insert([{ 
-                    date: today, 
-                    solderer_name: batch.sName, 
-                    dept: 'Пайка', 
-                    model: it.model, 
-                    count: it.count, 
-                    status: "Працював",
-                    time: it.time // Передаємо час, оскільки ви додали колонку
+                const { error: err1 } = await supabase.from('reports_payka').insert([{ 
+                    date: today, solderer_name: batch.sName, dept: 'Пайка', model: it.model, count: it.count, status: "Працював", time: it.time 
+                }]);
+                const { error: err2 } = await supabase.from('reports_zapakovka').insert([{ 
+                    date: today, packager_name: batch.pName, dept: 'Запаковка', model: it.model, count: it.count, status: "Працював", time: it.time
                 }]);
                 
-                // Записуємо в Запаковку (якщо там є колонка time, вона теж запишеться, якщо немає - ігнорується)
-                let res2 = await supabase.from('reports_zapakovka').insert([{ 
-                    date: today, 
-                    packager_name: batch.pName, 
-                    dept: 'Запаковка', 
-                    model: it.model, 
-                    count: it.count, 
-                    status: "Працював",
-                    time: it.time
-                }]);
-                
-                if (res1.error) {
-                    console.error("Помилка запису в reports_payka:", res1.error);
-                    hasError = true;
-                }
-                if (res2.error) {
-                    console.error("Помилка запису в reports_zapakovka:", res2.error);
-                    hasError = true;
-                }
+                if (err1 || err2) { console.error("DB Insert Error:", err1 || err2); hasError = true; }
             }
             
             if (hasError) { 
-                await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `❌ **Помилка бази.** Дані не збережено. Адміністратор має перевірити логи сервера.`}); 
-            } 
-            else {
+                await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `❌ **Помилка бази.** Дані збережені не повністю. Повідомте адміністратора.`}); 
+            } else {
                 await tg('editMessageText', {chat_id: chatId, message_id: msgId, text: `✅ **ЗВІТ ПІДТВЕРДЖЕНО ТА ЗБЕРЕЖЕНО**`, parse_mode: 'Markdown'});
                 await sendMessage(batch.pChatId, `✅ Пайщик **${batch.sName}** підтвердив ваш чек!`);
                 delete disputeBatches[bId];
@@ -282,15 +256,17 @@ async function handleCallbackQuery(query) {
             states[chatId] = { step: "WAITING_REASON", batchId: bId, itemIndex: idx };
             await sendMessage(chatId, `✍️ Напишіть причину незгоди (чому це не так):`, { keyboard: [[{text: "❌ Скасувати"}]], resize_keyboard: true });
         }
-    } catch (error) {
-        console.error("Помилка в handleCallbackQuery:", error);
-    }
+    } catch (error) { console.error("Помилка в handleCallbackQuery:", error); }
 }
 
 let lastUpdateId = 0;
+let isPolling = false;
+
 async function poll() {
+    if (isPolling) return;
+    isPolling = true;
     try {
-        const data = await tg('getUpdates', { offset: lastUpdateId + 1, timeout: 50 });
+        const data = await tg('getUpdates', { offset: lastUpdateId + 1, timeout: 30 });
         if (data && data.ok && data.result) {
             for (const update of data.result) {
                 lastUpdateId = update.update_id;
@@ -298,8 +274,12 @@ async function poll() {
                 if (update.callback_query) await handleCallbackQuery(update.callback_query);
             }
         }
-    } catch (e) {} 
-    setTimeout(poll, 1000);
+    } catch (e) {
+        console.error("Polling Network Error. Retrying...");
+    } finally {
+        isPolling = false;
+        setTimeout(poll, 1500); // Безпечна затримка між циклами
+    }
 }
 
 async function startSystem() {
