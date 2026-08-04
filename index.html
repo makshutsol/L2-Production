@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -164,6 +164,29 @@
       <div id="daily" class="section active">
         <div class="header"><h1>Операційний звіт</h1><p>Виробничий потік у реальному часі</p></div>
         
+        <!-- НОВИЙ БЛОК: КАТАЛОГ ЗМІНИ ДЛЯ TELEGRAM -->
+        <div class="card" style="border-color: var(--info);">
+            <div class="card-header" style="margin-bottom: 15px; padding-bottom: 10px;">
+                <div class="card-title" style="color:var(--info);"><i class="fa-solid fa-list-check"></i> План на зміну (Каталог для Telegram)</div>
+                <button class="btn-danger" style="padding: 8px 15px; font-size:12px;" onclick="clearModels()"><i class="fa-solid fa-trash"></i> Очистити каталог</button>
+            </div>
+            
+            <div class="setup-grid" style="align-items: flex-end; margin-bottom: 15px;">
+                <div style="flex:2;">
+                    <label style="font-size:12px; color:var(--text-muted);">Збірка (Конфігурація):</label>
+                    <select id="activeModelConfig" style="margin-top:5px;"></select>
+                </div>
+                <div style="flex:2;">
+                    <label style="font-size:12px; color:var(--text-muted);">Елемент (Банка):</label>
+                    <select id="activeModelElement" style="margin-top:5px;"></select>
+                </div>
+                <button class="btn-primary" style="padding:12px 20px; flex:none;" onclick="addActiveModel()">+ Додати в роботу</button>
+            </div>
+            
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Активні збірки, доступні працівникам у боті сьогодні:</div>
+            <div id="activeModelsList" style="display:flex; gap:10px; flex-wrap:wrap;">⏳ Завантаження...</div>
+        </div>
+
         <div id="pendingCard" class="card" style="display:none; border-color: var(--warning);">
             <div class="card-title" style="color:var(--warning); margin-bottom: 15px;">Нові заявки (Авторизація)</div>
             <div id="pendingList"></div>
@@ -508,6 +531,10 @@
     // === 1. ОПЕРАЦІЇ ===
     window.loadDaily = async function() {
       const dStr = document.getElementById('repDate').value;
+      
+      // Оновлюємо список активних моделей для Телеграму (Каталог)
+      loadActiveModels();
+
       document.getElementById('list-admin').innerHTML="⏳..."; document.getElementById('list-zvarka').innerHTML="⏳..."; document.getElementById('list-payka').innerHTML="⏳..."; document.getElementById('list-zapakovka').innerHTML="⏳...";
 
       const { data: pending } = await supabase.from('workers').select('*').eq('status', 'Очікує');
@@ -563,6 +590,43 @@
       document.getElementById('list-payka').innerHTML = pa || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>"; document.getElementById('list-zapakovka').innerHTML = zap || "<div style='color:var(--text-muted); font-size:12px;'>Порожньо</div>";
     }
 
+    // === НОВЕ: ЛОГІКА КАТАЛОГУ ДЛЯ БОТА (ПЛАН НА ЗМІНУ) ===
+    window.loadActiveModels = async function() {
+        document.getElementById('activeModelsList').innerHTML = "⏳...";
+        const { data } = await supabase.from('active_models').select('*');
+        if (data && data.length > 0) {
+            document.getElementById('activeModelsList').innerHTML = data.map(m => 
+                `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); border:1px solid rgba(0,158,247,0.3); font-size:13px; padding:8px 12px;">
+                    ${m.model} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:8px; color:var(--danger);" onclick="deleteActiveModel(${m.id})"></i>
+                </div>`
+            ).join('');
+        } else {
+            document.getElementById('activeModelsList').innerHTML = `<div style="color:var(--danger); font-size:13px;">Каталог порожній. Працівники не зможуть здати роботу! Оберіть конфігурацію вище.</div>`;
+        }
+    }
+
+    window.addActiveModel = async function() { 
+        let conf = document.getElementById('activeModelConfig').value;
+        let el = document.getElementById('activeModelElement').value;
+        if(!conf || !el) return alert("Оберіть конфігурацію та елемент із випадаючих списків!");
+        let m = conf + " " + el; 
+        await supabase.from('active_models').insert([{model: m}]); 
+        loadActiveModels(); 
+    }
+
+    window.deleteActiveModel = async function(id) {
+        await supabase.from('active_models').delete().eq('id', id);
+        loadActiveModels();
+    }
+
+    window.clearModels = async function() { 
+        if(confirm("Очистити план на зміну? Це повністю видалить всі доступні збірки з меню бота!")) {
+            await supabase.from('active_models').delete().neq('model', 'dummy'); 
+            loadActiveModels(); 
+        }
+    }
+
+
     window.updateDailyStatus = async function(name, dept, status) {
         const dStr = document.getElementById('repDate').value; const table = getTableName(dept); if(!table) return;
         let workerNameField = dept === 'Пайка' ? 'solderer_name' : (dept === 'Запаковка' ? 'packager_name' : 'name');
@@ -612,7 +676,7 @@
         } catch(e) { document.getElementById('btnSendTg').innerHTML = "Помилка відправки"; }
     }
 
-    // === 1.5 РОЗПОДІЛ РОБОТИ (ТОЧНИЙ РОЗПОДІЛ) ===
+    // === 1.5 РОЗПОДІЛ РОБОТИ ===
     window.loadDistribWorkers = function() {
         let dept = document.getElementById('distDept').value;
         let workers = window.globalWorkers.filter(w => w.dept === dept);
@@ -652,7 +716,6 @@
         let checks = document.querySelectorAll('.dist-check:checked');
         if (checks.length === 0) return alert("Оберіть працівників!");
         
-        // Перемішуємо працівників
         let availableWorkers = Array.from(checks).map(c => c.value).sort(() => Math.random() - 0.5);
         let workerAssignments = {}; availableWorkers.forEach(w => workerAssignments[w] = []);
 
@@ -662,12 +725,11 @@
         orders.forEach(ord => {
             text += `${ord.model} - ${ord.qty}шт.\n`;
             
-            // Якщо не вказано к-сть робітників або вона більша за залишок, роблять усі, хто лишився
             let numWorkersForThis = ord.workersCount > 0 ? Math.min(ord.workersCount, availableWorkers.length - workerIndex) : (availableWorkers.length - workerIndex);
-            if(numWorkersForThis <= 0) numWorkersForThis = availableWorkers.length; // фолбек
+            if(numWorkersForThis <= 0) numWorkersForThis = availableWorkers.length; 
 
             let currentGroup = availableWorkers.slice(workerIndex, workerIndex + numWorkersForThis);
-            if(currentGroup.length === 0) currentGroup = availableWorkers; // Якщо людей менше ніж замовлень
+            if(currentGroup.length === 0) currentGroup = availableWorkers; 
 
             let baseQty = Math.floor(ord.qty / currentGroup.length);
             let remainder = ord.qty % currentGroup.length;
@@ -973,7 +1035,7 @@
         document.getElementById('workerModal').classList.remove('active'); loadDaily(); loadTabel(); loadWorkersCards(); 
     }
 
-    // === 5. БАЗА ЗБІРОК (ПОСИЛАННЯ ТА ФОТО) ===
+    // === 5. БАЗА ЗБІРОК ===
     function extractCells(configStr) {
         let match = configStr.match(/(\d+)[sS](\d+)[pP]/);
         if(match) return parseInt(match[1]) * parseInt(match[2]);
@@ -998,12 +1060,19 @@
         let elements = data.filter(r => r.element).map(r => `<div class="badge" style="background:rgba(0,158,247,0.1); color:var(--info); margin:4px; cursor:pointer;" onclick="openArchiveDetails(${r.id}, '${r.element}', 'element')">${r.element} <i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;" onclick="event.stopPropagation(); deleteArchive(${r.id})"></i></div>`).join('');
         html += `<div><strong>Банки (Елементи):</strong><br>${elements || '—'}</div>`; document.getElementById('archiveListContainer').innerHTML = html;
         
+        // Оновлення списків для розподілу роботи та операцій
         let confHtml = confs.map(x=>`<option value="${x.config}">${x.config}</option>`).join(''); 
         document.querySelectorAll('.distModelList').forEach(el => el.innerHTML = confHtml);
+        
+        let activeConfSel = document.getElementById('activeModelConfig');
+        if(activeConfSel) activeConfSel.innerHTML = '<option value="" disabled selected>-- Конфігурація --</option>' + confHtml;
         
         let elsHtml = data.filter(r=>r.element).map(x=>`<option value="${x.element}">${x.element}</option>`).join(''); 
         document.getElementById('invSupEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; document.getElementById('invTrEl').innerHTML = '<option value="">Оберіть банку...</option>' + elsHtml; 
         
+        let activeElSel = document.getElementById('activeModelElement');
+        if(activeElSel) activeElSel.innerHTML = '<option value="" disabled selected>-- Банка --</option>' + elsHtml;
+
         let allModels = []; confs.forEach(c => { data.filter(r=>r.element).forEach(e => { allModels.push(`${c.config} ${e.element}`); }); });
         let issHtml = '<option value="">Оберіть банку АБО збірку...</option>';
         issHtml += `<optgroup label="Елементи (Банки)">` + elsHtml + `</optgroup><optgroup label="Готові збірки">` + allModels.map(m=>`<option value="${m}">${m}</option>`).join('') + `</optgroup>`;
@@ -1011,7 +1080,6 @@
       }
     }
 
-    // ВІДКРИТТЯ ДЕТАЛЕЙ В АРХІВІ
     window.openArchiveDetails = function(id, name, type) {
         document.getElementById('archModalTitle').innerText = name; 
         document.getElementById('archModalName').value = name; 
